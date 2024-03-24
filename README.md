@@ -1,5 +1,8 @@
 # Python implementation of SSVC (Stakeholder-Specific Vulnerability Categorization)
 
+![PyPI](https://img.shields.io/pypi/v/ssvc?label=pypi%20package)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/ssvc)
+
 ## Overview
 
 The Stakeholder-Specific Vulnerability Categorization (SSVC) is a decision-making framework developed to prioritize vulnerabilities based on a stakeholder's context. This approach allows for a more nuanced response to vulnerabilities, tailored to the specific needs and impact on an organization's mission and well-being.
