@@ -1,4 +1,4 @@
-from ssvc import ssvc
+import ssvc
 
 def test_string_inputs():
     result: ssvc.DecisionOutcome = ssvc.Decision(

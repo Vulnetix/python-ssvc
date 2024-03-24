@@ -42,18 +42,28 @@ To use SSVC, follow these steps:
 ### Example
 
 ```python
-from ssvc import DecisionTree
+from ssvc import Decision, ExploitationLevel, Automatable, TechnicalImpact, MissionWellbeingImpact, DecisionAction
+result = Decision(
+    ExploitationLevel.POC,
+    Automatable.YES,
+    TechnicalImpact.PARTIAL,
+    MissionWellbeingImpact.MEDIUM,
+).outcome
+assert result.impact == MissionWellbeingImpact.LOW, "SSVC decision should be LOW"
+assert result.action == DecisionAction.TRACK, "SSVC decision should be TRACK"
+```
 
-# Initialize the decision tree
-decision_tree = DecisionTree()
+Using strings also works
 
-# Example inputs
-exploitation_status = 'active'
-technical_impact = 'total'
-automatable = 'no'
-mission_prevalence = 'high'
-public_wellbeing_impact = 'high'
+```python
+import ssvc
 
-# Get the decision
-decision = decision_tree.decide(exploitation_status, technical_impact, automatable, mission_prevalence, public_wellbeing_impact)
-print(decision)
+result: ssvc.DecisionOutcome = ssvc.Decision(
+    exploitation='active',
+    automatable='no',
+    technical_impact='total',
+    mission_wellbeing='high',
+).outcome
+assert result.impact == ssvc.MissionWellbeingImpact.HIGH, "SSVC decision should be HIGH"
+assert result.action == ssvc.DecisionAction.ACT, "SSVC decision should be ACT"
+```
