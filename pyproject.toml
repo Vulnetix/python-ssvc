@@ -17,27 +17,3 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.urls]
 "Repository" = "https://github.com/chrisdlangton/py-cisa-ssvc.git"
-
-[project]
-name = "ssvc"
-version = "0.1.0"
-description = "A Python implementation of the Stakeholder-Specific Vulnerability Categorization framework."
-readme = "README.md"
-authors = [{ name = "Christopher Langton", email = "chris@langton.cloud" }]
-license = { file = "LICENSE" }
-classifiers = [
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-]
-keywords = ["cisa", "ssvc", "vulnerability"]
-requires-python = ">=3.11"
-dependencies = []
-
-[project.optional-dependencies]
-dev = ["ruff", "isort", "pip-tools", "pytest", "pytest-cov", "poetry"]
-
-[project.urls]
-Homepage = "https://github.com/chrisdlangton/py-cisa-ssvc"

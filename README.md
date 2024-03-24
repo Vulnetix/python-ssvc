@@ -1,7 +1,6 @@
 # Python implementation of SSVC (Stakeholder-Specific Vulnerability Categorization)
 
-![PyPI](https://img.shields.io/pypi/v/ssvc?label=pypi%20package)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/ssvc)
+[![PyPI](https://img.shields.io/pypi/v/ssvc?label=pypi%20package)![PyPI - Downloads](https://img.shields.io/pypi/dm/ssvc)](https://pypi.org/project/ssvc/)
 
 ## Overview
 
