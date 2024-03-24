@@ -26,18 +26,27 @@ This kind of decision tree is particularly suitable for complex scenarios where 
 
 ## Installation
 
+From pypi.org `pip install ssvc`
+
+From source
+
 ```bash
-git clone https://github.com/your-organization/SSVC.git
-cd SSVC
-pip install -r requirements.txt
+git clone https://github.com/chrisdlangton/py-cisa-ssvc.git
+cd py-cisa-ssvc
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -e '.[dev]'
 ```
 
-## Usage
+## SSVC Usage
 
 To use SSVC, follow these steps:
 1. Determine the exploitation status of the vulnerability.
 2. Assess the technical impact, considering the automatability, mission prevalence, and public well-being impact.
 3. Navigate through the decision tree to arrive at a decision point: Track, Track*, Attend, or Act.
+
+Or write some simple python:
 
 ### Example
 
