@@ -22,5 +22,4 @@ test: ##
 	coverage report -m
 
 publish: clean ## 
-	poetry build
-	poetry publish
+	poetry publish --build
