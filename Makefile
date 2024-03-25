@@ -19,7 +19,7 @@ install: ##
 
 test: ## 
 	coverage run -m pytest --nf
-	coverage report -m
+	coverage report -m --fail-under=100
 
 publish: clean ## 
 	poetry publish --build
