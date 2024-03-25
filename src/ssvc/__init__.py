@@ -79,6 +79,80 @@ class Decision:
             self.evaluate()
 
     def evaluate(self) -> DecisionOutcome:
+        """
+        Evaluates the decision based on the provided attributes and returns a DecisionOutcome object.
+
+        Raises:
+            AttributeError: If any of the required attributes (exploitation, automatable, technical_impact, mission_wellbeing) are not provided.
+        """
+        self._validate_attributes()
+        decision_matrix = {
+            ExploitationLevel.NONE: {
+                Automatable.YES: {
+                    TechnicalImpact.TOTAL: {
+                        MissionWellbeingImpact.HIGH: DecisionAction.ATTEND
+                    },
+                },
+                Automatable.NO: {
+                    TechnicalImpact.TOTAL: {
+                        MissionWellbeingImpact.HIGH: DecisionAction.TRACK_STAR
+                    },
+                }
+            },
+            ExploitationLevel.POC: {
+                Automatable.YES: {
+                    TechnicalImpact.TOTAL: {
+                        MissionWellbeingImpact.MEDIUM: DecisionAction.TRACK_STAR,
+                        MissionWellbeingImpact.HIGH: DecisionAction.ATTEND
+                    },
+                    TechnicalImpact.PARTIAL: {
+                        MissionWellbeingImpact.HIGH: DecisionAction.ATTEND
+                    },
+                },
+                Automatable.NO: {
+                    TechnicalImpact.PARTIAL: {
+                        MissionWellbeingImpact.HIGH: DecisionAction.TRACK_STAR
+                    },
+                    TechnicalImpact.TOTAL: {
+                        MissionWellbeingImpact.MEDIUM: DecisionAction.TRACK_STAR,
+                        MissionWellbeingImpact.HIGH: DecisionAction.ATTEND
+                    }
+                }
+            },
+            ExploitationLevel.ACTIVE: {
+                Automatable.YES: {
+                    TechnicalImpact.PARTIAL: {
+                        MissionWellbeingImpact.LOW: DecisionAction.ATTEND,
+                        MissionWellbeingImpact.MEDIUM: DecisionAction.ATTEND,
+                        MissionWellbeingImpact.HIGH: DecisionAction.ACT
+                    },
+                    TechnicalImpact.TOTAL: {
+                        MissionWellbeingImpact.LOW: DecisionAction.ATTEND,
+                        MissionWellbeingImpact.MEDIUM: DecisionAction.ACT,
+                        MissionWellbeingImpact.HIGH: DecisionAction.ACT
+                    }
+                },
+                Automatable.NO: {
+                    TechnicalImpact.PARTIAL: {
+                        MissionWellbeingImpact.HIGH: DecisionAction.ATTEND
+                    },
+                    TechnicalImpact.TOTAL: {
+                        MissionWellbeingImpact.MEDIUM: DecisionAction.ATTEND,
+                        MissionWellbeingImpact.HIGH: DecisionAction.ACT
+                    }
+                }
+            }
+        }
+        # Lookup decision based on attributes and return outcome
+        return DecisionOutcome(
+            decision_matrix
+                .get(self.exploitation, {})
+                .get(self.automatable, {})
+                .get(self.technical_impact, {})
+                .get(self.mission_wellbeing, DecisionAction.TRACK)
+        )
+
+    def _validate_attributes(self):
         if not isinstance(self.exploitation, ExploitationLevel):
             raise AttributeError('ExploitationLevel has not been provided')
         if not isinstance(self.automatable, Automatable):
@@ -87,66 +161,3 @@ class Decision:
             raise AttributeError('TechnicalImpact has not been provided')
         if not isinstance(self.mission_wellbeing, MissionWellbeingImpact):
             raise AttributeError('MissionWellbeingImpact has not been provided')
-
-        if self.exploitation == ExploitationLevel.NONE:
-            if self.automatable == Automatable.YES:
-                if self.mission_wellbeing == MissionWellbeingImpact.HIGH: # TechnicalImpact.TOTAL or TechnicalImpact.PARTIAL
-                    self.outcome = DecisionOutcome(DecisionAction.ATTEND)
-                else: # MissionWellbeingImpact.LOW MissionWellbeingImpact.MEDIUM and TechnicalImpact.TOTAL or TechnicalImpact.PARTIAL
-                    self.outcome = DecisionOutcome(DecisionAction.TRACK)
-            else: # Automatable.NO
-                if self.technical_impact == TechnicalImpact.TOTAL and self.mission_wellbeing == MissionWellbeingImpact.HIGH:
-                    self.outcome = DecisionOutcome(DecisionAction.TRACK_STAR)
-                else:  # TechnicalImpact.PARTIAL (all) or TechnicalImpact.TOTAL (low & medium)
-                    self.outcome = DecisionOutcome(DecisionAction.TRACK)
-
-        elif self.exploitation == ExploitationLevel.POC:
-            if self.mission_wellbeing == MissionWellbeingImpact.LOW: # Automatable.NO or Automatable.YES and TechnicalImpact.TOTAL or TechnicalImpact.PARTIAL
-                self.outcome = DecisionOutcome(DecisionAction.TRACK)
-
-            elif self.automatable == Automatable.YES:
-                if self.mission_wellbeing == MissionWellbeingImpact.HIGH: # TechnicalImpact.TOTAL or TechnicalImpact.PARTIAL
-                    self.outcome = DecisionOutcome(DecisionAction.ATTEND)
-                elif self.mission_wellbeing == MissionWellbeingImpact.MEDIUM:
-                    if self.technical_impact == TechnicalImpact.PARTIAL:
-                        self.outcome = DecisionOutcome(DecisionAction.TRACK)
-                    else: # TechnicalImpact.TOTAL
-                        self.outcome = DecisionOutcome(DecisionAction.TRACK_STAR)
-            else: # Automatable.NO
-                if self.technical_impact == TechnicalImpact.PARTIAL:
-                    if self.mission_wellbeing == MissionWellbeingImpact.HIGH:
-                        self.outcome = DecisionOutcome(DecisionAction.TRACK_STAR)
-                    else: # MissionWellbeingImpact.MEDIUM
-                        self.outcome = DecisionOutcome(DecisionAction.TRACK)
-                else: # TechnicalImpact.TOTAL
-                    if self.mission_wellbeing == MissionWellbeingImpact.MEDIUM:
-                        self.outcome = DecisionOutcome(DecisionAction.TRACK_STAR)
-                    else: # MissionWellbeingImpact.HIGH:
-                        self.outcome = DecisionOutcome(DecisionAction.ATTEND)
-
-        else: # ExploitationLevel.ACTIVE
-            if self.automatable == Automatable.YES:
-                if self.mission_wellbeing == MissionWellbeingImpact.LOW: # TechnicalImpact.TOTAL or TechnicalImpact.PARTIAL
-                    self.outcome = DecisionOutcome(DecisionAction.ATTEND)
-                elif self.mission_wellbeing == MissionWellbeingImpact.HIGH: # TechnicalImpact.TOTAL or TechnicalImpact.PARTIAL
-                    self.outcome = DecisionOutcome(DecisionAction.ACT)
-                else: # MissionWellbeingImpact.MEDIUM
-                    if self.technical_impact == TechnicalImpact.PARTIAL:
-                        self.outcome = DecisionOutcome(DecisionAction.ATTEND)
-                    else: # TechnicalImpact.TOTAL
-                        self.outcome = DecisionOutcome(DecisionAction.ACT)
-
-            else: # Automatable.NO
-                if self.mission_wellbeing == MissionWellbeingImpact.LOW: # TechnicalImpact.TOTAL or TechnicalImpact.PARTIAL
-                    self.outcome = DecisionOutcome(DecisionAction.TRACK)
-                elif self.technical_impact == TechnicalImpact.PARTIAL:
-                    if self.mission_wellbeing == MissionWellbeingImpact.MEDIUM:
-                        self.outcome = DecisionOutcome(DecisionAction.TRACK)
-                    else: # MissionWellbeingImpact.HIGH
-                        self.outcome = DecisionOutcome(DecisionAction.ATTEND)
-                else: # TechnicalImpact.TOTAL
-                    if self.mission_wellbeing == MissionWellbeingImpact.MEDIUM:
-                        self.outcome = DecisionOutcome(DecisionAction.ATTEND)
-                    else: # MissionWellbeingImpact.HIGH
-                        self.outcome = DecisionOutcome(DecisionAction.ACT)
-        return self.outcome
