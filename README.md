@@ -1,6 +1,6 @@
 # Python implementation of SSVC (Stakeholder-Specific Vulnerability Categorization)
 
-[![PyPI](https://img.shields.io/pypi/v/ssvc?label=pypi%20package)![PyPI - Downloads](https://img.shields.io/pypi/dm/ssvc)](https://pypi.org/project/ssvc/)
+[![PyPI](https://img.shields.io/pypi/v/ssvc?label=pypi%20package)](https://pypi.org/project/ssvc/)
 
 ## Overview
 
@@ -38,7 +38,7 @@ cd py-cisa-ssvc
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -U pip
-pip install -e '.[dev]'
+pip install -e .
 ```
 
 ## SSVC Usage
