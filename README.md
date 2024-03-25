@@ -53,15 +53,15 @@ Or write some simple python:
 ### Example
 
 ```python
-from ssvc import Decision, ExploitationLevel, Automatable, TechnicalImpact, MissionWellbeingImpact, DecisionAction
-result = Decision(
+from ssvc import Decision, ExploitationLevel, Automatable, TechnicalImpact, MissionWellbeingImpact, DecisionAction, DecisionPriority
+decision = Decision(
     ExploitationLevel.POC,
     Automatable.YES,
     TechnicalImpact.PARTIAL,
     MissionWellbeingImpact.MEDIUM,
-).outcome
-assert result.impact == MissionWellbeingImpact.LOW, "SSVC decision should be LOW"
-assert result.action == DecisionAction.TRACK, "SSVC decision should be TRACK"
+)
+assert decision.outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
+assert decision.outcome.action == DecisionAction.TRACK, "SSVC decision should be TRACK"
 ```
 
 Using strings also works
@@ -69,12 +69,35 @@ Using strings also works
 ```python
 import ssvc
 
-result: ssvc.DecisionOutcome = ssvc.Decision(
+decision = ssvc.Decision(
     exploitation='active',
     automatable='no',
     technical_impact='total',
     mission_wellbeing='high',
-).outcome
-assert result.impact == ssvc.MissionWellbeingImpact.HIGH, "SSVC decision should be HIGH"
-assert result.action == ssvc.DecisionAction.ACT, "SSVC decision should be ACT"
+)
+assert decision.outcome.priority == ssvc.DecisionPriority.HIGH, "SSVC priority should be HIGH"
+assert decision.outcome.action == ssvc.DecisionAction.ACT, "SSVC decision should be ACT"
+```
+
+Input incrementally and control how to handle decisions
+
+```python
+from ssvc import Decision, ExploitationLevel, Automatable, TechnicalImpact, MissionWellbeingImpact, DecisionAction, DecisionPriority
+decision = Decision()
+# what is the ExploitationLevel?
+decision.exploitation = ExploitationLevel.POC
+# is it Automatable?
+decision.automatable = Automatable.YES
+# figure out the technical impact
+decision.technical_impact = TechnicalImpact.PARTIAL
+# Wha't our impact?
+decision.mission_wellbeing = MissionWellbeingImpact.MEDIUM
+
+# Get a decision outcome
+outcome = decision.evaluate()
+
+# decisions are return and available as a new variable
+assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
+# or use the `decision.outcome` like before
+assert decision.outcome.action == DecisionAction.TRACK, "SSVC decision should be TRACK"
 ```
