@@ -15,12 +15,12 @@ install: ##
 	python3.12 -m venv .venv
 	source .venv/bin/activate
 	pip install -U pip
-	pip install -e '.[dev]'
+	pip install -e .
 
-test:
+test: ## 
 	coverage run -m pytest --nf
 	coverage report -m
 
-publish: clean
+publish: clean ## 
 	poetry build
 	poetry publish

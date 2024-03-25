@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssvc"
-version = "0.2.0"
+version = "1.0.0"
 description = "A Python implementation of the Stakeholder-Specific Vulnerability Categorization framework."
 authors = ["Christopher Langton <chris@langton.cloud>"]
 readme = "PYPI.md"
