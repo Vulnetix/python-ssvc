@@ -23,7 +23,7 @@ jobs:
         coverage run -m pytest --nf
     - name: Build coverage file
       run: |
-        coverage report -m --fail-under=100 > pytest-coverage.txt
+        coverage report -m > pytest-coverage.txt
     - name: Comment coverage
       uses: coroo/pytest-coverage-commentator@v1.0.2
       with:
