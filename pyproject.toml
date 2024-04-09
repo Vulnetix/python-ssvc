@@ -9,7 +9,12 @@ readme = "PYPI.md"
 python = "^3.11"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.4"
+uv = "^0.1.29"
+isort = "^5.13.2"
+pytest = "^8.1.1"
+pytest-cov = "^5.0.0"
+ruff = "^0.3.5"
+poetry = "^1.8.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
