@@ -4,5 +4,4 @@
 dist/
 __pycache__/
 **/*.pyc
-.coverage
 **/.DS_Store
