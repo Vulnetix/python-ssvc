@@ -18,9 +18,11 @@ jobs:
         pip install poetry flake8 pytest pytest-cov
         pip install -e .
         if [ -f poetry.lock ]; then poetry install; fi
-    - name: Build coverage file
+    - name: Pytest with coverage
       run: |
         coverage run -m pytest --nf
+    - name: Build coverage file
+      run: |
         coverage report -m --fail-under=100 > pytest-coverage.txt
     - name: Comment coverage
       uses: coroo/pytest-coverage-commentator@v1.0.2
