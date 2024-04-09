@@ -20,6 +20,7 @@ install: ##
 test: ## 
 	coverage run -m pytest --nf
 	coverage report -m --fail-under=100
+	coverage-badge -f -o coverage.svg
 
 publish: clean ## 
 	poetry publish --build
