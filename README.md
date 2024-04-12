@@ -6,17 +6,6 @@
 
 From pypi.org `pip install ssvc`
 
-From source
-
-```bash
-git clone https://github.com/chrisdlangton/py-cisa-ssvc.git
-cd py-cisa-ssvc
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -U pip
-pip install -e .
-```
-
 ## SSVC Usage
 
 To use SSVC, follow these steps:
