@@ -17,7 +17,7 @@ install: ##
 	pip install -U pip
 	pip install -e .
 
-test: ## 
+test: clean ## 
 	coverage run -m pytest --nf
 	coverage report -m --fail-under=100
 	coverage-badge -f -o coverage.svg

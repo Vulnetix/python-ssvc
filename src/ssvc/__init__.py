@@ -30,25 +30,29 @@ class DecisionPriority(Enum):
     IMMEDIATE = "immediate"
 
 
-class DecisionAction(Enum):
+class ActionCISA(Enum):
     TRACK = "Track"
     TRACK_STAR = "Track*"
     ATTEND = "Attend"
     ACT = "Act"
 
+class Methodology(Enum):
+    FIRST = "FIRST"
+    CISA = "CISA"
+
 
 priority_map = {
-    DecisionAction.TRACK: DecisionPriority.LOW,
-    DecisionAction.TRACK_STAR: DecisionPriority.MEDIUM,
-    DecisionAction.ATTEND: DecisionPriority.MEDIUM,
-    DecisionAction.ACT: DecisionPriority.IMMEDIATE,
+    ActionCISA.TRACK: DecisionPriority.LOW,
+    ActionCISA.TRACK_STAR: DecisionPriority.MEDIUM,
+    ActionCISA.ATTEND: DecisionPriority.MEDIUM,
+    ActionCISA.ACT: DecisionPriority.IMMEDIATE,
 }
 
 
-class DecisionOutcome:
-    def __init__(self, action: DecisionAction):
+class OutcomeCISA:
+    def __init__(self, action: ActionCISA):
         self.priority: DecisionPriority = priority_map[action]
-        self.action: DecisionAction = action
+        self.action: ActionCISA = action
 
 
 class Decision:
@@ -56,14 +60,16 @@ class Decision:
     automatable: Automatable
     technical_impact: TechnicalImpact
     mission_wellbeing: MissionWellbeingImpact
-    outcome: DecisionOutcome
+    outcome: OutcomeCISA
+    methodology: Methodology = Methodology.CISA
 
     def __init__(
         self,
-        exploitation: ExploitationLevel = None,
-        automatable: Automatable = None,
-        technical_impact: TechnicalImpact = None,
-        mission_wellbeing: MissionWellbeingImpact = None,
+        exploitation: ExploitationLevel | str = None,
+        automatable: Automatable | str = None,
+        technical_impact: TechnicalImpact | str = None,
+        mission_wellbeing: MissionWellbeingImpact | str = None,
+        methodology: Methodology | str = Methodology.CISA,
     ):
         if isinstance(exploitation, str):
             exploitation = ExploitationLevel(exploitation)
@@ -73,11 +79,14 @@ class Decision:
             technical_impact = TechnicalImpact(technical_impact)
         if isinstance(mission_wellbeing, str):
             mission_wellbeing = MissionWellbeingImpact(mission_wellbeing)
+        if isinstance(methodology, str):
+            methodology = Methodology(methodology)
 
         self.exploitation = exploitation
         self.automatable = automatable
         self.technical_impact = technical_impact
         self.mission_wellbeing = mission_wellbeing
+        self.methodology = methodology
         if all(
             [
                 isinstance(self.exploitation, ExploitationLevel),
@@ -88,80 +97,84 @@ class Decision:
         ):
             self.evaluate()
 
-    def evaluate(self) -> DecisionOutcome:
+    def evaluate(self) -> OutcomeCISA:
+        if self.methodology == Methodology.CISA:
+            return self.cisa()
+
+    def cisa(self) -> OutcomeCISA:
         """
-        Evaluates the decision based on the provided attributes and returns a DecisionOutcome object.
+        Evaluates the decision based on the provided attributes and returns a OutcomeCISA object.
 
         Raises:
             AttributeError: If any of the required attributes (exploitation, automatable, technical_impact, mission_wellbeing) are not provided.
         """
-        self._validate_attributes()
+        self._validate_cisa()
         decision_matrix = {
             ExploitationLevel.NONE: {
                 Automatable.YES: {
                     TechnicalImpact.TOTAL: {
-                        MissionWellbeingImpact.HIGH: DecisionAction.ATTEND
+                        MissionWellbeingImpact.HIGH: ActionCISA.ATTEND
                     },
                 },
                 Automatable.NO: {
                     TechnicalImpact.TOTAL: {
-                        MissionWellbeingImpact.HIGH: DecisionAction.TRACK_STAR
+                        MissionWellbeingImpact.HIGH: ActionCISA.TRACK_STAR
                     },
                 },
             },
             ExploitationLevel.POC: {
                 Automatable.YES: {
                     TechnicalImpact.TOTAL: {
-                        MissionWellbeingImpact.MEDIUM: DecisionAction.TRACK_STAR,
-                        MissionWellbeingImpact.HIGH: DecisionAction.ATTEND,
+                        MissionWellbeingImpact.MEDIUM: ActionCISA.TRACK_STAR,
+                        MissionWellbeingImpact.HIGH: ActionCISA.ATTEND,
                     },
                     TechnicalImpact.PARTIAL: {
-                        MissionWellbeingImpact.HIGH: DecisionAction.ATTEND
+                        MissionWellbeingImpact.HIGH: ActionCISA.ATTEND
                     },
                 },
                 Automatable.NO: {
                     TechnicalImpact.PARTIAL: {
-                        MissionWellbeingImpact.HIGH: DecisionAction.TRACK_STAR
+                        MissionWellbeingImpact.HIGH: ActionCISA.TRACK_STAR
                     },
                     TechnicalImpact.TOTAL: {
-                        MissionWellbeingImpact.MEDIUM: DecisionAction.TRACK_STAR,
-                        MissionWellbeingImpact.HIGH: DecisionAction.ATTEND,
+                        MissionWellbeingImpact.MEDIUM: ActionCISA.TRACK_STAR,
+                        MissionWellbeingImpact.HIGH: ActionCISA.ATTEND,
                     },
                 },
             },
             ExploitationLevel.ACTIVE: {
                 Automatable.YES: {
                     TechnicalImpact.PARTIAL: {
-                        MissionWellbeingImpact.LOW: DecisionAction.ATTEND,
-                        MissionWellbeingImpact.MEDIUM: DecisionAction.ATTEND,
-                        MissionWellbeingImpact.HIGH: DecisionAction.ACT,
+                        MissionWellbeingImpact.LOW: ActionCISA.ATTEND,
+                        MissionWellbeingImpact.MEDIUM: ActionCISA.ATTEND,
+                        MissionWellbeingImpact.HIGH: ActionCISA.ACT,
                     },
                     TechnicalImpact.TOTAL: {
-                        MissionWellbeingImpact.LOW: DecisionAction.ATTEND,
-                        MissionWellbeingImpact.MEDIUM: DecisionAction.ACT,
-                        MissionWellbeingImpact.HIGH: DecisionAction.ACT,
+                        MissionWellbeingImpact.LOW: ActionCISA.ATTEND,
+                        MissionWellbeingImpact.MEDIUM: ActionCISA.ACT,
+                        MissionWellbeingImpact.HIGH: ActionCISA.ACT,
                     },
                 },
                 Automatable.NO: {
                     TechnicalImpact.PARTIAL: {
-                        MissionWellbeingImpact.HIGH: DecisionAction.ATTEND
+                        MissionWellbeingImpact.HIGH: ActionCISA.ATTEND
                     },
                     TechnicalImpact.TOTAL: {
-                        MissionWellbeingImpact.MEDIUM: DecisionAction.ATTEND,
-                        MissionWellbeingImpact.HIGH: DecisionAction.ACT,
+                        MissionWellbeingImpact.MEDIUM: ActionCISA.ATTEND,
+                        MissionWellbeingImpact.HIGH: ActionCISA.ACT,
                     },
                 },
             },
         }
         # Lookup decision based on attributes and return outcome
-        return DecisionOutcome(
+        return OutcomeCISA(
             decision_matrix.get(self.exploitation, {})
             .get(self.automatable, {})
             .get(self.technical_impact, {})
-            .get(self.mission_wellbeing, DecisionAction.TRACK)
+            .get(self.mission_wellbeing, ActionCISA.TRACK)
         )
 
-    def _validate_attributes(self):
+    def _validate_cisa(self):
         if not isinstance(self.exploitation, ExploitationLevel):
             raise AttributeError("ExploitationLevel has not been provided")
         if not isinstance(self.automatable, Automatable):
