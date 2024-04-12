@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssvc"
-version = "1.0.3"
+version = "1.0.4"
 description = "A Python implementation of the Stakeholder-Specific Vulnerability Categorization framework."
 authors = ["Christopher Langton <chris@langton.cloud>"]
 readme = "PYPI.md"
@@ -22,4 +22,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.urls]
-"Repository" = "https://github.com/chrisdlangton/py-cisa-ssvc.git"
+"Repository" = "https://github.com/chrisdlangton/python-ssvc.git"
