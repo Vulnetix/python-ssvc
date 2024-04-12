@@ -22,7 +22,7 @@ To use SSVC:
 - Assess the technical impact, considering the automatability
 
 ```python
-from ssvc import Decision, ExploitationLevel, Automatable, TechnicalImpact, MissionWellbeingImpact, DecisionAction, DecisionPriority
+from ssvc import Decision, ExploitationLevel, Automatable, TechnicalImpact, MissionWellbeingImpact, ActionCISA, DecisionPriority
 decision = Decision(
     ExploitationLevel.POC,
     Automatable.YES,
@@ -30,7 +30,7 @@ decision = Decision(
     MissionWellbeingImpact.MEDIUM,
 )
 assert decision.outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
-assert decision.outcome.action == DecisionAction.TRACK, "SSVC decision should be TRACK"
+assert decision.outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
 ```
 
 Using strings also works
@@ -45,13 +45,13 @@ decision = ssvc.Decision(
     mission_wellbeing='high',
 )
 assert decision.outcome.priority == ssvc.DecisionPriority.HIGH, "SSVC priority should be HIGH"
-assert decision.outcome.action == ssvc.DecisionAction.ACT, "SSVC decision should be ACT"
+assert decision.outcome.action == ssvc.ActionCISA.ACT, "SSVC decision should be ACT"
 ```
 
 Input incrementally and control how to handle decisions
 
 ```python
-from ssvc import Decision, ExploitationLevel, Automatable, TechnicalImpact, MissionWellbeingImpact, DecisionAction, DecisionPriority
+from ssvc import Decision, ExploitationLevel, Automatable, TechnicalImpact, MissionWellbeingImpact, ActionCISA, DecisionPriority
 decision = Decision()
 # what is the ExploitationLevel?
 decision.exploitation = ExploitationLevel.POC
@@ -68,5 +68,5 @@ outcome = decision.evaluate()
 # decisions are return and available as a new variable
 assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
 # or use the `decision.outcome` like before
-assert decision.outcome.action == DecisionAction.TRACK, "SSVC decision should be TRACK"
+assert decision.outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
 ```
