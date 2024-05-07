@@ -11,16 +11,18 @@ clean: ## Cleanup tmp files
 	@find . -type d -name '__pycache__' -delete 2>/dev/null
 	@find . -type f -name '*.DS_Store' -delete 2>/dev/null
 
-install: ## 
-	python3.12 -m venv .venv
-	source .venv/bin/activate
-	pip install -U pip
-	pip install -e .
+setup: ## FOR DOCO ONLY - Run these one at a time, do not call this target directly
+	uv venv --python $(which python3.12)
+	source .venv/bin/activate	
+	uv pip install -U pip
 
-test: clean ## 
+install: ## poetry install
+	poetry install
+
+test: clean ## pytest with coverage
 	coverage run -m pytest --nf
 	coverage report -m --fail-under=100
 	coverage-badge -f -o coverage.svg
 
-publish: clean ## 
+publish: clean ## upload to pypi.org
 	poetry publish --build
