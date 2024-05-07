@@ -26,3 +26,7 @@ test: clean ## pytest with coverage
 
 publish: clean ## upload to pypi.org
 	poetry publish --build
+	git commit -a -s -m 'feat: v$(shell poetry version -s)'
+	git tag v$(shell poetry version -s)
+	git push --tags
+	git push
