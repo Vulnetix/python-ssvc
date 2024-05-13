@@ -450,9 +450,9 @@ poetry-core==1.9.0 \
     # via
     #   poetry
     #   poetry-plugin-export
-poetry-plugin-export==1.7.1 \
-    --hash=sha256:b2258e53ae0d369a73806f957ed0e726eb95c571a0ce8b1f273da686528cc1da \
-    --hash=sha256:cf62cfb6218a904290ba6db3bc1a24aa076d10f81c48c6e48b2ded430131e22e
+poetry-plugin-export==1.8.0 \
+    --hash=sha256:1fa6168a85d59395d835ca564bc19862a7c76061e60c3e7dfaec70d50937fc61 \
+    --hash=sha256:adbe232cfa0cc04991ea3680c865cf748bff27593b9abcb1f35fb50ed7ba2c22
     # via poetry
 ptyprocess==0.7.0 \
     --hash=sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35 \
