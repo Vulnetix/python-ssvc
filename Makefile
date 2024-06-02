@@ -30,3 +30,8 @@ publish: clean ## upload to pypi.org
 	git tag --force v$(shell poetry version -s)
 	git push
 	git push --tags --force
+
+sbom: ## generate CycloneDX for this project
+	uv pip compile --generate-hashes -o requirements.txt --all-extras --upgrade pyproject.toml
+	pip-audit -r requirements.txt -f cyclonedx-json --require-hashes | jq > sbom.json
+	rm requirements.txt
