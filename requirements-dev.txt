@@ -391,9 +391,9 @@ jeepney==0.8.0 \
     # via
     #   keyring
     #   secretstorage
-keyring==24.3.1 \
-    --hash=sha256:c3327b6ffafc0e8befbdb597cacdb4928ffe5c1212f7645f186e6d9957a898db \
-    --hash=sha256:df38a4d7419a6a60fea5cef1e45a948a3e8430dd12ad88b0f423c5c143906218
+keyring==25.2.1 \
+    --hash=sha256:2458681cdefc0dbc0b7eb6cf75d0b98e59f9ad9b2d4edd319d18f68bdca95e50 \
+    --hash=sha256:daaffd42dbda25ddafb1ad5fec4024e5bbcfe424597ca1ca452b299861e49f1b
     # via poetry
 license-expression==30.3.0 \
     --hash=sha256:1295406f736b4f395ff069aec1cebfad53c0fcb3cf57df0f5ec58fc7b905aea5 \
