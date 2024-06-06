@@ -3,6 +3,13 @@ on:
   pull_request:
     branches: 
       - '*'
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
+      
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -129,3 +136,14 @@ jobs:
         asset_path: ./dist/ssvc-${{ env.APP_VERSION }}-py3-none-any.whl
         asset_name: ssvc-${{ env.APP_VERSION }}-py3-none-any.whl
         asset_content_type: application/octet-stream
+
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: ./dist/ssvc-${{ env.APP_VERSION }}-py3-none-any.whl
+
+    - name: Generate SBOM attestation
+      uses: actions/attest-sbom@v1
+      with:
+        subject-path: ./dist/ssvc-${{ env.APP_VERSION }}-py3-none-any.whl
+        sbom-path: ./sbom.json
