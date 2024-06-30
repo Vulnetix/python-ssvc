@@ -8,7 +8,6 @@ permissions:
   id-token: write
   contents: read
   attestations: write
-      
 
 jobs:
   build:
@@ -146,4 +145,4 @@ jobs:
       uses: actions/attest-sbom@v1
       with:
         subject-path: ./dist/ssvc-${{ env.APP_VERSION }}-py3-none-any.whl
-        sbom-path: ./sbom.json
+        sbom-path: ./sbom.spdx.json
