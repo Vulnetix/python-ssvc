@@ -48,5 +48,6 @@ lockfile: ## generate pip lockfile for this project
 	uv pip compile --generate-hashes -o requirements.txt --all-extras --upgrade pyproject.toml
 
 sbom: lockfile ## generate CycloneDX for this project
-	pip-audit -r requirements.txt -f cyclonedx-json --require-hashes | jq > sbom.json
+	pip-audit -r requirements.txt -f cyclonedx-json --require-hashes | jq > sbom.cdx.json
 	rm requirements.txt
+	cyclonedx convert --input-file sbom.cdx.json --output-file sbom.spdx.json
