@@ -268,9 +268,9 @@ cryptography==42.0.8 \
     --hash=sha256:fa76fbb7596cc5839320000cdd5d0955313696d9511debab7ee7278fc8b5c84a \
     --hash=sha256:fff12c88a672ab9c9c1cf7b0c80e3ad9e2ebd9d828d955c126be4fd3e5578c9e
     # via secretstorage
-cyclonedx-python-lib==7.4.1 \
-    --hash=sha256:23bf8196e008bb8e06c1040ad2ab69492891d8a581cb2aefa36a77f199790a37 \
-    --hash=sha256:73bf8d5c09ad10698c75d3ce3f123c84c9aff3959d67b8b5ca9e5a7c5da43abe
+cyclonedx-python-lib==7.5.0 \
+    --hash=sha256:0bb301bfee57d21a76a1288c3670d5aca9924bbe212d13d09e264dfde8cc7389 \
+    --hash=sha256:28ef507c1a803e39f6932f328ca26f0fd21efbd9539175492b16325e400b4e1a
     # via pip-audit
 defusedxml==0.7.1 \
     --hash=sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69 \
