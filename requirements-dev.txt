@@ -224,9 +224,9 @@ coverage==7.6.0 \
     # via
     #   coverage-badge
     #   pytest-cov
-coverage-badge==1.1.1 \
-    --hash=sha256:1d8e566ad47c37910fa2bbc74ea19972b171b5b4e40624b31b3e2f2d93680266 \
-    --hash=sha256:42252df917404af6147380861228a4ace3d9a29804df8fc2d34a22b2bc4f45b6
+coverage-badge==1.1.2 \
+    --hash=sha256:d8413ce51c91043a1692b943616b450868cbeeb0ea6a0c54a32f8318c9c96ff7 \
+    --hash=sha256:fe7ed58a3b72dad85a553b64a99e963dea3847dcd0b8ddd2b38a00333618642c
     # via ssvc (pyproject.toml)
 crashtest==0.4.1 \
     --hash=sha256:80d7b1f316ebfbd429f648076d6275c877ba30ba48979de4191714a75266f0ce \
