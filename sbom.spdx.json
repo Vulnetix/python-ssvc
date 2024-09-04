@@ -1,0 +1,14 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.2",
+  "creationInfo": {
+    "comment": "This SPDX document has been converted from CycloneDX format.",
+    "created": "2024-09-04T13:24:57.417257Z",
+    "creators": [
+      "Tool: cyclonedx-python-lib-7.6.0"
+    ]
+  },
+  "name": "CycloneDX BOM",
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "http://spdx.org/spdxdocs/CycloneDX BOM-7d01ccc5-7c1a-494c-9ca2-1faea52cf0fd"
+}
