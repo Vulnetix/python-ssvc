@@ -9,13 +9,13 @@ readme = "PYPI.md"
 python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
-setuptools = ">=69.5.1,<71.0.0"
-uv = "^0.2.4"
+setuptools = ">=69.5.1,<75.0.0"
+uv = ">=0.2.4,<0.5.0"
 isort = "^5.13.2"
 pytest = "^8.3.2"
 pytest-cov = "^5.0.0"
-coverage-badge = "^1.1.2"
-ruff = "^0.4.5"
+coverage-badge = "^1.1.1"
+ruff = ">=0.4.5,<0.6.0"
 pip-audit = "^2.7.3"
 poetry = "^1.8.3"
 
