@@ -514,9 +514,9 @@ pkginfo==1.11.1 \
     --hash=sha256:2e0dca1cf4c8e39644eed32408ea9966ee15e0d324c62ba899a393b3c6b467aa \
     --hash=sha256:bfa76a714fdfc18a045fcd684dbfc3816b603d9d075febef17cb6582bea29573
     # via poetry
-platformdirs==4.2.2 \
-    --hash=sha256:2d7a1657e36a80ea911db832a8a6ece5ee53d8de21edd5cc5879af6530b1bfee \
-    --hash=sha256:38b7b51f512eed9e84a22788b4bce1de17c0adb134d6becb09836e37d8654cd3
+platformdirs==4.3.3 \
+    --hash=sha256:50a5450e2e84f44539718293cbb1da0a0885c9d14adf21b77bae4e66fc99d9b5 \
+    --hash=sha256:d4e0b7d8ec176b341fb03cb11ca12d0276faa8c485f9cd218f613840463fc2c0
     # via
     #   poetry
     #   virtualenv
