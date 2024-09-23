@@ -9,7 +9,7 @@ readme = "PYPI.md"
 python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
-setuptools = ">=69.5.1,<75.0.0"
+setuptools = ">=69.5.1,<76.0.0"
 uv = ">=0.2.4,<0.5.0"
 isort = "^5.13.2"
 pytest = "^8.3.2"
