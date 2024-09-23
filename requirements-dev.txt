@@ -544,9 +544,9 @@ ptyprocess==0.7.0 \
     --hash=sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35 \
     --hash=sha256:5c5d0a3b48ceee0b48485e0c26037c0acd7d29765ca3fbb5cb3831d347423220
     # via pexpect
-py-serializable==1.1.0 \
-    --hash=sha256:3311ab39063b131caca0fb75e2038153682e55576c67f24a2de72d402dccb6e0 \
-    --hash=sha256:ae7ae4326b0d037b7e710f6e8bb1a97ece4ac2895a1f443a17ffd17f85547d76
+py-serializable==1.1.1 \
+    --hash=sha256:008cf879c8a227851e745e307c1a1c9b58bc22ab87f3794a3750513b6c9e8713 \
+    --hash=sha256:f268db3afc42c8786da6dc64a8a36e33a82cf65cdcff22d1188b0927f6d4cfa9
     # via cyclonedx-python-lib
 pycparser==2.22 \
     --hash=sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6 \
