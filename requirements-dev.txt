@@ -743,9 +743,9 @@ tomlkit==0.13.2 \
     --hash=sha256:7a974427f6e119197f670fbbbeae7bef749a6c14e793db934baefc1b5f03efde \
     --hash=sha256:fff5fe59a87295b278abd31bec92c15d9bc4a06885ab12bcea52c71119392e79
     # via poetry
-trove-classifiers==2024.9.12 \
-    --hash=sha256:4b46b3e134a4d01999ac5bc6e528afcc10cc48f0f724f185f267e276005768f4 \
-    --hash=sha256:f88a27a892891c87c5f8bbdf110710ae9e0a4725ea8e0fb45f1bcadf088a491f
+trove-classifiers==2024.10.16 \
+    --hash=sha256:8a3570c880f7ca2ffebbc91806aee3e8f5cd221422dfc8cd2cad4b48789ac69b \
+    --hash=sha256:9b02a4cb49bd2e85c13e728ee461f4f332d6334736b18d61254c964643687144
     # via poetry
 urllib3==2.2.3 \
     --hash=sha256:ca899ca043dcb1bafa3e262d73aa25c465bfb49e0bd9dd5d59f1d0acba2f8fac \
