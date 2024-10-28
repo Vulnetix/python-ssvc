@@ -408,9 +408,9 @@ keyring==25.4.1 \
     --hash=sha256:5426f817cf7f6f007ba5ec722b1bcad95a75b27d780343772ad76b17cb47b0bf \
     --hash=sha256:b07ebc55f3e8ed86ac81dd31ef14e81ace9dd9c3d4b5d77a6e9a2016d0d71a1b
     # via poetry
-license-expression==30.3.1 \
-    --hash=sha256:60d5bec1f3364c256a92b9a08583d7ea933c7aa272c8d36d04144a89a3858c01 \
-    --hash=sha256:97904b9185c7bbb1e98799606fa7424191c375e70ba63a524b6f7100e42ddc46
+license-expression==30.4.0 \
+    --hash=sha256:6464397f8ed4353cc778999caec43b099f8d8d5b335f282e26a9eb9435522f05 \
+    --hash=sha256:7c8f240c6e20d759cb8455e49cb44a923d9e25c436bf48d7e5b8eea660782c04
     # via cyclonedx-python-lib
 markdown-it-py==3.0.0 \
     --hash=sha256:355216845c60bd96232cd8d8c40e8f9765cc86f46880e43a8fd22dc1a1a8cab1 \
