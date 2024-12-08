@@ -2,6 +2,7 @@
 .venv/
 .pytest_cache/
 dist/
+build/
 __pycache__/
 **/*.pyc
 **/.DS_Store
