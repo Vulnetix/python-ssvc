@@ -5,3 +5,7 @@ dist/
 __pycache__/
 **/*.pyc
 **/.DS_Store
+ssvc.cdx.json
+osv.sarif.json
+semgrep.sarif.json
+src/ssvc.egg-info/

@@ -15,39 +15,33 @@ clean: ## Cleanup tmp files
 	@find . -type f -name '*.DS_Store' -delete 2>/dev/null
 
 setup: ## FOR DOCO ONLY - Run these one at a time, do not call this target directly
-	uv venv --python $(which python3.12)
+	uv python install
+	uv venv
 	source .venv/bin/activate	
-	uv pip install -U pip
+	uv sync
+	uv build
+	uv pip install dist/ssvc-1.0.10-py3-none-any.whl
+	uv pip install "."
 
-install: ## poetry install and create poetry.lock
-	poetry install --no-root
-	poetry self add poetry-plugin-up
-
-update: ## poetry update poetry.lock
-	git submodule update
-	poetry self update
-	poetry up
+update: ## update and lock
+	uv lock -U
 
 test: clean ## pytest with coverage
 	coverage run -m pytest --nf
 	coverage report -m --fail-under=100
 	coverage-badge -f -o coverage.svg
 
-publish: clean update ## upload to pypi.org
-	poetry publish --build
-	git commit -a -s -m 'feat: v$(shell poetry version -s)'
-	git tag --force v$(shell poetry version -s)
+publish: clean ## upload to pypi.org
+	uv build
+	uv publish
+	git commit -a -s -m 'feat: $(shell uv tree -q | head -1 | awk '{print $2}')'
+	git tag --force $(shell uv tree -q | head -1 | awk '{print $2}')
 	git push
 	git push --tags --force
 
-sarif: clean update ## generate SARIF from Semgrep for this project
+sarif: clean ## generate SARIF from Semgrep for this project
 	osv-scanner --format sarif --call-analysis=all -r . | jq >osv.sarif.json
 	semgrep $(SEMGREP_ARGS) $(SEMGREP_RULES) | jq >semgrep.sarif.json
 
-lockfile: ## generate pip lockfile for this project
-	uv pip compile --generate-hashes -o requirements.txt --all-extras --upgrade pyproject.toml
-
-sbom: lockfile ## generate CycloneDX for this project
-	pip-audit -r requirements.txt -f cyclonedx-json --require-hashes | jq > sbom.cdx.json
-	rm requirements.txt
-	cyclonedx convert --input-file sbom.cdx.json --output-file sbom.spdx.json
+sbom: ## generate CycloneDX for this project
+	uvx pip-audit -f cyclonedx-json | jq > ssvc.cdx.json
