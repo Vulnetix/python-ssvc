@@ -15,21 +15,23 @@ clean: ## Cleanup tmp files
 	@find . -type f -name '*.DS_Store' -delete 2>/dev/null
 
 setup: ## FOR DOCO ONLY - Run these one at a time, do not call this target directly
+	@rm -rf dist 2>/dev/null
 	uv python install
 	uv venv
 	source .venv/bin/activate	
 	uv sync
 	uv build
-	uv pip install dist/ssvc-1.0.10-py3-none-any.whl
+	uv pip install dist/ssvc-*-py3-none-any.whl
 	uv pip install "."
 
 update: ## update and lock
 	uv lock -U
 
 test: clean ## pytest with coverage
-	coverage run -m pytest --nf
-	coverage report -m --fail-under=100
-	coverage-badge -f -o coverage.svg
+	uv pip install ".[test]"
+	uv run coverage run -m pytest --nf
+	uv run coverage report -m --fail-under=100
+	uv run coverage-badge -f -o coverage.svg
 
 publish: clean ## upload to pypi.org
 	uv build
@@ -44,4 +46,5 @@ sarif: clean ## generate SARIF from Semgrep for this project
 	semgrep $(SEMGREP_ARGS) $(SEMGREP_RULES) | jq >semgrep.sarif.json
 
 sbom: ## generate CycloneDX for this project
-	uvx pip-audit -f cyclonedx-json | jq > ssvc.cdx.json
+	uv pip install ".[sec]"
+	uv run pip-audit -f cyclonedx-json | jq > ssvc.cdx.json
