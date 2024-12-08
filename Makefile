@@ -15,7 +15,6 @@ clean: ## Cleanup tmp files
 	@find . -type f -name '*.DS_Store' -delete 2>/dev/null
 
 setup: ## FOR DOCO ONLY - Run these one at a time, do not call this target directly
-	@rm -rf dist 2>/dev/null
 	uv python install
 	uv venv
 	source .venv/bin/activate	
@@ -34,6 +33,7 @@ test: clean ## pytest with coverage
 	uv run coverage-badge -f -o coverage.svg
 
 publish: clean ## upload to pypi.org
+	@rm -rf dist build 2>/dev/null
 	uv build
 	uv publish
 	git commit -a -s -m 'feat: $(shell uv tree -q | head -1 | awk '{print $2}')'
