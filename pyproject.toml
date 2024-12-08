@@ -1,27 +1,24 @@
-[tool.poetry]
+[project]
 name = "ssvc"
-version = "1.0.10"
+version = "1.0.11"
 description = "A Python implementation of the Stakeholder-Specific Vulnerability Categorization framework."
-authors = ["Christopher Langton <chris@langton.cloud>"]
+authors = [{name = "Christopher Langton", email = "chris@vulnetix.app"}]
 readme = "PYPI.md"
+requires-python = ">=3.11"
+dependencies = [
+]
+license = {file = "LICENSE"}
 
-[tool.poetry.dependencies]
-python = "^3.11"
+[project.optional-dependencies]
+test = [
+    "pytest-cov>=6.0.0",
+    "pytest>=8.3.4",
+    "coverage-badge>=1.1.2",
+]
+sec = [
+    "pip-audit>=2.7.3",
+]
 
-[tool.poetry.group.dev.dependencies]
-setuptools = ">=69.5.1,<75.0.0"
-uv = ">=0.2.4,<0.5.0"
-isort = "^5.13.2"
-pytest = "^8.3.2"
-pytest-cov = "^5.0.0"
-coverage-badge = "^1.1.2"
-ruff = ">=0.4.5,<0.7.0"
-pip-audit = "^2.7.3"
-poetry = "^1.8.3"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.urls]
-"Repository" = "https://github.com/chrisdlangton/python-ssvc.git"
+[project.urls]
+Homepage = "https://www.vulnetix.com"
+Repository = "https://github.com/vulnetix/python-ssvc.git"
