@@ -1,0 +1,98 @@
+name: "Coordinator Publication Decision Model"
+description: "CERT/CC Coordinator Publication Decision Model for determining vulnerability disclosure"
+version: "1.0"
+url: "https://certcc.github.io/SSVC/howto/publication_decision/"
+
+enums:
+  SupplierInvolvement:
+    - FIX_READY
+    - COOPERATIVE
+    - UNCOOPERATIVE_UNRESPONSIVE
+  ExploitationStatus:
+    - NONE
+    - PUBLIC_POC
+    - ACTIVE
+  PublicValueAdded:
+    - LIMITED
+    - AMPLIATIVE
+    - PRECEDENCE
+  ActionType:
+    - PUBLISH
+    - DO_NOT_PUBLISH
+  DecisionPriorityLevel:
+    - PUBLISH
+    - DO_NOT_PUBLISH
+
+priorityMap:
+  PUBLISH: PUBLISH
+  DO_NOT_PUBLISH: DO_NOT_PUBLISH
+
+decisionTree:
+  type: SupplierInvolvement
+  children:
+    FIX_READY:
+      type: ExploitationStatus
+      children:
+        NONE:
+          type: PublicValueAdded
+          children:
+            LIMITED: DO_NOT_PUBLISH
+            AMPLIATIVE: DO_NOT_PUBLISH
+            PRECEDENCE: PUBLISH
+        PUBLIC_POC:
+          type: PublicValueAdded
+          children:
+            LIMITED: DO_NOT_PUBLISH
+            AMPLIATIVE: PUBLISH
+            PRECEDENCE: PUBLISH
+        ACTIVE:
+          type: PublicValueAdded
+          children:
+            LIMITED: PUBLISH
+            AMPLIATIVE: PUBLISH
+            PRECEDENCE: PUBLISH
+    COOPERATIVE:
+      type: ExploitationStatus
+      children:
+        NONE:
+          type: PublicValueAdded
+          children:
+            LIMITED: DO_NOT_PUBLISH
+            AMPLIATIVE: DO_NOT_PUBLISH
+            PRECEDENCE: PUBLISH
+        PUBLIC_POC:
+          type: PublicValueAdded
+          children:
+            LIMITED: DO_NOT_PUBLISH
+            AMPLIATIVE: PUBLISH
+            PRECEDENCE: PUBLISH
+        ACTIVE:
+          type: PublicValueAdded
+          children:
+            LIMITED: PUBLISH
+            AMPLIATIVE: PUBLISH
+            PRECEDENCE: PUBLISH
+    UNCOOPERATIVE_UNRESPONSIVE:
+      type: ExploitationStatus
+      children:
+        NONE:
+          type: PublicValueAdded
+          children:
+            LIMITED: PUBLISH
+            AMPLIATIVE: PUBLISH
+            PRECEDENCE: PUBLISH
+        PUBLIC_POC:
+          type: PublicValueAdded
+          children:
+            LIMITED: PUBLISH
+            AMPLIATIVE: PUBLISH
+            PRECEDENCE: PUBLISH
+        ACTIVE:
+          type: PublicValueAdded
+          children:
+            LIMITED: PUBLISH
+            AMPLIATIVE: PUBLISH
+            PRECEDENCE: PUBLISH
+
+# Default action for unmapped paths
+defaultAction: DO_NOT_PUBLISH
