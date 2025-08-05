@@ -1,0 +1,169 @@
+name: "Supplier Decision Model"
+description: "CERT/CC Supplier Decision Model for prioritizing patch creation"
+version: "1.0"
+url: "https://certcc.github.io/SSVC/howto/supplier_tree/"
+
+enums:
+  ExploitationStatus:
+    - NONE
+    - POC
+    - ACTIVE
+  UtilityLevel:
+    - LABORIOUS
+    - EFFICIENT
+    - SUPER_EFFECTIVE
+  TechnicalImpactLevel:
+    - PARTIAL
+    - TOTAL
+  PublicSafetyImpactLevel:
+    - MINIMAL
+    - SIGNIFICANT
+  ActionType:
+    - DEFER
+    - SCHEDULED
+    - OUT_OF_CYCLE
+    - IMMEDIATE
+  DecisionPriorityLevel:
+    - DEFER
+    - SCHEDULED
+    - OUT_OF_CYCLE
+    - IMMEDIATE
+
+priorityMap:
+  DEFER: DEFER
+  SCHEDULED: SCHEDULED
+  OUT_OF_CYCLE: OUT_OF_CYCLE
+  IMMEDIATE: IMMEDIATE
+
+decisionTree:
+  type: ExploitationStatus
+  children:
+    NONE:
+      type: UtilityLevel
+      children:
+        LABORIOUS:
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: DEFER
+                SIGNIFICANT: DEFER
+            TOTAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: DEFER
+                SIGNIFICANT: DEFER
+        EFFICIENT:
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: DEFER
+                SIGNIFICANT: SCHEDULED
+            TOTAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: SCHEDULED
+                SIGNIFICANT: SCHEDULED
+        SUPER_EFFECTIVE:
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: SCHEDULED
+                SIGNIFICANT: OUT_OF_CYCLE
+            TOTAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: OUT_OF_CYCLE
+                SIGNIFICANT: IMMEDIATE
+    POC:
+      type: UtilityLevel
+      children:
+        LABORIOUS:
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: DEFER
+                SIGNIFICANT: DEFER
+            TOTAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: DEFER
+                SIGNIFICANT: SCHEDULED
+        EFFICIENT:
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: DEFER
+                SIGNIFICANT: SCHEDULED
+            TOTAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: SCHEDULED
+                SIGNIFICANT: OUT_OF_CYCLE
+        SUPER_EFFECTIVE:
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: SCHEDULED
+                SIGNIFICANT: OUT_OF_CYCLE
+            TOTAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: OUT_OF_CYCLE
+                SIGNIFICANT: IMMEDIATE
+    ACTIVE:
+      type: UtilityLevel
+      children:
+        LABORIOUS:
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: DEFER
+                SIGNIFICANT: SCHEDULED
+            TOTAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: SCHEDULED
+                SIGNIFICANT: SCHEDULED
+        EFFICIENT:
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: SCHEDULED
+                SIGNIFICANT: OUT_OF_CYCLE
+            TOTAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: OUT_OF_CYCLE
+                SIGNIFICANT: IMMEDIATE
+        SUPER_EFFECTIVE:
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: OUT_OF_CYCLE
+                SIGNIFICANT: IMMEDIATE
+            TOTAL:
+              type: PublicSafetyImpactLevel
+              children:
+                MINIMAL: IMMEDIATE
+                SIGNIFICANT: IMMEDIATE
+
+# Default action for unmapped paths
+defaultAction: DEFER
