@@ -1,11 +1,12 @@
 [project]
 name = "ssvc"
-version = "1.0.11"
+version = "1.1.0"
 description = "A Python implementation of the Stakeholder-Specific Vulnerability Categorization framework."
-authors = [{name = "Christopher Langton", email = "chris@vulnetix.app"}]
+authors = [{name = "Christopher Langton", email = "chris@vulnetix.com"}]
 readme = "PYPI.md"
 requires-python = ">=3.11"
 dependencies = [
+    "PyYAML>=6.0",
 ]
 license = {file = "LICENSE"}
 
@@ -17,6 +18,9 @@ test = [
 ]
 sec = [
     "pip-audit>=2.7.3",
+]
+dev = [
+    "PyYAML>=6.0",
 ]
 
 [project.urls]

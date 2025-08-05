@@ -1,0 +1,161 @@
+name: "Coordinator Triage"
+description: "CERT/CC Coordinator Triage Decision Model"
+version: "1.0"  
+url: "https://certcc.github.io/SSVC/howto/coordination_triage_decision/"
+
+enums:
+  ReportPublicStatus:
+    - "YES"
+    - "NO"
+  SupplierContactedStatus:
+    - "YES"
+    - "NO"
+  ReportCredibilityLevel:
+    - CREDIBLE
+    - NOT_CREDIBLE
+  SupplierCardinalityLevel:
+    - ONE
+    - MULTIPLE
+  SupplierEngagementLevel:
+    - ACTIVE
+    - UNRESPONSIVE
+  UtilityLevel:
+    - LABORIOUS
+    - EFFICIENT
+    - SUPER_EFFECTIVE
+  PublicSafetyImpactLevel:
+    - MINIMAL
+    - SIGNIFICANT
+  ActionType:
+    - DECLINE
+    - TRACK
+    - COORDINATE
+  DecisionPriorityLevel:
+    - LOW
+    - MEDIUM
+    - HIGH
+
+priorityMap:
+  DECLINE: LOW
+  TRACK: MEDIUM  
+  COORDINATE: HIGH
+
+decisionTree:
+  type: ReportPublicStatus
+  children:
+    YES:
+      type: SupplierContactedStatus
+      children:
+        YES:
+          type: ReportCredibilityLevel
+          children:
+            CREDIBLE:
+              type: SupplierCardinalityLevel
+              children:
+                MULTIPLE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: COORDINATE
+                        MINIMAL: TRACK
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: TRACK
+                        MINIMAL: DECLINE
+                    LABORIOUS: DECLINE
+                ONE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: TRACK
+                        MINIMAL: DECLINE
+                    EFFICIENT: DECLINE
+                    LABORIOUS: DECLINE
+            NOT_CREDIBLE: DECLINE
+        NO:
+          type: SupplierCardinalityLevel
+          children:
+            MULTIPLE:
+              type: UtilityLevel
+              children:
+                SUPER_EFFECTIVE:
+                  type: PublicSafetyImpactLevel
+                  children:
+                    SIGNIFICANT: COORDINATE
+                    MINIMAL: TRACK
+                EFFICIENT: DECLINE
+                LABORIOUS: DECLINE
+            ONE: DECLINE
+    NO:
+      type: SupplierContactedStatus
+      children:
+        YES:
+          type: ReportCredibilityLevel
+          children:
+            CREDIBLE:
+              type: SupplierCardinalityLevel
+              children:
+                MULTIPLE:
+                  type: SupplierEngagementLevel
+                  children:
+                    ACTIVE:
+                      type: UtilityLevel
+                      children:
+                        SUPER_EFFECTIVE:
+                          type: PublicSafetyImpactLevel
+                          children:
+                            SIGNIFICANT: COORDINATE
+                            MINIMAL: TRACK
+                        EFFICIENT:
+                          type: PublicSafetyImpactLevel
+                          children:
+                            SIGNIFICANT: TRACK
+                            MINIMAL: TRACK
+                        LABORIOUS: TRACK
+                    UNRESPONSIVE:
+                      type: UtilityLevel
+                      children:
+                        SUPER_EFFECTIVE:
+                          type: PublicSafetyImpactLevel
+                          children:
+                            SIGNIFICANT: COORDINATE
+                            MINIMAL: TRACK
+                        EFFICIENT: TRACK
+                        LABORIOUS: DECLINE
+                ONE:
+                  type: SupplierEngagementLevel
+                  children:
+                    ACTIVE:
+                      type: UtilityLevel
+                      children:
+                        SUPER_EFFECTIVE:
+                          type: PublicSafetyImpactLevel
+                          children:
+                            SIGNIFICANT: TRACK
+                            MINIMAL: TRACK
+                        EFFICIENT: TRACK
+                        LABORIOUS: DECLINE
+                    UNRESPONSIVE: DECLINE
+            NOT_CREDIBLE: DECLINE
+        NO:
+          type: SupplierCardinalityLevel
+          children:
+            MULTIPLE:
+              type: UtilityLevel
+              children:
+                SUPER_EFFECTIVE:
+                  type: PublicSafetyImpactLevel
+                  children:
+                    SIGNIFICANT: COORDINATE
+                    MINIMAL: TRACK
+                EFFICIENT: DECLINE
+                LABORIOUS: DECLINE
+            ONE: DECLINE
+
+# Default action for unmapped paths
+defaultAction: DECLINE
