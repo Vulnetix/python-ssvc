@@ -1,0 +1,117 @@
+name: "CISA"
+description: "CISA Stakeholder-Specific Vulnerability Categorization"
+version: "1.0"
+url: "https://www.cisa.gov/stakeholder-specific-vulnerability-categorization-ssvc"
+
+enums:
+  ExploitationStatus:
+    - NONE
+    - POC
+    - ACTIVE
+  AutomatableStatus:
+    - "YES"
+    - "NO"
+  TechnicalImpactLevel:
+    - PARTIAL
+    - TOTAL
+  MissionWellbeingImpactLevel:
+    - LOW
+    - MEDIUM
+    - HIGH
+  DecisionPriorityLevel:
+    - LOW
+    - MEDIUM
+    - HIGH
+    - IMMEDIATE
+  ActionType:
+    - TRACK
+    - TRACK_STAR
+    - ATTEND
+    - ACT
+
+priorityMap:
+  TRACK: LOW
+  TRACK_STAR: MEDIUM
+  ATTEND: MEDIUM
+  ACT: IMMEDIATE
+
+decisionTree:
+  type: ExploitationStatus
+  children:
+    NONE:
+      type: AutomatableStatus
+      children:
+        "YES":
+          type: TechnicalImpactLevel
+          children:
+            TOTAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                HIGH: ATTEND
+        "NO":
+          type: TechnicalImpactLevel
+          children:
+            TOTAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                HIGH: TRACK_STAR
+    POC:
+      type: AutomatableStatus
+      children:
+        "YES":
+          type: TechnicalImpactLevel
+          children:
+            TOTAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                MEDIUM: TRACK_STAR
+                HIGH: ATTEND
+            PARTIAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                HIGH: ATTEND
+        "NO":
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                HIGH: TRACK_STAR
+            TOTAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                MEDIUM: TRACK_STAR
+                HIGH: ATTEND
+    ACTIVE:
+      type: AutomatableStatus
+      children:
+        "YES":
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                LOW: ATTEND
+                MEDIUM: ATTEND
+                HIGH: ACT
+            TOTAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                LOW: ATTEND
+                MEDIUM: ACT
+                HIGH: ACT
+        "NO":
+          type: TechnicalImpactLevel
+          children:
+            PARTIAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                HIGH: ATTEND
+            TOTAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                MEDIUM: ATTEND
+                HIGH: ACT
+
+# Default action for unmapped paths
+defaultAction: TRACK

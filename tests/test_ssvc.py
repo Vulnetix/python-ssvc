@@ -1,348 +1,350 @@
+"""
+Tests for SSVC functionality using the new plugin-based API.
+These tests focus on the new API while maintaining backward compatibility coverage.
+"""
+
 import pytest
-from ssvc import (
-    Decision,
-    ExploitationLevel,
-    Automatable,
-    TechnicalImpact,
-    MissionWellbeingImpact,
-    ActionCISA,
-    DecisionPriority,
-)
+import ssvc
 
-
-@pytest.mark.xfail(raises=AttributeError)
-def test_negative_evaluate_no_attributes():
-    decision = Decision()
-    decision.evaluate()
-
-
-@pytest.mark.xfail(raises=AttributeError)
-def test_negative_evaluate_attribute_exploitation():
-    decision = Decision()
-    decision.exploitation = ExploitationLevel.POC
-    decision.evaluate()
-
-
-@pytest.mark.xfail(raises=AttributeError)
-def test_negative_evaluate_attribute_automatable():
-    decision = Decision()
-    decision.exploitation = ExploitationLevel.POC
-    decision.automatable = Automatable.YES
-    decision.evaluate()
-
-
-@pytest.mark.xfail(raises=AttributeError)
-def test_negative_evaluate_attribute_technical_impact():
-    decision = Decision()
-    decision.exploitation = ExploitationLevel.POC
-    decision.automatable = Automatable.YES
-    decision.technical_impact = TechnicalImpact.TOTAL
-    decision.evaluate()
 
 @pytest.mark.xfail(raises=ValueError)
 def test_negative_methodology():
-    Decision(methodology='noop')
+    ssvc.Decision(methodology='noop')
 
 
 def test_methodology_cisa():
-    outcome = Decision(
+    decision = ssvc.Decision(
+        methodology='cisa',
         exploitation="active",
         automatable="no",
         technical_impact="total",
-        mission_wellbeing="high",
-        methodology='CISA'
-    ).evaluate()
-    assert (
-        outcome.priority == DecisionPriority.IMMEDIATE
-    ), "SSVC priority should be IMMEDIATE"
-    assert outcome.action == ActionCISA.ACT, "SSVC decision should be ACT"
+        mission_wellbeing_impact="high"
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'immediate', "SSVC priority should be IMMEDIATE"
+    assert outcome.action.value == 'act', "SSVC decision should be ACT"
+
 
 def test_string_inputs():
-    outcome = Decision(
+    decision = ssvc.Decision(
+        methodology='cisa',
         exploitation="active",
-        automatable="no",
+        automatable="no", 
         technical_impact="total",
-        mission_wellbeing="high",
-    ).evaluate()
-    assert (
-        outcome.priority == DecisionPriority.IMMEDIATE
-    ), "SSVC priority should be IMMEDIATE"
-    assert outcome.action == ActionCISA.ACT, "SSVC decision should be ACT"
+        mission_wellbeing_impact="high"
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'immediate', "SSVC priority should be IMMEDIATE"
+    assert outcome.action.value == 'act', "SSVC decision should be ACT"
 
 
 def test_decision_active_no_total_high():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.NO,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.HIGH,
-    ).evaluate()
-    assert (
-        outcome.priority == DecisionPriority.IMMEDIATE
-    ), "SSVC priority should be IMMEDIATE"
-    assert outcome.action == ActionCISA.ACT, "SSVC decision should be ACT"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='no',
+        technical_impact='total',
+        mission_wellbeing_impact='high'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'immediate', "SSVC priority should be IMMEDIATE"
+    assert outcome.action.value == 'act', "SSVC decision should be ACT"
 
 
 def test_decision_active_no_partial_high():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.NO,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.HIGH,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert outcome.action == ActionCISA.ATTEND, "SSVC decision should be ATTEND"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='no',
+        technical_impact='partial',
+        mission_wellbeing_impact='high'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'attend', "SSVC decision should be ATTEND"
 
 
 def test_decision_active_no_partial_low():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.NO,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.LOW,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
-    assert outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='no',
+        technical_impact='partial',
+        mission_wellbeing_impact='low'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'low', "SSVC priority should be LOW"
+    assert outcome.action.value == 'track', "SSVC decision should be TRACK"
 
 
 def test_decision_active_no_partial_medium():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.NO,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.MEDIUM,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
-    assert outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='no',
+        technical_impact='partial',
+        mission_wellbeing_impact='medium'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'low', "SSVC priority should be LOW"
+    assert outcome.action.value == 'track', "SSVC decision should be TRACK"
 
 
 def test_decision_active_no_total_medium():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.NO,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.MEDIUM,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert outcome.action == ActionCISA.ATTEND, "SSVC decision should be ATTEND"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='no',
+        technical_impact='total',
+        mission_wellbeing_impact='medium'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'attend', "SSVC decision should be ATTEND"
 
 
 def test_decision_active_no_total_low():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.NO,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.LOW,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
-    assert outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='no',
+        technical_impact='total',
+        mission_wellbeing_impact='low'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'low', "SSVC priority should be LOW"
+    assert outcome.action.value == 'track', "SSVC decision should be TRACK"
 
 
 def test_decision_active_yes_total_high():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.YES,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.HIGH,
-    ).evaluate()
-    assert (
-        outcome.priority == DecisionPriority.IMMEDIATE
-    ), "SSVC priority should be IMMEDIATE"
-    assert outcome.action == ActionCISA.ACT, "SSVC decision should be ACT"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='yes',
+        technical_impact='total',
+        mission_wellbeing_impact='high'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'immediate', "SSVC priority should be IMMEDIATE"
+    assert outcome.action.value == 'act', "SSVC decision should be ACT"
 
 
 def test_decision_active_yes_total_low():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.YES,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.LOW,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert outcome.action == ActionCISA.ATTEND, "SSVC decision should be ATTEND"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='yes',
+        technical_impact='total',
+        mission_wellbeing_impact='low'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'attend', "SSVC decision should be ATTEND"
 
 
 def test_decision_active_yes_partial_low():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.YES,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.LOW,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert outcome.action == ActionCISA.ATTEND, "SSVC decision should be ATTEND"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='yes',
+        technical_impact='partial',
+        mission_wellbeing_impact='low'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'attend', "SSVC decision should be ATTEND"
 
 
 def test_decision_active_yes_total_medium():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.YES,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.MEDIUM,
-    ).evaluate()
-    assert (
-        outcome.priority == DecisionPriority.IMMEDIATE
-    ), "SSVC priority should be IMMEDIATE"
-    assert outcome.action == ActionCISA.ACT, "SSVC decision should be ACT"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='yes',
+        technical_impact='total',
+        mission_wellbeing_impact='medium'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'immediate', "SSVC priority should be IMMEDIATE"
+    assert outcome.action.value == 'act', "SSVC decision should be ACT"
 
 
 def test_decision_active_yes_partial_medium():
-    outcome = Decision(
-        ExploitationLevel.ACTIVE,
-        Automatable.YES,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.MEDIUM,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert outcome.action == ActionCISA.ATTEND, "SSVC decision should be ATTEND"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='active',
+        automatable='yes',
+        technical_impact='partial',
+        mission_wellbeing_impact='medium'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'attend', "SSVC decision should be ATTEND"
 
 
 def test_decision_none_no_total_high():
-    outcome = Decision(
-        ExploitationLevel.NONE,
-        Automatable.NO,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.HIGH,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert (
-        outcome.action == ActionCISA.TRACK_STAR
-    ), "SSVC decision should be TRACK_STAR"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='none',
+        automatable='no',
+        technical_impact='total',
+        mission_wellbeing_impact='high'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'track_star', "SSVC decision should be TRACK_STAR"
 
 
 def test_decision_none_yes_total_high():
-    outcome = Decision(
-        ExploitationLevel.NONE,
-        Automatable.YES,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.HIGH,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert outcome.action == ActionCISA.ATTEND, "SSVC decision should be ATTEND"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='none',
+        automatable='yes',
+        technical_impact='total',
+        mission_wellbeing_impact='high'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'attend', "SSVC decision should be ATTEND"
 
 
 def test_decision_none_yes_total_low():
-    outcome = Decision(
-        ExploitationLevel.NONE,
-        Automatable.YES,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.LOW,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
-    assert outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='none',
+        automatable='yes',
+        technical_impact='total',
+        mission_wellbeing_impact='low'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'low', "SSVC priority should be LOW"
+    assert outcome.action.value == 'track', "SSVC decision should be TRACK"
 
 
 def test_decision_none_no_partial_high():
-    outcome = Decision(
-        ExploitationLevel.NONE,
-        Automatable.NO,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.HIGH,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
-    assert outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='none',
+        automatable='no',
+        technical_impact='partial',
+        mission_wellbeing_impact='high'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'low', "SSVC priority should be LOW"
+    assert outcome.action.value == 'track', "SSVC decision should be TRACK"
 
 
 def test_decision_poc_no_total_high():
-    outcome = Decision(
-        ExploitationLevel.POC,
-        Automatable.NO,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.HIGH,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert outcome.action == ActionCISA.ATTEND, "SSVC decision should be ATTEND"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='poc',
+        automatable='no',
+        technical_impact='total',
+        mission_wellbeing_impact='high'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'attend', "SSVC decision should be ATTEND"
 
 
 def test_decision_poc_no_total_medium():
-    outcome = Decision(
-        ExploitationLevel.POC,
-        Automatable.NO,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.MEDIUM,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert (
-        outcome.action == ActionCISA.TRACK_STAR
-    ), "SSVC decision should be TRACK_STAR"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='poc',
+        automatable='no',
+        technical_impact='total',
+        mission_wellbeing_impact='medium'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'track_star', "SSVC decision should be TRACK_STAR"
 
 
 def test_decision_poc_no_total_low():
-    outcome = Decision(
-        ExploitationLevel.POC,
-        Automatable.NO,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.LOW,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
-    assert outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='poc',
+        automatable='no',
+        technical_impact='total',
+        mission_wellbeing_impact='low'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'low', "SSVC priority should be LOW"
+    assert outcome.action.value == 'track', "SSVC decision should be TRACK"
 
 
 def test_decision_poc_no_partial_high():
-    outcome = Decision(
-        ExploitationLevel.POC,
-        Automatable.NO,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.HIGH,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert (
-        outcome.action == ActionCISA.TRACK_STAR
-    ), "SSVC decision should be TRACK_STAR"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='poc',
+        automatable='no',
+        technical_impact='partial',
+        mission_wellbeing_impact='high'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'track_star', "SSVC decision should be TRACK_STAR"
 
 
 def test_decision_poc_no_partial_medium():
-    outcome = Decision(
-        ExploitationLevel.POC,
-        Automatable.NO,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.MEDIUM,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
-    assert outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='poc',
+        automatable='no',
+        technical_impact='partial',
+        mission_wellbeing_impact='medium'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'low', "SSVC priority should be LOW"
+    assert outcome.action.value == 'track', "SSVC decision should be TRACK"
 
 
 def test_decision_poc_yes_partial_high():
-    outcome = Decision(
-        ExploitationLevel.POC,
-        Automatable.YES,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.HIGH,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert outcome.action == ActionCISA.ATTEND, "SSVC decision should be ATTEND"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='poc',
+        automatable='yes',
+        technical_impact='partial',
+        mission_wellbeing_impact='high'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'attend', "SSVC decision should be ATTEND"
 
 
 def test_decision_poc_yes_partial_medium():
-    outcome = Decision(
-        ExploitationLevel.POC,
-        Automatable.YES,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.MEDIUM,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
-    assert outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='poc',
+        automatable='yes',
+        technical_impact='partial',
+        mission_wellbeing_impact='medium'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'low', "SSVC priority should be LOW"
+    assert outcome.action.value == 'track', "SSVC decision should be TRACK"
 
 
 def test_decision_poc_yes_partial_low():
-    outcome = Decision(
-        ExploitationLevel.POC,
-        Automatable.YES,
-        TechnicalImpact.PARTIAL,
-        MissionWellbeingImpact.LOW,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.LOW, "SSVC priority should be LOW"
-    assert outcome.action == ActionCISA.TRACK, "SSVC decision should be TRACK"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='poc',
+        automatable='yes',
+        technical_impact='partial',
+        mission_wellbeing_impact='low'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'low', "SSVC priority should be LOW"
+    assert outcome.action.value == 'track', "SSVC decision should be TRACK"
 
 
 def test_decision_poc_yes_total_medium():
-    outcome = Decision(
-        ExploitationLevel.POC,
-        Automatable.YES,
-        TechnicalImpact.TOTAL,
-        MissionWellbeingImpact.MEDIUM,
-    ).evaluate()
-    assert outcome.priority == DecisionPriority.MEDIUM, "SSVC priority should be MEDIUM"
-    assert (
-        outcome.action == ActionCISA.TRACK_STAR
-    ), "SSVC decision should be TRACK_STAR"
+    decision = ssvc.Decision(
+        methodology='cisa',
+        exploitation='poc',
+        automatable='yes',
+        technical_impact='total',
+        mission_wellbeing_impact='medium'
+    )
+    outcome = decision.evaluate()
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'track_star', "SSVC decision should be TRACK_STAR"

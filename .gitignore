@@ -1,6 +1,7 @@
 .vscode/
 .venv/
 .pytest_cache/
+.idea/
 dist/
 build/
 __pycache__/
@@ -10,3 +11,18 @@ ssvc.cdx.json
 osv.sarif.json
 semgrep.sarif.json
 src/ssvc.egg-info/
+CLAUDE.md
+.env
+.claude/
+.qwen/
+.github/*copilot*
+GEMINI.md
+QWEN.md
+OpenCode.md
+.opencode/
+*.egg
+*.egg-info/
+*.whl
+*.tar.gz
+*.zip
+*.log
