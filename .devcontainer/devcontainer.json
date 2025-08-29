@@ -1,0 +1,80 @@
+{
+    "name": "SSVC Python Development Environment",
+    "build": {
+        "dockerfile": "../Containerfile",
+        "context": ".."
+    },
+    "workspaceFolder": "/workspace",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "runArgs": [
+        "--name=ssvc-python-devcontainer"
+    ],
+    "forwardPorts": [3000, 5000, 8000, 9229],
+    "portsAttributes": {
+        "3000": {
+            "label": "Development Server",
+            "onAutoForward": "notify"
+        },
+        "5000": {
+            "label": "Application Port",
+            "onAutoForward": "notify"
+        },
+        "8000": {
+            "label": "HTTP Server",
+            "onAutoForward": "notify"
+        },
+        "9229": {
+            "label": "Debug Port",
+            "onAutoForward": "silent"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.black-formatter",
+                "ms-python.isort",
+                "ms-python.mypy-type-checker",
+                "charliermarsh.ruff",
+                "ms-python.debugpy",
+                "redhat.vscode-yaml",
+                "ms-vsliveshare.vsliveshare",
+                "skellock.just",
+                "GitLab.gitlab-workflow",
+                "ms-vscode.test-adapter-converter"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "sh",
+                "terminal.integrated.profiles.linux": {
+                    "sh": {
+                        "path": "/bin/sh"
+                    }
+                },
+                "python.defaultInterpreterPath": "/root/.local/share/uv/python",
+                "python.terminal.activateEnvironment": true,
+                "files.watcherExclude": {
+                    "**/.venv/**": true,
+                    "**/dist/**": true,
+                    "**/coverage/**": true,
+                    "**/__pycache__/**": true,
+                    "**/*.egg-info/**": true
+                },
+                "python.testing.pytestEnabled": true,
+                "python.testing.unittestEnabled": false,
+                "python.linting.enabled": true,
+                "python.linting.ruffEnabled": true,
+                "python.formatting.provider": "black",
+                "editor.formatOnSave": true
+            }
+        }
+    },
+    "initializeCommand": "chmod -R 755 ${localWorkspaceFolder} 2>/dev/null || true",
+    "postCreateCommand": "uv sync && uv run python -c 'import ssvc; print(f\"SSVC Python {ssvc.__version__ if hasattr(ssvc, \"__version__\") else \"dev\"} ready for development!\")'",
+    "remoteUser": "node",
+    "containerUser": "node",
+    "updateRemoteUserUID": true,
+    "containerEnv": {
+        "PYTHONPATH": "/workspace/src",
+        "UV_PROJECT_ENVIRONMENT": "/workspace/.venv"
+    }
+}

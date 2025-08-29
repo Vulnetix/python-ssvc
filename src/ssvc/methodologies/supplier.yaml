@@ -1,169 +1,194 @@
-name: "Supplier Decision Model"
-description: "CERT/CC Supplier Decision Model for prioritizing patch creation"
+name: "Supplier"
+description: "CERT/CC Supplier Decision Model"
 version: "1.0"
 url: "https://certcc.github.io/SSVC/howto/supplier_tree/"
 
 enums:
   ExploitationStatus:
-    - NONE
-    - POC
-    - ACTIVE
+    - none
+    - public_poc
+    - active
+
   UtilityLevel:
-    - LABORIOUS
-    - EFFICIENT
-    - SUPER_EFFECTIVE
+    - laborious
+    - efficient
+    - super_effective
+
   TechnicalImpactLevel:
-    - PARTIAL
-    - TOTAL
+    - partial
+    - total
+
   PublicSafetyImpactLevel:
-    - MINIMAL
-    - SIGNIFICANT
-  ActionType:
-    - DEFER
-    - SCHEDULED
-    - OUT_OF_CYCLE
-    - IMMEDIATE
-  DecisionPriorityLevel:
-    - DEFER
-    - SCHEDULED
-    - OUT_OF_CYCLE
-    - IMMEDIATE
+    - minimal
+    - significant
+
 
 priorityMap:
-  DEFER: DEFER
-  SCHEDULED: SCHEDULED
-  OUT_OF_CYCLE: OUT_OF_CYCLE
-  IMMEDIATE: IMMEDIATE
+  defer: low
+  scheduled: medium
+  out_of_cycle: high
+  immediate: immediate
+
+defaultAction: defer
 
 decisionTree:
   type: ExploitationStatus
   children:
-    NONE:
+    none:
       type: UtilityLevel
       children:
-        LABORIOUS:
+        laborious:
           type: TechnicalImpactLevel
           children:
-            PARTIAL:
+            partial:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: DEFER
-                SIGNIFICANT: DEFER
-            TOTAL:
+                minimal: defer
+                significant: scheduled
+            total:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: DEFER
-                SIGNIFICANT: DEFER
-        EFFICIENT:
+                minimal: defer
+                significant: scheduled
+        efficient:
           type: TechnicalImpactLevel
           children:
-            PARTIAL:
+            partial:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: DEFER
-                SIGNIFICANT: SCHEDULED
-            TOTAL:
+                minimal: defer
+                significant: scheduled
+            total:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: SCHEDULED
-                SIGNIFICANT: SCHEDULED
-        SUPER_EFFECTIVE:
+                minimal: scheduled
+                significant: scheduled
+        super_effective:
           type: TechnicalImpactLevel
           children:
-            PARTIAL:
+            partial:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: SCHEDULED
-                SIGNIFICANT: OUT_OF_CYCLE
-            TOTAL:
+                minimal: defer
+                significant: scheduled
+            total:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: OUT_OF_CYCLE
-                SIGNIFICANT: IMMEDIATE
-    POC:
+                minimal: scheduled
+                significant: out_of_cycle
+    public_poc:
       type: UtilityLevel
       children:
-        LABORIOUS:
+        laborious:
           type: TechnicalImpactLevel
           children:
-            PARTIAL:
+            partial:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: DEFER
-                SIGNIFICANT: DEFER
-            TOTAL:
+                minimal: defer
+                significant: scheduled
+            total:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: DEFER
-                SIGNIFICANT: SCHEDULED
-        EFFICIENT:
+                minimal: scheduled
+                significant: out_of_cycle
+        efficient:
           type: TechnicalImpactLevel
           children:
-            PARTIAL:
+            partial:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: DEFER
-                SIGNIFICANT: SCHEDULED
-            TOTAL:
+                minimal: scheduled
+                significant: out_of_cycle
+            total:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: SCHEDULED
-                SIGNIFICANT: OUT_OF_CYCLE
-        SUPER_EFFECTIVE:
+                minimal: scheduled
+                significant: out_of_cycle
+        super_effective:
           type: TechnicalImpactLevel
           children:
-            PARTIAL:
+            partial:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: SCHEDULED
-                SIGNIFICANT: OUT_OF_CYCLE
-            TOTAL:
+                minimal: scheduled
+                significant: out_of_cycle
+            total:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: OUT_OF_CYCLE
-                SIGNIFICANT: IMMEDIATE
-    ACTIVE:
+                minimal: out_of_cycle
+                significant: immediate
+    active:
       type: UtilityLevel
       children:
-        LABORIOUS:
+        laborious:
           type: TechnicalImpactLevel
           children:
-            PARTIAL:
+            partial:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: DEFER
-                SIGNIFICANT: SCHEDULED
-            TOTAL:
+                minimal: scheduled
+                significant: out_of_cycle
+            total:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: SCHEDULED
-                SIGNIFICANT: SCHEDULED
-        EFFICIENT:
+                minimal: out_of_cycle
+                significant: immediate
+        efficient:
           type: TechnicalImpactLevel
           children:
-            PARTIAL:
+            partial:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: SCHEDULED
-                SIGNIFICANT: OUT_OF_CYCLE
-            TOTAL:
+                minimal: out_of_cycle
+                significant: immediate
+            total:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: OUT_OF_CYCLE
-                SIGNIFICANT: IMMEDIATE
-        SUPER_EFFECTIVE:
+                minimal: out_of_cycle
+                significant: immediate
+        super_effective:
           type: TechnicalImpactLevel
           children:
-            PARTIAL:
+            partial:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: OUT_OF_CYCLE
-                SIGNIFICANT: IMMEDIATE
-            TOTAL:
+                minimal: out_of_cycle
+                significant: immediate
+            total:
               type: PublicSafetyImpactLevel
               children:
-                MINIMAL: IMMEDIATE
-                SIGNIFICANT: IMMEDIATE
+                minimal: immediate
+                significant: immediate
 
-# Default action for unmapped paths
-defaultAction: DEFER
+# Vector string metadata
+vectorMetadata:
+  prefix: SUPPLIER
+  version: v1
+  parameterMappings:
+    exploitation:
+      abbrev: E
+      enumType: ExploitationStatus
+      valueMappings:
+        none: N
+        public_poc: P
+        active: A
+    utility:
+      abbrev: U
+      enumType: UtilityLevel
+      valueMappings:
+        laborious: L
+        efficient: E
+        super_effective: S
+    technical_impact:
+      abbrev: T
+      enumType: TechnicalImpactLevel
+      valueMappings:
+        partial: P
+        total: T
+    public_safety:
+      abbrev: P
+      enumType: PublicSafetyImpactLevel
+      valueMappings:
+        minimal: M
+        significant: S

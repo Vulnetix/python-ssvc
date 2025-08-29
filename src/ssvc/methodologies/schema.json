@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ssvc.io/methodology-schema.json",
+  "title": "SSVC Methodology Schema",
+  "description": "Schema for SSVC methodology YAML files ensuring consistent hierarchical tree structure",
+  "type": "object",
+  "required": ["name", "description", "version", "enums", "priorityMap", "decisionTree", "defaultAction"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the methodology"
+    },
+    "description": {
+      "type": "string",
+      "description": "A description of the methodology"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Version number in semver format"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Optional URL for methodology documentation"
+    },
+    "enums": {
+      "type": "object",
+      "description": "Enum definitions for decision points",
+      "patternProperties": {
+        "^[A-Z][a-zA-Z]*$": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "priorityMap": {
+      "type": "object",
+      "description": "Mapping from actions to priority levels",
+      "patternProperties": {
+        "^[A-Za-z_]+$": {
+          "type": "string",
+          "pattern": "^[A-Za-z_]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "decisionTree": {
+      "$ref": "#/definitions/decisionNode",
+      "description": "Hierarchical decision tree structure"
+    },
+    "defaultAction": {
+      "type": "string",
+      "pattern": "^[A-Za-z_]+$",
+      "description": "Default action for unmapped paths"
+    },
+    "vectorMetadata": {
+      "type": "object",
+      "description": "Optional metadata for vector string generation",
+      "additionalProperties": false,
+      "properties": {
+        "prefix": {
+          "type": "string",
+          "pattern": "^[A-Z_]+$",
+          "description": "Vector string methodology prefix (e.g., CISA, SUPPLIER)"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^v\\d+(\\.\\d+)?$",
+          "description": "Vector string version identifier (e.g., v1, v2.1)"
+        },
+        "parameterMappings": {
+          "type": "object",
+          "description": "Mapping from parameter names to vector abbreviations",
+          "patternProperties": {
+            "^[a-zA-Z_]+$": {
+              "type": "object",
+              "required": ["abbrev"],
+              "additionalProperties": false,
+              "properties": {
+                "abbrev": {
+                  "type": "string",
+                  "pattern": "^[A-Z]+$",
+                  "description": "Parameter abbreviation for vector strings"
+                },
+                "enumType": {
+                  "type": "string",
+                  "pattern": "^[A-Z][a-zA-Z]*$",
+                  "description": "Associated enum type name"
+                },
+                "valueMappings": {
+                  "type": "object",
+                  "description": "Mapping from enum values to vector abbreviations",
+                  "patternProperties": {
+                    ".*": {
+                      "type": "string",
+                      "pattern": "^[A-Z_]+$",
+                      "description": "Value abbreviation for vector strings"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "definitions": {
+    "decisionNode": {
+      "type": "object",
+      "required": ["type", "children"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^[A-Z][a-zA-Z]*$",
+          "description": "The enum type for this decision point"
+        },
+        "children": {
+          "type": "object",
+          "description": "Child nodes or actions for each enum value",
+          "patternProperties": {
+            ".*": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/decisionNode"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_]+$",
+                  "description": "Leaf action"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "minProperties": 1
+        }
+      }
+    }
+  }
+}

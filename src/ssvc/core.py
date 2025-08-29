@@ -157,6 +157,42 @@ class Decision:
             # For backward compatibility, return existing outcome
             return getattr(self._decision_instance, 'outcome', None)
     
+    def to_vector(self) -> str:
+        """Generate SSVC vector string representation."""
+        if hasattr(self._decision_instance, 'to_vector'):
+            return self._decision_instance.to_vector()
+        else:
+            raise NotImplementedError(f"Vector string generation not supported for methodology: {self.methodology}")
+    
+    @classmethod
+    def from_vector(cls, vector_string: str):
+        """Parse SSVC vector string to create decision instance."""
+        # Parse the methodology name from vector string
+        import re
+        match = re.match(r'^([A-Z_]+)v?\d*', vector_string)
+        if not match:
+            raise ValueError(f"Invalid vector string format: {vector_string}")
+        
+        methodology_prefix = match.group(1)
+        
+        # Find plugin by matching vector prefix
+        for plugin_name, plugin in registry.list_plugins().items():
+            decision_instance = plugin.create_decision()
+            if hasattr(decision_instance, 'from_vector'):
+                try:
+                    parsed_decision = decision_instance.from_vector(vector_string)
+                    # Create a Decision wrapper that uses the parsed decision
+                    decision = cls(plugin_name)
+                    decision._decision_instance = parsed_decision
+                    if hasattr(parsed_decision, 'outcome'):
+                        decision.outcome = parsed_decision.outcome
+                    return decision
+                except (ValueError, AttributeError):
+                    # This plugin can't parse this vector string, try next
+                    continue
+        
+        raise ValueError(f"No plugin found that can parse vector string: {vector_string}")
+    
     def __getattr__(self, name):
         """Delegate attribute access to the plugin-specific decision instance."""
         return getattr(self._decision_instance, name)

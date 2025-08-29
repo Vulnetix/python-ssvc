@@ -16,9 +16,6 @@ enums:
   SupplierCardinalityLevel:
     - ONE
     - MULTIPLE
-  SupplierEngagementLevel:
-    - ACTIVE
-    - UNRESPONSIVE
   UtilityLevel:
     - LABORIOUS
     - EFFICIENT
@@ -26,27 +23,21 @@ enums:
   PublicSafetyImpactLevel:
     - MINIMAL
     - SIGNIFICANT
-  ActionType:
-    - DECLINE
-    - TRACK
-    - COORDINATE
-  DecisionPriorityLevel:
-    - LOW
-    - MEDIUM
-    - HIGH
 
 priorityMap:
   DECLINE: LOW
   TRACK: MEDIUM  
   COORDINATE: HIGH
 
+defaultAction: DECLINE
+
 decisionTree:
   type: ReportPublicStatus
   children:
-    YES:
+    "YES":
       type: SupplierContactedStatus
       children:
-        YES:
+        "YES":
           type: ReportCredibilityLevel
           children:
             CREDIBLE:
@@ -65,7 +56,11 @@ decisionTree:
                       children:
                         SIGNIFICANT: TRACK
                         MINIMAL: DECLINE
-                    LABORIOUS: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
                 ONE:
                   type: UtilityLevel
                   children:
@@ -74,88 +69,340 @@ decisionTree:
                       children:
                         SIGNIFICANT: TRACK
                         MINIMAL: DECLINE
-                    EFFICIENT: DECLINE
-                    LABORIOUS: DECLINE
-            NOT_CREDIBLE: DECLINE
-        NO:
-          type: SupplierCardinalityLevel
-          children:
-            MULTIPLE:
-              type: UtilityLevel
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+            NOT_CREDIBLE:
+              type: SupplierCardinalityLevel
               children:
-                SUPER_EFFECTIVE:
-                  type: PublicSafetyImpactLevel
+                MULTIPLE:
+                  type: UtilityLevel
                   children:
-                    SIGNIFICANT: COORDINATE
-                    MINIMAL: TRACK
-                EFFICIENT: DECLINE
-                LABORIOUS: DECLINE
-            ONE: DECLINE
-    NO:
-      type: SupplierContactedStatus
-      children:
-        YES:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                ONE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+        "NO":
           type: ReportCredibilityLevel
           children:
             CREDIBLE:
               type: SupplierCardinalityLevel
               children:
                 MULTIPLE:
-                  type: SupplierEngagementLevel
+                  type: UtilityLevel
                   children:
-                    ACTIVE:
-                      type: UtilityLevel
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
                       children:
-                        SUPER_EFFECTIVE:
-                          type: PublicSafetyImpactLevel
-                          children:
-                            SIGNIFICANT: COORDINATE
-                            MINIMAL: TRACK
-                        EFFICIENT:
-                          type: PublicSafetyImpactLevel
-                          children:
-                            SIGNIFICANT: TRACK
-                            MINIMAL: TRACK
-                        LABORIOUS: TRACK
-                    UNRESPONSIVE:
-                      type: UtilityLevel
+                        SIGNIFICANT: COORDINATE
+                        MINIMAL: TRACK
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
                       children:
-                        SUPER_EFFECTIVE:
-                          type: PublicSafetyImpactLevel
-                          children:
-                            SIGNIFICANT: COORDINATE
-                            MINIMAL: TRACK
-                        EFFICIENT: TRACK
-                        LABORIOUS: DECLINE
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
                 ONE:
-                  type: SupplierEngagementLevel
+                  type: UtilityLevel
                   children:
-                    ACTIVE:
-                      type: UtilityLevel
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
                       children:
-                        SUPER_EFFECTIVE:
-                          type: PublicSafetyImpactLevel
-                          children:
-                            SIGNIFICANT: TRACK
-                            MINIMAL: TRACK
-                        EFFICIENT: TRACK
-                        LABORIOUS: DECLINE
-                    UNRESPONSIVE: DECLINE
-            NOT_CREDIBLE: DECLINE
-        NO:
-          type: SupplierCardinalityLevel
-          children:
-            MULTIPLE:
-              type: UtilityLevel
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+            NOT_CREDIBLE:
+              type: SupplierCardinalityLevel
               children:
-                SUPER_EFFECTIVE:
-                  type: PublicSafetyImpactLevel
+                MULTIPLE:
+                  type: UtilityLevel
                   children:
-                    SIGNIFICANT: COORDINATE
-                    MINIMAL: TRACK
-                EFFICIENT: DECLINE
-                LABORIOUS: DECLINE
-            ONE: DECLINE
-
-# Default action for unmapped paths
-defaultAction: DECLINE
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                ONE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+    "NO":
+      type: SupplierContactedStatus
+      children:
+        "YES":
+          type: ReportCredibilityLevel
+          children:
+            CREDIBLE:
+              type: SupplierCardinalityLevel
+              children:
+                MULTIPLE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: COORDINATE
+                        MINIMAL: TRACK
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: TRACK
+                        MINIMAL: TRACK
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: COORDINATE
+                        MINIMAL: COORDINATE
+                ONE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: TRACK
+                        MINIMAL: TRACK
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: TRACK
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: COORDINATE
+                        MINIMAL: DECLINE
+            NOT_CREDIBLE:
+              type: SupplierCardinalityLevel
+              children:
+                MULTIPLE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: COORDINATE
+                        MINIMAL: DECLINE
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                ONE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+        "NO":
+          type: ReportCredibilityLevel
+          children:
+            CREDIBLE:
+              type: SupplierCardinalityLevel
+              children:
+                MULTIPLE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: COORDINATE
+                        MINIMAL: TRACK
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                ONE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+            NOT_CREDIBLE:
+              type: SupplierCardinalityLevel
+              children:
+                MULTIPLE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                ONE:
+                  type: UtilityLevel
+                  children:
+                    SUPER_EFFECTIVE:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    EFFICIENT:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+                    LABORIOUS:
+                      type: PublicSafetyImpactLevel
+                      children:
+                        SIGNIFICANT: DECLINE
+                        MINIMAL: DECLINE
+# Vector string metadata
+vectorMetadata:
+  prefix: COORD_TRIAGE
+  version: v1
+  parameterMappings:
+    report_public:
+      abbrev: RP
+      enumType: ReportPublicStatus
+      valueMappings:
+        "YES": Y
+        "NO": N
+    supplier_contacted:
+      abbrev: SC
+      enumType: SupplierContactedStatus
+      valueMappings:
+        "YES": Y
+        "NO": N
+    report_credibility:
+      abbrev: RC
+      enumType: ReportCredibilityLevel
+      valueMappings:
+        CREDIBLE: C
+        NOT_CREDIBLE: N
+    supplier_cardinality:
+      abbrev: CA
+      enumType: SupplierCardinalityLevel
+      valueMappings:
+        ONE: O
+        MULTIPLE: M
+    utility:
+      abbrev: U
+      enumType: UtilityLevel
+      valueMappings:
+        LABORIOUS: L
+        EFFICIENT: E
+        SUPER_EFFECTIVE: S
+    public_safety:
+      abbrev: PS
+      enumType: PublicSafetyImpactLevel
+      valueMappings:
+        MINIMAL: M
+        SIGNIFICANT: S

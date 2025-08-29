@@ -18,16 +18,6 @@ enums:
     - LOW
     - MEDIUM
     - HIGH
-  DecisionPriorityLevel:
-    - LOW
-    - MEDIUM
-    - HIGH
-    - IMMEDIATE
-  ActionType:
-    - TRACK
-    - TRACK_STAR
-    - ATTEND
-    - ACT
 
 priorityMap:
   TRACK: LOW
@@ -44,6 +34,10 @@ decisionTree:
         "YES":
           type: TechnicalImpactLevel
           children:
+            PARTIAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                HIGH: ATTEND
             TOTAL:
               type: MissionWellbeingImpactLevel
               children:
@@ -51,6 +45,10 @@ decisionTree:
         "NO":
           type: TechnicalImpactLevel
           children:
+            PARTIAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                HIGH: TRACK_STAR
             TOTAL:
               type: MissionWellbeingImpactLevel
               children:
@@ -115,3 +113,35 @@ decisionTree:
 
 # Default action for unmapped paths
 defaultAction: TRACK
+
+# Vector string metadata
+vectorMetadata:
+  prefix: CISA
+  version: v1
+  parameterMappings:
+    exploitation:
+      abbrev: E
+      enumType: ExploitationStatus
+      valueMappings:
+        NONE: N
+        POC: P
+        ACTIVE: A
+    automatable:
+      abbrev: A
+      enumType: AutomatableStatus
+      valueMappings:
+        "YES": Y
+        "NO": N
+    technical_impact:
+      abbrev: T
+      enumType: TechnicalImpactLevel
+      valueMappings:
+        PARTIAL: P
+        TOTAL: T
+    mission_wellbeing:
+      abbrev: M
+      enumType: MissionWellbeingImpactLevel
+      valueMappings:
+        LOW: L
+        MEDIUM: M
+        HIGH: H
