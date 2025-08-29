@@ -12,7 +12,7 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/coordinator_triage.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-30T00:13:44.359975
+@lastGenerated 2025-08-30T00:35:06.016942
 """
 
 from enum import Enum
@@ -58,9 +58,9 @@ class ActionType(Enum):
 
 
 class DecisionPriorityLevel(Enum):
+    HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
-    HIGH = "high"
 
 
 priority_map = {

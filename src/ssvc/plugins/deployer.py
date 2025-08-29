@@ -12,7 +12,7 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/deployer.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-30T00:13:44.122917
+@lastGenerated 2025-08-30T00:35:05.839604
 """
 
 from enum import Enum
@@ -53,10 +53,10 @@ class ActionType(Enum):
 
 
 class DecisionPriorityLevel(Enum):
-    LOW = "low"
-    IMMEDIATE = "immediate"
-    HIGH = "high"
     MEDIUM = "medium"
+    IMMEDIATE = "immediate"
+    LOW = "low"
+    HIGH = "high"
 
 
 priority_map = {

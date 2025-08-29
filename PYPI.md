@@ -35,47 +35,145 @@ uv sync
 uv run python -m pip install -e .
 ```
 
+## 🤖 AI Methodology Update Notice
+
+**New AI Methodology Available!** We've recently added support for an AI-specific SSVC methodology designed for vulnerability assessment in artificial intelligence systems. This methodology addresses unique AI security considerations including:
+
+- **Model Exploitation**: Assessment of AI model-specific attack vectors
+- **Training Data Impact**: Evaluation of vulnerabilities in training datasets  
+- **AI Safety Concerns**: Consideration of AI alignment and safety risks
+- **Automated Decision Impact**: Assessment of consequences from AI-driven decisions
+
+The AI methodology is available alongside traditional cybersecurity methodologies and uses the same simple API. See the [AI methodology documentation](docs/ai.md) for complete usage examples and decision trees.
+
 ## Available Methodologies
 
 This library supports multiple SSVC methodologies through a plugin-based architecture:
 
 | Methodology | Description | Documentation | Official Source |
 |-------------|-------------|---------------|-----------------|
-| **CISA** | CISA Stakeholder-Specific Vulnerability Categorization | [docs/cisa.md](https://github.com/Vulnetix/python-ssvc/blob/main/docs/cisa.md) | [CISA SSVC](https://www.cisa.gov/stakeholder-specific-vulnerability-categorization-ssvc) |
-| **Coordinator Triage** | CERT/CC Coordinator Triage Decision Model | [docs/coordinator_triage.md](https://github.com/Vulnetix/python-ssvc/blob/main/docs/coordinator_triage.md) | [CERT/CC Coordinator Triage](https://certcc.github.io/SSVC/howto/coordination_triage_decision/) |
-| **Coordinator Publication** | CERT/CC Coordinator Publication Decision Model | [docs/coordinator_publication.md](https://github.com/Vulnetix/python-ssvc/blob/main/docs/coordinator_publication.md) | [CERT/CC Publication Decision](https://certcc.github.io/SSVC/howto/publication_decision/) |
-| **Supplier** | CERT/CC Supplier Decision Model | [docs/supplier.md](https://github.com/Vulnetix/python-ssvc/blob/main/docs/supplier.md) | [CERT/CC Supplier Tree](https://certcc.github.io/SSVC/howto/supplier_tree/) |
-| **Deployer** | CERT/CC Deployer Decision Model | [docs/deployer.md](https://github.com/Vulnetix/python-ssvc/blob/main/docs/deployer.md) | [CERT/CC Deployer Tree](https://certcc.github.io/SSVC/howto/deployer_tree/) |
+| **AI LLM Triage** | AI-specific vulnerability categorization for ML systems | [docs/ai_llm_triage.md](docs/ai_llm_triage.md) | [NIST AI Risk Management](https://www.nist.gov/ai-risk-management) |
+| **CISA** | CISA Stakeholder-Specific Vulnerability Categorization | [docs/cisa.md](docs/cisa.md) | [CISA SSVC](https://www.cisa.gov/stakeholder-specific-vulnerability-categorization-ssvc) |
+| **Coordinator Triage** | CERT/CC Coordinator Triage Decision Model | [docs/coordinator_triage.md](docs/coordinator_triage.md) | [CERT/CC Coordinator Triage](https://certcc.github.io/SSVC/howto/coordination_triage_decision/) |
+| **Coordinator Publication** | CERT/CC Coordinator Publication Decision Model | [docs/coordinator_publication.md](docs/coordinator_publication.md) | [CERT/CC Publication Decision](https://certcc.github.io/SSVC/howto/publication_decision/) |
+| **Supplier** | CERT/CC Supplier Decision Model | [docs/supplier.md](docs/supplier.md) | [CERT/CC Supplier Tree](https://certcc.github.io/SSVC/howto/supplier_tree/) |
+| **Deployer** | CERT/CC Deployer Decision Model | [docs/deployer.md](docs/deployer.md) | [CERT/CC Deployer Tree](https://certcc.github.io/SSVC/howto/deployer_tree/) |
 
-## Quick Start
+## Complete Example
+
+Here's a comprehensive example showing the library's key features:
 
 ```python
 import ssvc
 
-# List available methodologies
-print("Available methodologies:", ssvc.list_methodologies())
+# 1. List all available methodologies
+print("Available SSVC methodologies:")
+for methodology in ssvc.list_methodologies():
+    print(f"  - {methodology}")
 
-# Use CISA methodology
-decision = ssvc.Decision(
+# 2. CISA methodology for enterprise vulnerability management
+print("\n=== CISA Enterprise Assessment ===")
+cisa_decision = ssvc.Decision(
     methodology='cisa',
-    exploitation='active',
-    automatable='no',
-    technical_impact='total',
-    mission_wellbeing_impact='high'
+    exploitation='active',           # Exploits available in the wild
+    automatable='yes',              # Can be automated by attackers
+    technical_impact='total',       # Complete system compromise possible
+    mission_wellbeing_impact='high' # Significant organizational impact
 )
-print(f"CISA Decision: {decision.outcome.action.value} (Priority: {decision.outcome.priority.value})")
 
-# Use Coordinator Triage methodology
-decision = ssvc.Decision(
+print(f"Decision: {cisa_decision.outcome.action.value}")
+print(f"Priority: {cisa_decision.outcome.priority.value}")
+print(f"Vector: {cisa_decision.to_vector()}")
+
+# 3. Coordinator triage for vulnerability disclosure
+print("\n=== Coordinator Triage Assessment ===")
+coord_decision = ssvc.Decision(
     methodology='coordinator_triage',
-    report_public='no',
-    supplier_contacted='yes', 
-    report_credibility='credible',
-    supplier_cardinality='multiple',
-    utility='super_effective',
-    public_safety_impact='significant'
+    report_public='no',              # Report not yet public
+    supplier_contacted='yes',        # Vendor has been notified
+    report_credibility='credible',   # Report appears legitimate
+    supplier_cardinality='multiple', # Affects multiple vendors
+    utility='super_effective',       # High exploit utility for attackers
+    public_safety_impact='significant' # Could impact public safety
 )
-print(f"Coordinator Triage Decision: {decision.outcome.action.value} (Priority: {decision.outcome.priority.value})")
+
+print(f"Decision: {coord_decision.outcome.action.value}")
+print(f"Priority: {coord_decision.outcome.priority.value}")
+
+# 4. Supplier assessment for patch development prioritization
+print("\n=== Supplier Patch Development ===")
+supplier_decision = ssvc.Decision(
+    methodology='supplier',
+    exploitation='poc',              # Proof of concept exists
+    utility='efficient',            # Moderately useful to attackers
+    technical_impact='partial',     # Limited system access
+    public_safety_impact='minimal'  # Low public safety risk
+)
+
+print(f"Decision: {supplier_decision.outcome.action.value}")
+print(f"Priority: {supplier_decision.outcome.priority.value}")
+
+# 5. Vector string parsing and data exchange
+print("\n=== Vector String Operations ===")
+vector_string = cisa_decision.to_vector()
+print(f"Generated vector: {vector_string}")
+
+# Parse the vector back into a decision
+parsed_decision = ssvc.Decision.from_vector(vector_string)
+print(f"Parsed action: {parsed_decision.outcome.action.value}")
+print(f"Decisions match: {cisa_decision.outcome.action == parsed_decision.outcome.action}")
+
+# 6. Error handling and validation
+print("\n=== Input Validation ===")
+try:
+    invalid_decision = ssvc.Decision('cisa', exploitation='invalid_value')
+except ValueError as e:
+    print(f"Validation error caught: {e}")
+
+# 7. Case-insensitive input handling
+print("\n=== Case-Insensitive Input ===")
+flexible_decision = ssvc.Decision(
+    methodology='CISA',              # Uppercase methodology
+    exploitation='ACTIVE',          # Uppercase parameters
+    automatable='No',               # Mixed case
+    technical_impact='total',       # Lowercase
+    mission_wellbeing_impact='HIGH' # Uppercase
+)
+print(f"Flexible input result: {flexible_decision.outcome.action.value}")
+```
+
+**Output:**
+```
+Available SSVC methodologies:
+  - cisa
+  - coordinator_triage
+  - coordinator_publication
+  - supplier
+  - deployer
+
+=== CISA Enterprise Assessment ===
+Decision: act
+Priority: immediate
+Vector: CISAv1/E:A/A:Y/T:T/M:H/2025-08-29T17:53:26.057876/
+
+=== Coordinator Triage Assessment ===
+Decision: coordinate
+Priority: high
+
+=== Supplier Patch Development ===
+Decision: scheduled
+Priority: medium
+
+=== Vector String Operations ===
+Generated vector: CISAv1/E:A/A:Y/T:T/M:H/2025-08-29T17:53:26.057876/
+Parsed action: act
+Decisions match: True
+
+=== Input Validation ===
+Validation error caught: 'INVALID_VALUE' is not a valid ExploitationStatus
+
+=== Case-Insensitive Input ===
+Flexible input result: act
 ```
 
 ## Key Features
@@ -203,4 +301,4 @@ uv run python scripts/generate_plugins.py
 
 ## License
 
-Licensed under the Apache License 2.0. See [LICENSE](https://github.com/Vulnetix/python-ssvc/blob/main/LICENSE) for details.
+Licensed under the Apache License 2.0. See [LICENSE](./LICENSE) for details.
