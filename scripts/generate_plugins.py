@@ -6,13 +6,11 @@ Generates Python plugin modules from YAML decision tree definitions.
 Also generates markdown documentation with mermaid diagrams.
 """
 
-import os
-import sys
 import yaml
 import hashlib
+import subprocess
 from pathlib import Path
-from typing import Dict, Any, List, Optional
-from textwrap import dedent, indent
+from typing import Dict, Any, List
 
 
 class SSVCPluginGenerator:
@@ -20,73 +18,110 @@ class SSVCPluginGenerator:
         self.yaml_dir = yaml_dir
         self.output_dir = output_dir
         self.docs_dir = docs_dir
-        
+
+    def _format_python_code(self, file_path: Path) -> None:
+        """Format Python code using ruff."""
+        try:
+            # First fix lint issues
+            subprocess.run(
+                ["ruff", "check", "--fix", str(file_path)],
+                capture_output=True,
+                check=False,
+            )
+            # Then format
+            subprocess.run(
+                ["ruff", "format", str(file_path)], capture_output=True, check=True
+            )
+        except subprocess.CalledProcessError as e:
+            print(f"Warning: Failed to format {file_path}: {e}")
+
+    def _format_markdown_code(self, file_path: Path) -> None:
+        """Format Markdown code using prettier if available."""
+        try:
+            subprocess.run(
+                ["prettier", "--write", str(file_path)], capture_output=True, check=True
+            )
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            # Prettier not available or failed, skip formatting
+            pass
+
     def generate_all(self):
         """Generate all plugins from YAML files in the methodologies directory."""
         yaml_files = list(self.yaml_dir.glob("*.yaml"))
-        
+
         for yaml_file in yaml_files:
             print(f"Processing {yaml_file.name}...")
             self.generate_plugin(yaml_file)
-            
+
     def generate_plugin(self, yaml_file: Path):
         """Generate a single plugin from a YAML file."""
-        with open(yaml_file, 'r') as f:
+        with open(yaml_file, "r") as f:
             config = yaml.safe_load(f)
-            
+
         plugin_name = yaml_file.stem
-        
+
         # Generate Python plugin
         python_code = self._generate_python_plugin(config, plugin_name)
         python_file = self.output_dir / f"{plugin_name}.py"
-        with open(python_file, 'w') as f:
+        with open(python_file, "w") as f:
             f.write(python_code)
-            
-        # Calculate checksum for the actual written file
-        with open(python_file, 'r') as f:
+
+        # Format the Python file
+        self._format_python_code(python_file)
+
+        # Calculate checksum for the formatted file
+        with open(python_file, "r") as f:
             python_checksum = self._calculate_sha1(f.read())
-            
+
         # Generate markdown documentation with checksum
-        markdown_code = self._generate_markdown_docs(config, plugin_name, python_file, python_checksum)
+        markdown_code = self._generate_markdown_docs(
+            config, plugin_name, python_file, python_checksum
+        )
         docs_file = self.docs_dir / f"{plugin_name}.md"
-        with open(docs_file, 'w') as f:
+        with open(docs_file, "w") as f:
             f.write(markdown_code)
-            
+
+        # Format the markdown file
+        self._format_markdown_code(docs_file)
+
         print(f"Generated {python_file} and {docs_file}")
         print(f"Python checksum: {python_checksum}")
-        
+
     def _calculate_sha1(self, content: str) -> str:
         """Calculate SHA1 checksum of content."""
-        return hashlib.sha1(content.encode('utf-8')).hexdigest()
-        
+        return hashlib.sha1(content.encode("utf-8")).hexdigest()
+
     def _generate_python_plugin(self, config: Dict[str, Any], plugin_name: str) -> str:
         """Generate Python plugin code from YAML configuration."""
-        
+
         # Generate enum classes
-        enums_code = self._generate_enums(config['enums'])
-        
+        enums_code = self._generate_enums(config["enums"])
+
         # Generate priority map
-        priority_map_code = self._generate_priority_map(config['priorityMap'], config['enums'])
-        
+        priority_map_code = self._generate_priority_map(
+            config["priorityMap"], config["enums"]
+        )
+
         # Generate outcome class
         outcome_class_code = self._generate_outcome_class(plugin_name)
-        
+
         # Generate main decision class
         decision_class_code = self._generate_decision_class(config, plugin_name)
-        
+
         # Generate vector string support
         vector_methods_code = self._generate_vector_methods(config, plugin_name)
-        
+
         # Add generation metadata
         from datetime import datetime
+
         current_date = datetime.now().isoformat()
         yaml_file_path = f"methodologies/{plugin_name}.yaml"
-        
+
         # Combine all parts
         return f'''"""
-{config['name']} Plugin
+{config["name"]} Plugin
 
-{config['description']}
+{config["description"]}
 Generated from YAML configuration.
 
 DO NOT EDIT THIS FILE DIRECTLY
@@ -101,7 +136,6 @@ This file is auto-generated. To make changes:
 """
 
 from enum import Enum
-from typing import Dict, Any, Optional
 from datetime import datetime
 import re
 
@@ -118,11 +152,11 @@ import re
 {decision_class_code}
 
 {vector_methods_code}'''
-        
+
     def _generate_enums(self, enums: Dict[str, List[str]]) -> str:
         """Generate enum class definitions."""
         enum_classes = []
-        
+
         for enum_name, values in enums.items():
             enum_values = []
             for value in values:
@@ -134,93 +168,110 @@ import re
                     value_str = str(value)
                     value_literal = str(value)  # Keep original case
                 enum_values.append(f'    {value_str} = "{value_literal}"')
-                
+
             enum_class = f"class {enum_name}(Enum):\n" + "\n".join(enum_values)
             enum_classes.append(enum_class)
-            
+
         return "\n\n".join(enum_classes)
-        
-    def _generate_priority_map(self, priority_map: Dict[str, str], enums: Dict[str, List[str]]) -> str:
+
+    def _generate_priority_map(
+        self, priority_map: Dict[str, str], enums: Dict[str, List[str]]
+    ) -> str:
         """Generate priority mapping dictionary and required enums."""
-        
+
         # Check if ActionType and Priority enums already exist
         action_enum = None
         priority_enum = None
-        
+
         for enum_name, values in enums.items():
-            if 'ActionType' in enum_name or enum_name == 'ActionType':
+            if "ActionType" in enum_name or enum_name == "ActionType":
                 action_enum = enum_name
-            elif 'Priority' in enum_name or enum_name.endswith('PriorityLevel'):
+            elif "Priority" in enum_name or enum_name.endswith("PriorityLevel"):
                 priority_enum = enum_name
-        
+
         # Generate ActionType and DecisionPriorityLevel enums if they don't exist
         enum_definitions = []
-        
+
         if not action_enum:
-            action_enum = 'ActionType'
+            action_enum = "ActionType"
             actions = list(priority_map.keys())
-            action_values = [f'    {action.upper()} = "{action.lower()}"' for action in actions]
-            enum_definitions.append(f"class {action_enum}(Enum):\n" + "\n".join(action_values))
-        
+            action_values = [
+                f'    {action.upper()} = "{action.lower()}"' for action in actions
+            ]
+            enum_definitions.append(
+                f"class {action_enum}(Enum):\n" + "\n".join(action_values)
+            )
+
         if not priority_enum:
-            priority_enum = 'DecisionPriorityLevel'
+            priority_enum = "DecisionPriorityLevel"
             priorities = list(set(priority_map.values()))
-            priority_values = [f'    {priority.upper()} = "{priority.lower()}"' for priority in priorities]
-            enum_definitions.append(f"class {priority_enum}(Enum):\n" + "\n".join(priority_values))
-        
+            priority_values = [
+                f'    {priority.upper()} = "{priority.lower()}"'
+                for priority in priorities
+            ]
+            enum_definitions.append(
+                f"class {priority_enum}(Enum):\n" + "\n".join(priority_values)
+            )
+
         # Generate priority mappings
         mappings = []
         for action, priority in priority_map.items():
-            mappings.append(f"    {action_enum}.{action.upper()}: {priority_enum}.{priority.upper()}")
-        
-        priority_map_code = f"priority_map = {{\n" + ",\n".join(mappings) + "\n}"
-        
+            mappings.append(
+                f"    {action_enum}.{action.upper()}: {priority_enum}.{priority.upper()}"
+            )
+
+        priority_map_code = "priority_map = {\n" + ",\n".join(mappings) + "\n}"
+
         # Combine enum definitions and priority map
         if enum_definitions:
             return "\n\n".join(enum_definitions) + "\n\n" + priority_map_code
         else:
             return priority_map_code
-        
+
     def _generate_outcome_class(self, plugin_name: str) -> str:
         """Generate outcome class."""
         class_name = f"Outcome{plugin_name.title().replace('_', '')}"
-        
+
         return f"""class {class_name}:
     def __init__(self, action):
         self.priority = priority_map[action]
         self.action = action"""
-        
+
     def _generate_decision_class(self, config: Dict[str, Any], plugin_name: str) -> str:
         """Generate main decision class."""
-        
+
         class_name = f"Decision{plugin_name.title().replace('_', '')}"
         outcome_class = f"Outcome{plugin_name.title().replace('_', '')}"
-        
+
         # Get decision point enums (exclude ActionType and Priority)
         decision_enums = []
-        for enum_name in config['enums'].keys():
-            if 'ActionType' not in enum_name and 'Priority' not in enum_name:
+        for enum_name in config["enums"].keys():
+            if "ActionType" not in enum_name and "Priority" not in enum_name:
                 decision_enums.append(enum_name)
-        
+
         # Generate constructor parameters
         params = []
         type_conversions = []
         attributes = []
         validations = []
-        
+
         for enum_name in decision_enums:
             param_name = self._enum_to_param_name(enum_name)
             params.append(f"{param_name}: {enum_name} | str = None")
-            
+
             type_conversions.append(f"        if isinstance({param_name}, str):")
-            type_conversions.append(f"            {param_name} = {enum_name}({param_name}.upper())")
-            
+            type_conversions.append(
+                f"            {param_name} = {enum_name}({param_name}.upper())"
+            )
+
             attributes.append(f"        self.{param_name} = {param_name}")
             validations.append(f"self.{param_name} is not None")
-        
+
         # Generate decision tree traversal
-        tree_method = self._generate_decision_tree_method(config['decisionTree'], config.get('defaultAction', 'TRACK'))
-        
+        tree_method = self._generate_decision_tree_method(
+            config["decisionTree"], config.get("defaultAction", "TRACK")
+        )
+
         constructor_code = f"""class {class_name}:
     def __init__(self, {", ".join(params)}):
 {chr(10).join(type_conversions)}
@@ -237,50 +288,56 @@ import re
         return self.outcome
 
 {tree_method}"""
-        
+
         return constructor_code
-    
+
     def _enum_to_param_name(self, enum_name: str) -> str:
         """Convert enum name to parameter name."""
         # Remove common suffixes and convert to snake_case
-        param_name = enum_name.replace('Status', '').replace('Level', '').replace('_', '')
-        
+        param_name = (
+            enum_name.replace("Status", "").replace("Level", "").replace("_", "")
+        )
+
         # Convert CamelCase to snake_case
         result = []
         for i, char in enumerate(param_name):
             if i > 0 and char.isupper():
-                result.append('_')
+                result.append("_")
             result.append(char.lower())
-            
-        return ''.join(result)
-        
-    def _generate_decision_tree_method(self, tree: Dict[str, Any], default_action: str) -> str:
+
+        return "".join(result)
+
+    def _generate_decision_tree_method(
+        self, tree: Dict[str, Any], default_action: str
+    ) -> str:
         """Generate decision tree traversal method."""
-        
+
         def generate_traversal_code(node: Dict[str, Any], depth: int = 2) -> str:
             indent_str = "    " * depth
-            
+
             if isinstance(node, str):
                 # Leaf node - return action
                 return f"{indent_str}return ActionType.{node}"
-                
-            node_type = node['type']
-            children = node['children']
-            
+
+            node_type = node["type"]
+            children = node["children"]
+
             param_name = self._enum_to_param_name(node_type)
-            
+
             code_lines = []
-            
+
             for i, (value, child_node) in enumerate(children.items()):
-                condition = "if" if i == 0 else "elif" 
+                condition = "if" if i == 0 else "elif"
                 # Handle enum values correctly
                 # Convert YAML boolean values to proper enum values
                 if isinstance(value, bool):
                     enum_value = "YES" if value else "NO"
                 else:
                     enum_value = value
-                code_lines.append(f"{indent_str}{condition} self.{param_name} == {node_type}.{enum_value}:")
-                
+                code_lines.append(
+                    f"{indent_str}{condition} self.{param_name} == {node_type}.{enum_value}:"
+                )
+
                 if isinstance(child_node, str):
                     # Direct action
                     code_lines.append(f"{indent_str}    return ActionType.{child_node}")
@@ -288,38 +345,49 @@ import re
                     # Recursive traversal
                     child_code = generate_traversal_code(child_node, depth + 1)
                     code_lines.append(child_code)
-                    
+
             return "\n".join(code_lines)
-            
+
         traversal_code = generate_traversal_code(tree)
-        
+
         return f"""    def _traverse_tree(self):
         \"\"\"Traverse the decision tree to determine the outcome.\"\"\"
 {traversal_code}
         
         # Default action for unmapped paths
         return ActionType.{default_action}"""
-        
-    def _generate_markdown_docs(self, config: Dict[str, Any], plugin_name: str, python_file: Path, python_checksum: str) -> str:
+
+    def _generate_markdown_docs(
+        self,
+        config: Dict[str, Any],
+        plugin_name: str,
+        python_file: Path,
+        python_checksum: str,
+    ) -> str:
         """Generate markdown documentation with mermaid diagram and checksum verification."""
-        
+
         # Generate mermaid diagram
-        mermaid_code = self._generate_mermaid_diagram(config['decisionTree'])
-        
+        mermaid_code = self._generate_mermaid_diagram(config["decisionTree"])
+
         # Generate enum documentation
-        enum_docs = self._generate_enum_docs(config['enums'])
-        
+        enum_docs = self._generate_enum_docs(config["enums"])
+
         # Generate vector string documentation if available
-        vector_docs = self._generate_vector_docs(config, plugin_name) if 'vectorMetadata' in config else ''
-        
+        vector_docs = (
+            self._generate_vector_docs(config, plugin_name)
+            if "vectorMetadata" in config
+            else ""
+        )
+
         # Add generation metadata
         from datetime import datetime
+
         current_date = datetime.now().isoformat()
         yaml_file_path = f"methodologies/{plugin_name}.yaml"
-        
+
         # Use relative path for consistency
         relative_python_path = f"src/ssvc/plugins/{plugin_name}.py"
-        
+
         return f"""---
 generated: true
 source: {yaml_file_path}
@@ -331,17 +399,17 @@ generatedFiles:
     checksum: {python_checksum}
 ---
 
-# {config['name']} Decision Model
+# {config["name"]} Decision Model
 
-{config['description']}
+{config["description"]}
 
 > **⚠️ DO NOT EDIT THIS FILE DIRECTLY**  
 > This file is auto-generated. To make changes:
 > 1. Edit the source YAML file: `{yaml_file_path}`
 > 2. Run: `uv run python scripts/generate_plugins.py`
 
-**Version:** {config['version']}  
-{f"**Reference:** [{config['url']}]({config['url']})" if config.get('url') else ''}
+**Version:** {config["version"]}  
+{f"**Reference:** [{config['url']}]({config['url']})" if config.get("url") else ""}
 
 ## Decision Tree
 
@@ -356,9 +424,9 @@ generatedFiles:
 ## Usage
 
 ```python
-from ssvc.plugins.{plugin_name} import Decision{plugin_name.title().replace('_', '')}
+from ssvc.plugins.{plugin_name} import Decision{plugin_name.title().replace("_", "")}
 
-decision = Decision{plugin_name.title().replace('_', '')}(
+decision = Decision{plugin_name.title().replace("_", "")}(
     # Set decision point values here
 )
 
@@ -417,13 +485,13 @@ done
 
 Always verify checksums before deploying or using generated files in production environments.
 """
-        
+
     def _generate_mermaid_diagram(self, tree: Dict[str, Any]) -> str:
         """Generate a proper left-to-right mermaid decision tree diagram showing all paths."""
-        
+
         lines = ["flowchart LR"]
         node_counter = 0
-        
+
         def get_node_id(node_type, value=None):
             nonlocal node_counter
             node_counter += 1
@@ -433,7 +501,7 @@ Always verify checksums before deploying or using generated files in production 
             else:
                 # For action nodes
                 return f"{node_type}_{node_counter}"
-        
+
         def traverse_tree(node, parent_id=None, edge_label=None):
             if isinstance(node, str):
                 # Leaf node - action
@@ -442,82 +510,100 @@ Always verify checksums before deploying or using generated files in production 
                 if parent_id:
                     lines.append(f"    {parent_id} -->|{edge_label}| {action_id}")
                 return action_id
-            
+
             # Decision node
-            node_type = node['type']
-            children = node['children']
-            
+            node_type = node["type"]
+            children = node["children"]
+
             # Create node for this decision point
             decision_id = get_node_id(node_type)
             lines.append(f"    {decision_id}{{{node_type}}}")
-            
+
             # Connect to parent if exists
             if parent_id:
                 lines.append(f"    {parent_id} -->|{edge_label}| {decision_id}")
-            
+
             # Process children
             for value, child_node in children.items():
                 traverse_tree(child_node, decision_id, value)
-            
+
             return decision_id
-        
+
         # Start traversal from root
         traverse_tree(tree)
-        
+
         return "\n".join(lines)
-        
+
     def _generate_enum_docs(self, enums: Dict[str, List[str]]) -> str:
         """Generate documentation for enums."""
-        
+
         docs = []
         for enum_name, values in enums.items():
-            if 'ActionType' in enum_name or 'Priority' in enum_name:
+            if "ActionType" in enum_name or "Priority" in enum_name:
                 continue
-                
+
             value_list = ", ".join([f"`{v}`" for v in values])
             docs.append(f"- **{enum_name}**: {value_list}")
-            
+
         return "\n".join(docs)
 
     def _generate_vector_methods(self, config: Dict[str, Any], plugin_name: str) -> str:
         """Generate vector string support methods if vectorMetadata is present."""
-        if 'vectorMetadata' not in config:
-            return ''
-        
-        vector_meta = config['vectorMetadata']
+        if "vectorMetadata" not in config:
+            return ""
+
+        vector_meta = config["vectorMetadata"]
         class_name = f"Decision{plugin_name.title().replace('_', '')}"
-        
+
         # Generate toVector method
         to_vector_params = []
-        for param_name, mapping in vector_meta.get('parameterMappings', {}).items():
-            actual_param_name = self._enum_to_param_name(mapping['enumType'])
-            if 'valueMappings' in mapping:
-                value_mappings = {k.upper(): v for k, v in mapping['valueMappings'].items()}
-                to_vector_params.append(f"        {param_name}_vector = {value_mappings}.get(str(self.{actual_param_name}).split('.')[-1] if self.{actual_param_name} else '', '')")
+        for param_name, mapping in vector_meta.get("parameterMappings", {}).items():
+            actual_param_name = self._enum_to_param_name(mapping["enumType"])
+            if "valueMappings" in mapping:
+                value_mappings = {
+                    k.upper(): v for k, v in mapping["valueMappings"].items()
+                }
+                to_vector_params.append(
+                    f"        {param_name}_vector = {value_mappings}.get(str(self.{actual_param_name}).split('.')[-1] if self.{actual_param_name} else '', '')"
+                )
             else:
-                to_vector_params.append(f"        {param_name}_vector = str(self.{actual_param_name}) if self.{actual_param_name} else ''")
-        
-        vector_segments = '/'.join([f"{mapping['abbrev']}:{{{param_name}_vector}}" 
-                                  for param_name, mapping in vector_meta.get('parameterMappings', {}).items()])
-        
+                to_vector_params.append(
+                    f"        {param_name}_vector = str(self.{actual_param_name}) if self.{actual_param_name} else ''"
+                )
+
+        vector_segments = "/".join(
+            [
+                f"{mapping['abbrev']}:{{{param_name}_vector}}"
+                for param_name, mapping in vector_meta.get(
+                    "parameterMappings", {}
+                ).items()
+            ]
+        )
+
         # Generate fromVector method
         from_vector_validations = []
         from_vector_params = []
-        
-        for param_name, mapping in vector_meta.get('parameterMappings', {}).items():
-            actual_param_name = self._enum_to_param_name(mapping['enumType'])
-            from_vector_validations.append(f"        {param_name}_match = params.get('{mapping['abbrev']}')")
-            
-            if 'valueMappings' in mapping:
-                reverse_mappings = {v: k for k, v in mapping['valueMappings'].items()}
-                from_vector_params.append(f"            {actual_param_name}={reverse_mappings}.get({param_name}_match, {param_name}_match) if {param_name}_match else None,")
+
+        for param_name, mapping in vector_meta.get("parameterMappings", {}).items():
+            actual_param_name = self._enum_to_param_name(mapping["enumType"])
+            from_vector_validations.append(
+                f"        {param_name}_match = params.get('{mapping['abbrev']}')"
+            )
+
+            if "valueMappings" in mapping:
+                reverse_mappings = {v: k for k, v in mapping["valueMappings"].items()}
+                from_vector_params.append(
+                    f"            {actual_param_name}={reverse_mappings}.get({param_name}_match, {param_name}_match) if {param_name}_match else None,"
+                )
             else:
-                from_vector_params.append(f"            {actual_param_name}={param_name}_match if {param_name}_match else None,")
-        
-        prefix = vector_meta['prefix']
-        version = vector_meta['version']
-        config_name = config['name']
-        
+                from_vector_params.append(
+                    f"            {actual_param_name}={param_name}_match if {param_name}_match else None,"
+                )
+
+        prefix = vector_meta["prefix"]
+        version = vector_meta["version"]
+        config_name = config["name"]
+
         return f'''
     def to_vector(self) -> str:
         """Generate SSVC vector string representation."""
@@ -531,7 +617,7 @@ Always verify checksums before deploying or using generated files in production 
     @classmethod
     def from_vector(cls, vector_string: str) -> '{class_name}':
         """Parse SSVC vector string to create decision instance."""
-        pattern = r'^{prefix}{version}/(.+)/([0-9T:\\-\\.Z]+)/?$'
+        pattern = r'^{prefix}{version}/(.+)/([0-9T:\\-\.Z]+)/?$'
         match = re.match(pattern, vector_string)
         
         if not match:
@@ -554,36 +640,46 @@ Always verify checksums before deploying or using generated files in production 
 
     def _generate_vector_docs(self, config: Dict[str, Any], plugin_name: str) -> str:
         """Generate vector string documentation if metadata is available."""
-        if 'vectorMetadata' not in config:
-            return ''
-        
-        vector_meta = config['vectorMetadata']
+        if "vectorMetadata" not in config:
+            return ""
+
+        vector_meta = config["vectorMetadata"]
         class_name = f"Decision{plugin_name.title().replace('_', '')}"
-        
+
         # Generate parameter abbreviations table
         param_table = []
-        for param_name, mapping in vector_meta.get('parameterMappings', {}).items():
-            if 'valueMappings' in mapping:
-                value_examples = ', '.join([f"{k}→{v}" for k, v in mapping['valueMappings'].items()])
-                param_table.append(f"| {param_name} | {mapping['abbrev']} | {value_examples} |")
+        for param_name, mapping in vector_meta.get("parameterMappings", {}).items():
+            if "valueMappings" in mapping:
+                value_examples = ", ".join(
+                    [f"{k}→{v}" for k, v in mapping["valueMappings"].items()]
+                )
+                param_table.append(
+                    f"| {param_name} | {mapping['abbrev']} | {value_examples} |"
+                )
             else:
-                param_table.append(f"| {param_name} | {mapping['abbrev']} | Direct mapping |")
-        
+                param_table.append(
+                    f"| {param_name} | {mapping['abbrev']} | Direct mapping |"
+                )
+
         # Generate example vector string
         example_params = []
         vector_segments = []
-        for param_name, mapping in vector_meta.get('parameterMappings', {}).items():
-            if 'valueMappings' in mapping:
-                first_key = list(mapping['valueMappings'].keys())[0]
-                first_value = mapping['valueMappings'][first_key]
-                example_params.append(f"    {self._enum_to_param_name(mapping['enumType'])}='{first_key}',")
+        for param_name, mapping in vector_meta.get("parameterMappings", {}).items():
+            if "valueMappings" in mapping:
+                first_key = list(mapping["valueMappings"].keys())[0]
+                first_value = mapping["valueMappings"][first_key]
+                example_params.append(
+                    f"    {self._enum_to_param_name(mapping['enumType'])}='{first_key}',"
+                )
                 vector_segments.append(f"{mapping['abbrev']}:{first_value}")
             else:
-                example_params.append(f"    {self._enum_to_param_name(mapping['enumType'])}='example',")
+                example_params.append(
+                    f"    {self._enum_to_param_name(mapping['enumType'])}='example',"
+                )
                 vector_segments.append(f"{mapping['abbrev']}:example")
-        
+
         example_vector = f"{vector_meta['prefix']}{vector_meta['version']}/{'/'.join(vector_segments)}/2024-07-23T20:34:21.000000/"
-        
+
         return f'''
 ## Vector String Support
 
@@ -598,7 +694,7 @@ This methodology supports SSVC vector strings for compact representation and int
 ### Vector String Format
 
 ```
-{vector_meta['prefix']}{vector_meta['version']}/[parameters]/[timestamp]/
+{vector_meta["prefix"]}{vector_meta["version"]}/[parameters]/[timestamp]/
 ```
 
 ### Example Usage
@@ -621,26 +717,26 @@ outcome = parsed_decision.evaluate()
 
 def main():
     """Main entry point for the generator."""
-    
+
     # Setup paths
     root_dir = Path(__file__).parent.parent
     yaml_dir = root_dir / "src" / "ssvc" / "methodologies"
     output_dir = root_dir / "src" / "ssvc" / "plugins"
     docs_dir = root_dir / "docs"
-    
+
     # Create output directories
     output_dir.mkdir(parents=True, exist_ok=True)
     docs_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Create __init__.py in plugins directory
     init_file = output_dir / "__init__.py"
-    with open(init_file, 'w') as f:
+    with open(init_file, "w") as f:
         f.write('"""SSVC Plugins generated from YAML configurations."""\n')
-    
+
     # Generate plugins
     generator = SSVCPluginGenerator(yaml_dir, output_dir, docs_dir)
     generator.generate_all()
-    
+
     print("Plugin generation complete!")
 
 

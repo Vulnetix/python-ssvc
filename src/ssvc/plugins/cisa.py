@@ -12,11 +12,10 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/cisa.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T23:51:54.787381
+@lastGenerated 2025-08-30T00:13:44.264014
 """
 
 from enum import Enum
-from typing import Dict, Any, Optional
 from datetime import datetime
 import re
 
@@ -26,13 +25,16 @@ class ExploitationStatus(Enum):
     POC = "POC"
     ACTIVE = "ACTIVE"
 
+
 class AutomatableStatus(Enum):
     YES = "YES"
     NO = "NO"
 
+
 class TechnicalImpactLevel(Enum):
     PARTIAL = "PARTIAL"
     TOTAL = "TOTAL"
+
 
 class MissionWellbeingImpactLevel(Enum):
     LOW = "LOW"
@@ -46,16 +48,18 @@ class ActionType(Enum):
     ATTEND = "attend"
     ACT = "act"
 
+
 class DecisionPriorityLevel(Enum):
-    LOW = "low"
     MEDIUM = "medium"
+    LOW = "low"
     IMMEDIATE = "immediate"
+
 
 priority_map = {
     ActionType.TRACK: DecisionPriorityLevel.LOW,
     ActionType.TRACK_STAR: DecisionPriorityLevel.MEDIUM,
     ActionType.ATTEND: DecisionPriorityLevel.MEDIUM,
-    ActionType.ACT: DecisionPriorityLevel.IMMEDIATE
+    ActionType.ACT: DecisionPriorityLevel.IMMEDIATE,
 }
 
 
@@ -66,7 +70,13 @@ class OutcomeCisa:
 
 
 class DecisionCisa:
-    def __init__(self, exploitation: ExploitationStatus | str = None, automatable: AutomatableStatus | str = None, technical_impact: TechnicalImpactLevel | str = None, mission_wellbeing_impact: MissionWellbeingImpactLevel | str = None):
+    def __init__(
+        self,
+        exploitation: ExploitationStatus | str = None,
+        automatable: AutomatableStatus | str = None,
+        technical_impact: TechnicalImpactLevel | str = None,
+        mission_wellbeing_impact: MissionWellbeingImpactLevel | str = None,
+    ):
         if isinstance(exploitation, str):
             exploitation = ExploitationStatus(exploitation.upper())
         if isinstance(automatable, str):
@@ -74,15 +84,24 @@ class DecisionCisa:
         if isinstance(technical_impact, str):
             technical_impact = TechnicalImpactLevel(technical_impact.upper())
         if isinstance(mission_wellbeing_impact, str):
-            mission_wellbeing_impact = MissionWellbeingImpactLevel(mission_wellbeing_impact.upper())
-        
+            mission_wellbeing_impact = MissionWellbeingImpactLevel(
+                mission_wellbeing_impact.upper()
+            )
+
         self.exploitation = exploitation
         self.automatable = automatable
         self.technical_impact = technical_impact
         self.mission_wellbeing_impact = mission_wellbeing_impact
-        
+
         # Always try to evaluate if we have the minimum required parameters
-        if all([self.exploitation is not None, self.automatable is not None, self.technical_impact is not None, self.mission_wellbeing_impact is not None]):
+        if all(
+            [
+                self.exploitation is not None,
+                self.automatable is not None,
+                self.technical_impact is not None,
+                self.mission_wellbeing_impact is not None,
+            ]
+        ):
             self.outcome = self.evaluate()
 
     def evaluate(self) -> OutcomeCisa:
@@ -95,105 +114,183 @@ class DecisionCisa:
         if self.exploitation == ExploitationStatus.NONE:
             if self.automatable == AutomatableStatus.YES:
                 if self.technical_impact == TechnicalImpactLevel.PARTIAL:
-                    if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    if (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.ATTEND
                 elif self.technical_impact == TechnicalImpactLevel.TOTAL:
-                    if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    if (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.ATTEND
             elif self.automatable == AutomatableStatus.NO:
                 if self.technical_impact == TechnicalImpactLevel.PARTIAL:
-                    if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    if (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.TRACK_STAR
                 elif self.technical_impact == TechnicalImpactLevel.TOTAL:
-                    if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    if (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.TRACK_STAR
         elif self.exploitation == ExploitationStatus.POC:
             if self.automatable == AutomatableStatus.YES:
                 if self.technical_impact == TechnicalImpactLevel.TOTAL:
-                    if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.MEDIUM:
+                    if (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.MEDIUM
+                    ):
                         return ActionType.TRACK_STAR
-                    elif self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    elif (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.ATTEND
                 elif self.technical_impact == TechnicalImpactLevel.PARTIAL:
-                    if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    if (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.ATTEND
             elif self.automatable == AutomatableStatus.NO:
                 if self.technical_impact == TechnicalImpactLevel.PARTIAL:
-                    if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    if (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.TRACK_STAR
                 elif self.technical_impact == TechnicalImpactLevel.TOTAL:
-                    if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.MEDIUM:
+                    if (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.MEDIUM
+                    ):
                         return ActionType.TRACK_STAR
-                    elif self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    elif (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.ATTEND
         elif self.exploitation == ExploitationStatus.ACTIVE:
             if self.automatable == AutomatableStatus.YES:
                 if self.technical_impact == TechnicalImpactLevel.PARTIAL:
                     if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.LOW:
                         return ActionType.ATTEND
-                    elif self.mission_wellbeing_impact == MissionWellbeingImpactLevel.MEDIUM:
+                    elif (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.MEDIUM
+                    ):
                         return ActionType.ATTEND
-                    elif self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    elif (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.ACT
                 elif self.technical_impact == TechnicalImpactLevel.TOTAL:
                     if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.LOW:
                         return ActionType.ATTEND
-                    elif self.mission_wellbeing_impact == MissionWellbeingImpactLevel.MEDIUM:
+                    elif (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.MEDIUM
+                    ):
                         return ActionType.ACT
-                    elif self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    elif (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.ACT
             elif self.automatable == AutomatableStatus.NO:
                 if self.technical_impact == TechnicalImpactLevel.PARTIAL:
-                    if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    if (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.ATTEND
                 elif self.technical_impact == TechnicalImpactLevel.TOTAL:
-                    if self.mission_wellbeing_impact == MissionWellbeingImpactLevel.MEDIUM:
+                    if (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.MEDIUM
+                    ):
                         return ActionType.ATTEND
-                    elif self.mission_wellbeing_impact == MissionWellbeingImpactLevel.HIGH:
+                    elif (
+                        self.mission_wellbeing_impact
+                        == MissionWellbeingImpactLevel.HIGH
+                    ):
                         return ActionType.ACT
-        
+
         # Default action for unmapped paths
         return ActionType.TRACK
 
-
     def to_vector(self) -> str:
         """Generate SSVC vector string representation."""
-        if not hasattr(self, 'outcome') or not self.outcome:
+        if not hasattr(self, "outcome") or not self.outcome:
             self.evaluate()
-        
-        exploitation_vector = {'NONE': 'N', 'POC': 'P', 'ACTIVE': 'A'}.get(str(self.exploitation).split('.')[-1] if self.exploitation else '', '')
-        automatable_vector = {'YES': 'Y', 'NO': 'N'}.get(str(self.automatable).split('.')[-1] if self.automatable else '', '')
-        technical_impact_vector = {'PARTIAL': 'P', 'TOTAL': 'T'}.get(str(self.technical_impact).split('.')[-1] if self.technical_impact else '', '')
-        mission_wellbeing_vector = {'LOW': 'L', 'MEDIUM': 'M', 'HIGH': 'H'}.get(str(self.mission_wellbeing_impact).split('.')[-1] if self.mission_wellbeing_impact else '', '')
+
+        exploitation_vector = {"NONE": "N", "POC": "P", "ACTIVE": "A"}.get(
+            str(self.exploitation).split(".")[-1] if self.exploitation else "", ""
+        )
+        automatable_vector = {"YES": "Y", "NO": "N"}.get(
+            str(self.automatable).split(".")[-1] if self.automatable else "", ""
+        )
+        technical_impact_vector = {"PARTIAL": "P", "TOTAL": "T"}.get(
+            str(self.technical_impact).split(".")[-1] if self.technical_impact else "",
+            "",
+        )
+        mission_wellbeing_vector = {"LOW": "L", "MEDIUM": "M", "HIGH": "H"}.get(
+            str(self.mission_wellbeing_impact).split(".")[-1]
+            if self.mission_wellbeing_impact
+            else "",
+            "",
+        )
         timestamp = datetime.now().isoformat()
         return f"CISAv1/E:{exploitation_vector}/A:{automatable_vector}/T:{technical_impact_vector}/M:{mission_wellbeing_vector}/{timestamp}/"
-    
+
     @classmethod
-    def from_vector(cls, vector_string: str) -> 'DecisionCisa':
+    def from_vector(cls, vector_string: str) -> "DecisionCisa":
         """Parse SSVC vector string to create decision instance."""
-        pattern = r'^CISAv1/(.+)/([0-9T:\-\.Z]+)/?$'
+        pattern = r"^CISAv1/(.+)/([0-9T:\-\.Z]+)/?$"
         match = re.match(pattern, vector_string)
-        
+
         if not match:
             raise ValueError(f"Invalid vector string format for CISA: {vector_string}")
-        
+
         params_string = match.group(1)
         params = {}
-        
-        param_pairs = params_string.split('/')
+
+        param_pairs = params_string.split("/")
         for pair in param_pairs:
-            if ':' in pair:
-                key, value = pair.split(':', 1)
+            if ":" in pair:
+                key, value = pair.split(":", 1)
                 params[key] = value
-        
-        exploitation_match = params.get('E')
-        automatable_match = params.get('A')
-        technical_impact_match = params.get('T')
-        mission_wellbeing_match = params.get('M')
-        
+
+        exploitation_match = params.get("E")
+        automatable_match = params.get("A")
+        technical_impact_match = params.get("T")
+        mission_wellbeing_match = params.get("M")
+
         return cls(
-            exploitation={'N': 'NONE', 'P': 'POC', 'A': 'ACTIVE'}.get(exploitation_match, exploitation_match) if exploitation_match else None,
-            automatable={'Y': 'YES', 'N': 'NO'}.get(automatable_match, automatable_match) if automatable_match else None,
-            technical_impact={'P': 'PARTIAL', 'T': 'TOTAL'}.get(technical_impact_match, technical_impact_match) if technical_impact_match else None,
-            mission_wellbeing_impact={'L': 'LOW', 'M': 'MEDIUM', 'H': 'HIGH'}.get(mission_wellbeing_match, mission_wellbeing_match) if mission_wellbeing_match else None,
+            exploitation={"N": "NONE", "P": "POC", "A": "ACTIVE"}.get(
+                exploitation_match, exploitation_match
+            )
+            if exploitation_match
+            else None,
+            automatable={"Y": "YES", "N": "NO"}.get(
+                automatable_match, automatable_match
+            )
+            if automatable_match
+            else None,
+            technical_impact={"P": "PARTIAL", "T": "TOTAL"}.get(
+                technical_impact_match, technical_impact_match
+            )
+            if technical_impact_match
+            else None,
+            mission_wellbeing_impact={"L": "LOW", "M": "MEDIUM", "H": "HIGH"}.get(
+                mission_wellbeing_match, mission_wellbeing_match
+            )
+            if mission_wellbeing_match
+            else None,
         )

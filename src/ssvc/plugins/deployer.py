@@ -12,11 +12,10 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/deployer.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T23:51:54.768233
+@lastGenerated 2025-08-30T00:13:44.122917
 """
 
 from enum import Enum
-from typing import Dict, Any, Optional
 from datetime import datetime
 import re
 
@@ -26,15 +25,18 @@ class ExploitationStatus(Enum):
     public_poc = "public_poc"
     active = "active"
 
+
 class SystemExposureLevel(Enum):
     small = "small"
     controlled = "controlled"
     open = "open"
 
+
 class UtilityLevel(Enum):
     laborious = "laborious"
     efficient = "efficient"
     super_effective = "super_effective"
+
 
 class HumanImpactLevel(Enum):
     low = "low"
@@ -49,17 +51,19 @@ class ActionType(Enum):
     OUT_OF_CYCLE = "out_of_cycle"
     IMMEDIATE = "immediate"
 
+
 class DecisionPriorityLevel(Enum):
-    HIGH = "high"
-    MEDIUM = "medium"
     LOW = "low"
     IMMEDIATE = "immediate"
+    HIGH = "high"
+    MEDIUM = "medium"
+
 
 priority_map = {
     ActionType.DEFER: DecisionPriorityLevel.LOW,
     ActionType.SCHEDULED: DecisionPriorityLevel.MEDIUM,
     ActionType.OUT_OF_CYCLE: DecisionPriorityLevel.HIGH,
-    ActionType.IMMEDIATE: DecisionPriorityLevel.IMMEDIATE
+    ActionType.IMMEDIATE: DecisionPriorityLevel.IMMEDIATE,
 }
 
 
@@ -70,7 +74,13 @@ class OutcomeDeployer:
 
 
 class DecisionDeployer:
-    def __init__(self, exploitation: ExploitationStatus | str = None, system_exposure: SystemExposureLevel | str = None, utility: UtilityLevel | str = None, human_impact: HumanImpactLevel | str = None):
+    def __init__(
+        self,
+        exploitation: ExploitationStatus | str = None,
+        system_exposure: SystemExposureLevel | str = None,
+        utility: UtilityLevel | str = None,
+        human_impact: HumanImpactLevel | str = None,
+    ):
         if isinstance(exploitation, str):
             exploitation = ExploitationStatus(exploitation.upper())
         if isinstance(system_exposure, str):
@@ -79,14 +89,21 @@ class DecisionDeployer:
             utility = UtilityLevel(utility.upper())
         if isinstance(human_impact, str):
             human_impact = HumanImpactLevel(human_impact.upper())
-        
+
         self.exploitation = exploitation
         self.system_exposure = system_exposure
         self.utility = utility
         self.human_impact = human_impact
-        
+
         # Always try to evaluate if we have the minimum required parameters
-        if all([self.exploitation is not None, self.system_exposure is not None, self.utility is not None, self.human_impact is not None]):
+        if all(
+            [
+                self.exploitation is not None,
+                self.system_exposure is not None,
+                self.utility is not None,
+                self.human_impact is not None,
+            ]
+        ):
             self.outcome = self.evaluate()
 
     def evaluate(self) -> OutcomeDeployer:
@@ -351,49 +368,79 @@ class DecisionDeployer:
                         return ActionType.immediate
                     elif self.human_impact == HumanImpactLevel.very_high:
                         return ActionType.immediate
-        
+
         # Default action for unmapped paths
         return ActionType.defer
 
-
     def to_vector(self) -> str:
         """Generate SSVC vector string representation."""
-        if not hasattr(self, 'outcome') or not self.outcome:
+        if not hasattr(self, "outcome") or not self.outcome:
             self.evaluate()
-        
-        exploitation_vector = {'NONE': 'N', 'PUBLIC_POC': 'P', 'ACTIVE': 'A'}.get(str(self.exploitation).split('.')[-1] if self.exploitation else '', '')
-        system_exposure_vector = {'SMALL': 'S', 'CONTROLLED': 'C', 'OPEN': 'O'}.get(str(self.system_exposure).split('.')[-1] if self.system_exposure else '', '')
-        utility_vector = {'LABORIOUS': 'L', 'EFFICIENT': 'E', 'SUPER_EFFECTIVE': 'S'}.get(str(self.utility).split('.')[-1] if self.utility else '', '')
-        human_impact_vector = {'LOW': 'L', 'MEDIUM': 'M', 'HIGH': 'H', 'VERY_HIGH': 'V'}.get(str(self.human_impact).split('.')[-1] if self.human_impact else '', '')
+
+        exploitation_vector = {"NONE": "N", "PUBLIC_POC": "P", "ACTIVE": "A"}.get(
+            str(self.exploitation).split(".")[-1] if self.exploitation else "", ""
+        )
+        system_exposure_vector = {"SMALL": "S", "CONTROLLED": "C", "OPEN": "O"}.get(
+            str(self.system_exposure).split(".")[-1] if self.system_exposure else "", ""
+        )
+        utility_vector = {
+            "LABORIOUS": "L",
+            "EFFICIENT": "E",
+            "SUPER_EFFECTIVE": "S",
+        }.get(str(self.utility).split(".")[-1] if self.utility else "", "")
+        human_impact_vector = {
+            "LOW": "L",
+            "MEDIUM": "M",
+            "HIGH": "H",
+            "VERY_HIGH": "V",
+        }.get(str(self.human_impact).split(".")[-1] if self.human_impact else "", "")
         timestamp = datetime.now().isoformat()
         return f"DEPLOYERv1/E:{exploitation_vector}/SE:{system_exposure_vector}/U:{utility_vector}/HI:{human_impact_vector}/{timestamp}/"
-    
+
     @classmethod
-    def from_vector(cls, vector_string: str) -> 'DecisionDeployer':
+    def from_vector(cls, vector_string: str) -> "DecisionDeployer":
         """Parse SSVC vector string to create decision instance."""
-        pattern = r'^DEPLOYERv1/(.+)/([0-9T:\-\.Z]+)/?$'
+        pattern = r"^DEPLOYERv1/(.+)/([0-9T:\-\.Z]+)/?$"
         match = re.match(pattern, vector_string)
-        
+
         if not match:
-            raise ValueError(f"Invalid vector string format for Deployer: {vector_string}")
-        
+            raise ValueError(
+                f"Invalid vector string format for Deployer: {vector_string}"
+            )
+
         params_string = match.group(1)
         params = {}
-        
-        param_pairs = params_string.split('/')
+
+        param_pairs = params_string.split("/")
         for pair in param_pairs:
-            if ':' in pair:
-                key, value = pair.split(':', 1)
+            if ":" in pair:
+                key, value = pair.split(":", 1)
                 params[key] = value
-        
-        exploitation_match = params.get('E')
-        system_exposure_match = params.get('SE')
-        utility_match = params.get('U')
-        human_impact_match = params.get('HI')
-        
+
+        exploitation_match = params.get("E")
+        system_exposure_match = params.get("SE")
+        utility_match = params.get("U")
+        human_impact_match = params.get("HI")
+
         return cls(
-            exploitation={'N': 'none', 'P': 'public_poc', 'A': 'active'}.get(exploitation_match, exploitation_match) if exploitation_match else None,
-            system_exposure={'S': 'small', 'C': 'controlled', 'O': 'open'}.get(system_exposure_match, system_exposure_match) if system_exposure_match else None,
-            utility={'L': 'laborious', 'E': 'efficient', 'S': 'super_effective'}.get(utility_match, utility_match) if utility_match else None,
-            human_impact={'L': 'low', 'M': 'medium', 'H': 'high', 'V': 'very_high'}.get(human_impact_match, human_impact_match) if human_impact_match else None,
+            exploitation={"N": "none", "P": "public_poc", "A": "active"}.get(
+                exploitation_match, exploitation_match
+            )
+            if exploitation_match
+            else None,
+            system_exposure={"S": "small", "C": "controlled", "O": "open"}.get(
+                system_exposure_match, system_exposure_match
+            )
+            if system_exposure_match
+            else None,
+            utility={"L": "laborious", "E": "efficient", "S": "super_effective"}.get(
+                utility_match, utility_match
+            )
+            if utility_match
+            else None,
+            human_impact={"L": "low", "M": "medium", "H": "high", "V": "very_high"}.get(
+                human_impact_match, human_impact_match
+            )
+            if human_impact_match
+            else None,
         )

@@ -65,7 +65,7 @@ class OutcomeCISA:
 
 class LegacyDecision:
     """Legacy Decision class - deprecated, use ssvc.Decision instead."""
-    
+
     def __init__(
         self,
         exploitation: ExploitationLevel | str = None,
@@ -75,12 +75,13 @@ class LegacyDecision:
         methodology: Methodology | str = Methodology.CISA,
     ):
         import warnings
+
         warnings.warn(
             "LegacyDecision is deprecated. Use ssvc.Decision with methodology='cisa' instead.",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
-        
+
         if isinstance(exploitation, str):
             exploitation = ExploitationLevel(exploitation)
         if isinstance(automatable, str):
@@ -97,13 +98,15 @@ class LegacyDecision:
         self.technical_impact = technical_impact
         self.mission_wellbeing = mission_wellbeing
         self.methodology = methodology
-        
-        if all([
-            isinstance(self.exploitation, ExploitationLevel),
-            isinstance(self.automatable, Automatable),
-            isinstance(self.technical_impact, TechnicalImpact),
-            isinstance(self.mission_wellbeing, MissionWellbeingImpact),
-        ]):
+
+        if all(
+            [
+                isinstance(self.exploitation, ExploitationLevel),
+                isinstance(self.automatable, Automatable),
+                isinstance(self.technical_impact, TechnicalImpact),
+                isinstance(self.mission_wellbeing, MissionWellbeingImpact),
+            ]
+        ):
             self.evaluate()
 
     def evaluate(self) -> OutcomeCISA:
@@ -170,7 +173,7 @@ class LegacyDecision:
                 },
             },
         }
-        
+
         # Lookup decision based on attributes and return outcome
         outcome = OutcomeCISA(
             decision_matrix.get(self.exploitation, {})

@@ -12,11 +12,10 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/supplier.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T23:51:54.751042
+@lastGenerated 2025-08-30T00:13:44.022159
 """
 
 from enum import Enum
-from typing import Dict, Any, Optional
 from datetime import datetime
 import re
 
@@ -26,14 +25,17 @@ class ExploitationStatus(Enum):
     public_poc = "public_poc"
     active = "active"
 
+
 class UtilityLevel(Enum):
     laborious = "laborious"
     efficient = "efficient"
     super_effective = "super_effective"
 
+
 class TechnicalImpactLevel(Enum):
     partial = "partial"
     total = "total"
+
 
 class PublicSafetyImpactLevel(Enum):
     minimal = "minimal"
@@ -46,17 +48,19 @@ class ActionType(Enum):
     OUT_OF_CYCLE = "out_of_cycle"
     IMMEDIATE = "immediate"
 
+
 class DecisionPriorityLevel(Enum):
-    HIGH = "high"
-    MEDIUM = "medium"
     LOW = "low"
     IMMEDIATE = "immediate"
+    HIGH = "high"
+    MEDIUM = "medium"
+
 
 priority_map = {
     ActionType.DEFER: DecisionPriorityLevel.LOW,
     ActionType.SCHEDULED: DecisionPriorityLevel.MEDIUM,
     ActionType.OUT_OF_CYCLE: DecisionPriorityLevel.HIGH,
-    ActionType.IMMEDIATE: DecisionPriorityLevel.IMMEDIATE
+    ActionType.IMMEDIATE: DecisionPriorityLevel.IMMEDIATE,
 }
 
 
@@ -67,7 +71,13 @@ class OutcomeSupplier:
 
 
 class DecisionSupplier:
-    def __init__(self, exploitation: ExploitationStatus | str = None, utility: UtilityLevel | str = None, technical_impact: TechnicalImpactLevel | str = None, public_safety_impact: PublicSafetyImpactLevel | str = None):
+    def __init__(
+        self,
+        exploitation: ExploitationStatus | str = None,
+        utility: UtilityLevel | str = None,
+        technical_impact: TechnicalImpactLevel | str = None,
+        public_safety_impact: PublicSafetyImpactLevel | str = None,
+    ):
         if isinstance(exploitation, str):
             exploitation = ExploitationStatus(exploitation.upper())
         if isinstance(utility, str):
@@ -76,14 +86,21 @@ class DecisionSupplier:
             technical_impact = TechnicalImpactLevel(technical_impact.upper())
         if isinstance(public_safety_impact, str):
             public_safety_impact = PublicSafetyImpactLevel(public_safety_impact.upper())
-        
+
         self.exploitation = exploitation
         self.utility = utility
         self.technical_impact = technical_impact
         self.public_safety_impact = public_safety_impact
-        
+
         # Always try to evaluate if we have the minimum required parameters
-        if all([self.exploitation is not None, self.utility is not None, self.technical_impact is not None, self.public_safety_impact is not None]):
+        if all(
+            [
+                self.exploitation is not None,
+                self.utility is not None,
+                self.technical_impact is not None,
+                self.public_safety_impact is not None,
+            ]
+        ):
             self.outcome = self.evaluate()
 
     def evaluate(self) -> OutcomeSupplier:
@@ -98,146 +115,213 @@ class DecisionSupplier:
                 if self.technical_impact == TechnicalImpactLevel.partial:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.defer
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.scheduled
                 elif self.technical_impact == TechnicalImpactLevel.total:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.defer
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.scheduled
             elif self.utility == UtilityLevel.efficient:
                 if self.technical_impact == TechnicalImpactLevel.partial:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.defer
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.scheduled
                 elif self.technical_impact == TechnicalImpactLevel.total:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.scheduled
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.scheduled
             elif self.utility == UtilityLevel.super_effective:
                 if self.technical_impact == TechnicalImpactLevel.partial:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.defer
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.scheduled
                 elif self.technical_impact == TechnicalImpactLevel.total:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.scheduled
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.out_of_cycle
         elif self.exploitation == ExploitationStatus.public_poc:
             if self.utility == UtilityLevel.laborious:
                 if self.technical_impact == TechnicalImpactLevel.partial:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.defer
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.scheduled
                 elif self.technical_impact == TechnicalImpactLevel.total:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.scheduled
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.out_of_cycle
             elif self.utility == UtilityLevel.efficient:
                 if self.technical_impact == TechnicalImpactLevel.partial:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.scheduled
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.out_of_cycle
                 elif self.technical_impact == TechnicalImpactLevel.total:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.scheduled
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.out_of_cycle
             elif self.utility == UtilityLevel.super_effective:
                 if self.technical_impact == TechnicalImpactLevel.partial:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.scheduled
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.out_of_cycle
                 elif self.technical_impact == TechnicalImpactLevel.total:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.out_of_cycle
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.immediate
         elif self.exploitation == ExploitationStatus.active:
             if self.utility == UtilityLevel.laborious:
                 if self.technical_impact == TechnicalImpactLevel.partial:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.scheduled
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.out_of_cycle
                 elif self.technical_impact == TechnicalImpactLevel.total:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.out_of_cycle
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.immediate
             elif self.utility == UtilityLevel.efficient:
                 if self.technical_impact == TechnicalImpactLevel.partial:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.out_of_cycle
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.immediate
                 elif self.technical_impact == TechnicalImpactLevel.total:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.out_of_cycle
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.immediate
             elif self.utility == UtilityLevel.super_effective:
                 if self.technical_impact == TechnicalImpactLevel.partial:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.out_of_cycle
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.immediate
                 elif self.technical_impact == TechnicalImpactLevel.total:
                     if self.public_safety_impact == PublicSafetyImpactLevel.minimal:
                         return ActionType.immediate
-                    elif self.public_safety_impact == PublicSafetyImpactLevel.significant:
+                    elif (
+                        self.public_safety_impact == PublicSafetyImpactLevel.significant
+                    ):
                         return ActionType.immediate
-        
+
         # Default action for unmapped paths
         return ActionType.defer
 
-
     def to_vector(self) -> str:
         """Generate SSVC vector string representation."""
-        if not hasattr(self, 'outcome') or not self.outcome:
+        if not hasattr(self, "outcome") or not self.outcome:
             self.evaluate()
-        
-        exploitation_vector = {'NONE': 'N', 'PUBLIC_POC': 'P', 'ACTIVE': 'A'}.get(str(self.exploitation).split('.')[-1] if self.exploitation else '', '')
-        utility_vector = {'LABORIOUS': 'L', 'EFFICIENT': 'E', 'SUPER_EFFECTIVE': 'S'}.get(str(self.utility).split('.')[-1] if self.utility else '', '')
-        technical_impact_vector = {'PARTIAL': 'P', 'TOTAL': 'T'}.get(str(self.technical_impact).split('.')[-1] if self.technical_impact else '', '')
-        public_safety_vector = {'MINIMAL': 'M', 'SIGNIFICANT': 'S'}.get(str(self.public_safety_impact).split('.')[-1] if self.public_safety_impact else '', '')
+
+        exploitation_vector = {"NONE": "N", "PUBLIC_POC": "P", "ACTIVE": "A"}.get(
+            str(self.exploitation).split(".")[-1] if self.exploitation else "", ""
+        )
+        utility_vector = {
+            "LABORIOUS": "L",
+            "EFFICIENT": "E",
+            "SUPER_EFFECTIVE": "S",
+        }.get(str(self.utility).split(".")[-1] if self.utility else "", "")
+        technical_impact_vector = {"PARTIAL": "P", "TOTAL": "T"}.get(
+            str(self.technical_impact).split(".")[-1] if self.technical_impact else "",
+            "",
+        )
+        public_safety_vector = {"MINIMAL": "M", "SIGNIFICANT": "S"}.get(
+            str(self.public_safety_impact).split(".")[-1]
+            if self.public_safety_impact
+            else "",
+            "",
+        )
         timestamp = datetime.now().isoformat()
         return f"SUPPLIERv1/E:{exploitation_vector}/U:{utility_vector}/T:{technical_impact_vector}/P:{public_safety_vector}/{timestamp}/"
-    
+
     @classmethod
-    def from_vector(cls, vector_string: str) -> 'DecisionSupplier':
+    def from_vector(cls, vector_string: str) -> "DecisionSupplier":
         """Parse SSVC vector string to create decision instance."""
-        pattern = r'^SUPPLIERv1/(.+)/([0-9T:\-\.Z]+)/?$'
+        pattern = r"^SUPPLIERv1/(.+)/([0-9T:\-\.Z]+)/?$"
         match = re.match(pattern, vector_string)
-        
+
         if not match:
-            raise ValueError(f"Invalid vector string format for Supplier: {vector_string}")
-        
+            raise ValueError(
+                f"Invalid vector string format for Supplier: {vector_string}"
+            )
+
         params_string = match.group(1)
         params = {}
-        
-        param_pairs = params_string.split('/')
+
+        param_pairs = params_string.split("/")
         for pair in param_pairs:
-            if ':' in pair:
-                key, value = pair.split(':', 1)
+            if ":" in pair:
+                key, value = pair.split(":", 1)
                 params[key] = value
-        
-        exploitation_match = params.get('E')
-        utility_match = params.get('U')
-        technical_impact_match = params.get('T')
-        public_safety_match = params.get('P')
-        
+
+        exploitation_match = params.get("E")
+        utility_match = params.get("U")
+        technical_impact_match = params.get("T")
+        public_safety_match = params.get("P")
+
         return cls(
-            exploitation={'N': 'none', 'P': 'public_poc', 'A': 'active'}.get(exploitation_match, exploitation_match) if exploitation_match else None,
-            utility={'L': 'laborious', 'E': 'efficient', 'S': 'super_effective'}.get(utility_match, utility_match) if utility_match else None,
-            technical_impact={'P': 'partial', 'T': 'total'}.get(technical_impact_match, technical_impact_match) if technical_impact_match else None,
-            public_safety_impact={'M': 'minimal', 'S': 'significant'}.get(public_safety_match, public_safety_match) if public_safety_match else None,
+            exploitation={"N": "none", "P": "public_poc", "A": "active"}.get(
+                exploitation_match, exploitation_match
+            )
+            if exploitation_match
+            else None,
+            utility={"L": "laborious", "E": "efficient", "S": "super_effective"}.get(
+                utility_match, utility_match
+            )
+            if utility_match
+            else None,
+            technical_impact={"P": "partial", "T": "total"}.get(
+                technical_impact_match, technical_impact_match
+            )
+            if technical_impact_match
+            else None,
+            public_safety_impact={"M": "minimal", "S": "significant"}.get(
+                public_safety_match, public_safety_match
+            )
+            if public_safety_match
+            else None,
         )

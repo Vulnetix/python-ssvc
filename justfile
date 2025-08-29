@@ -91,18 +91,42 @@ generate-plugins: validate-methodologies
 # Verify checksums of all generated files from documentation metadata
 verify-checksums:
     #!/bin/bash
+    # Color codes
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    BLUE='\033[0;34m'
+    NC='\033[0m' # No Color
+    
     echo "Verifying checksums of generated files..."
+    
+    success_count=0
+    error_count=0
+    
     for doc in docs/*.md; do
         if [ -f "$doc" ]; then
             py_path=$(rg -N "path: src/ssvc/plugins/.*\.py" --only-matching "$doc" 2>/dev/null | head -1 | sed 's/path: //' || true)
             py_checksum=$(rg -N "checksum: [a-f0-9]+" --only-matching "$doc" 2>/dev/null | head -1 | sed 's/checksum: //' || true)
             if [ -n "$py_path" ] && [ -n "$py_checksum" ] && [ -f "$py_path" ]; then
                 echo "Verifying $py_path..."
-                echo "$py_checksum  $py_path" | sha1sum -c || echo "CHECKSUM MISMATCH: $py_path"
+                if echo "$py_checksum  $py_path" | sha1sum -c --quiet >/dev/null 2>&1; then
+                    echo -e "${GREEN}$py_path: OK${NC}"
+                    ((success_count++))
+                else
+                    echo -e "${RED}CHECKSUM MISMATCH: $py_path${NC}"
+                    ((error_count++))
+                fi
             fi
         fi
     done
-    echo "Checksum verification complete."
+    
+    echo ""
+    if [ $error_count -eq 0 ]; then
+        echo -e "${GREEN}Checksum verification complete. All $success_count files verified successfully!${NC}"
+    else
+        echo -e "${RED}Checksum verification failed. $error_count file(s) have checksum mismatches, $success_count file(s) verified successfully.${NC}"
+        exit 1
+    fi
 
 # Run full development cycle: generate plugins, test
 dev: generate-plugins test
