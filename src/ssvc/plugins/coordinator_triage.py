@@ -12,11 +12,10 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/coordinator_triage.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T23:51:54.816560
+@lastGenerated 2025-08-30T00:13:44.359975
 """
 
 from enum import Enum
-from typing import Dict, Any, Optional
 from datetime import datetime
 import re
 
@@ -25,22 +24,27 @@ class ReportPublicStatus(Enum):
     YES = "YES"
     NO = "NO"
 
+
 class SupplierContactedStatus(Enum):
     YES = "YES"
     NO = "NO"
+
 
 class ReportCredibilityLevel(Enum):
     CREDIBLE = "CREDIBLE"
     NOT_CREDIBLE = "NOT_CREDIBLE"
 
+
 class SupplierCardinalityLevel(Enum):
     ONE = "ONE"
     MULTIPLE = "MULTIPLE"
+
 
 class UtilityLevel(Enum):
     LABORIOUS = "LABORIOUS"
     EFFICIENT = "EFFICIENT"
     SUPER_EFFECTIVE = "SUPER_EFFECTIVE"
+
 
 class PublicSafetyImpactLevel(Enum):
     MINIMAL = "MINIMAL"
@@ -52,15 +56,17 @@ class ActionType(Enum):
     TRACK = "track"
     COORDINATE = "coordinate"
 
+
 class DecisionPriorityLevel(Enum):
-    LOW = "low"
     MEDIUM = "medium"
+    LOW = "low"
     HIGH = "high"
+
 
 priority_map = {
     ActionType.DECLINE: DecisionPriorityLevel.LOW,
     ActionType.TRACK: DecisionPriorityLevel.MEDIUM,
-    ActionType.COORDINATE: DecisionPriorityLevel.HIGH
+    ActionType.COORDINATE: DecisionPriorityLevel.HIGH,
 }
 
 
@@ -71,7 +77,15 @@ class OutcomeCoordinatorTriage:
 
 
 class DecisionCoordinatorTriage:
-    def __init__(self, report_public: ReportPublicStatus | str = None, supplier_contacted: SupplierContactedStatus | str = None, report_credibility: ReportCredibilityLevel | str = None, supplier_cardinality: SupplierCardinalityLevel | str = None, utility: UtilityLevel | str = None, public_safety_impact: PublicSafetyImpactLevel | str = None):
+    def __init__(
+        self,
+        report_public: ReportPublicStatus | str = None,
+        supplier_contacted: SupplierContactedStatus | str = None,
+        report_credibility: ReportCredibilityLevel | str = None,
+        supplier_cardinality: SupplierCardinalityLevel | str = None,
+        utility: UtilityLevel | str = None,
+        public_safety_impact: PublicSafetyImpactLevel | str = None,
+    ):
         if isinstance(report_public, str):
             report_public = ReportPublicStatus(report_public.upper())
         if isinstance(supplier_contacted, str):
@@ -79,21 +93,32 @@ class DecisionCoordinatorTriage:
         if isinstance(report_credibility, str):
             report_credibility = ReportCredibilityLevel(report_credibility.upper())
         if isinstance(supplier_cardinality, str):
-            supplier_cardinality = SupplierCardinalityLevel(supplier_cardinality.upper())
+            supplier_cardinality = SupplierCardinalityLevel(
+                supplier_cardinality.upper()
+            )
         if isinstance(utility, str):
             utility = UtilityLevel(utility.upper())
         if isinstance(public_safety_impact, str):
             public_safety_impact = PublicSafetyImpactLevel(public_safety_impact.upper())
-        
+
         self.report_public = report_public
         self.supplier_contacted = supplier_contacted
         self.report_credibility = report_credibility
         self.supplier_cardinality = supplier_cardinality
         self.utility = utility
         self.public_safety_impact = public_safety_impact
-        
+
         # Always try to evaluate if we have the minimum required parameters
-        if all([self.report_public is not None, self.supplier_contacted is not None, self.report_credibility is not None, self.supplier_cardinality is not None, self.utility is not None, self.public_safety_impact is not None]):
+        if all(
+            [
+                self.report_public is not None,
+                self.supplier_contacted is not None,
+                self.report_credibility is not None,
+                self.supplier_cardinality is not None,
+                self.utility is not None,
+                self.public_safety_impact is not None,
+            ]
+        ):
             self.outcome = self.evaluate()
 
     def evaluate(self) -> OutcomeCoordinatorTriage:
@@ -108,320 +133,659 @@ class DecisionCoordinatorTriage:
                 if self.report_credibility == ReportCredibilityLevel.CREDIBLE:
                     if self.supplier_cardinality == SupplierCardinalityLevel.MULTIPLE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.COORDINATE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.TRACK
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.TRACK
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                     elif self.supplier_cardinality == SupplierCardinalityLevel.ONE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.TRACK
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                 elif self.report_credibility == ReportCredibilityLevel.NOT_CREDIBLE:
                     if self.supplier_cardinality == SupplierCardinalityLevel.MULTIPLE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                     elif self.supplier_cardinality == SupplierCardinalityLevel.ONE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
             elif self.supplier_contacted == SupplierContactedStatus.NO:
                 if self.report_credibility == ReportCredibilityLevel.CREDIBLE:
                     if self.supplier_cardinality == SupplierCardinalityLevel.MULTIPLE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.COORDINATE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.TRACK
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                     elif self.supplier_cardinality == SupplierCardinalityLevel.ONE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                 elif self.report_credibility == ReportCredibilityLevel.NOT_CREDIBLE:
                     if self.supplier_cardinality == SupplierCardinalityLevel.MULTIPLE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                     elif self.supplier_cardinality == SupplierCardinalityLevel.ONE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
         elif self.report_public == ReportPublicStatus.NO:
             if self.supplier_contacted == SupplierContactedStatus.YES:
                 if self.report_credibility == ReportCredibilityLevel.CREDIBLE:
                     if self.supplier_cardinality == SupplierCardinalityLevel.MULTIPLE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.COORDINATE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.TRACK
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.TRACK
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.TRACK
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.COORDINATE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.COORDINATE
                     elif self.supplier_cardinality == SupplierCardinalityLevel.ONE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.TRACK
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.TRACK
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.TRACK
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.COORDINATE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                 elif self.report_credibility == ReportCredibilityLevel.NOT_CREDIBLE:
                     if self.supplier_cardinality == SupplierCardinalityLevel.MULTIPLE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.COORDINATE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                     elif self.supplier_cardinality == SupplierCardinalityLevel.ONE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
             elif self.supplier_contacted == SupplierContactedStatus.NO:
                 if self.report_credibility == ReportCredibilityLevel.CREDIBLE:
                     if self.supplier_cardinality == SupplierCardinalityLevel.MULTIPLE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.COORDINATE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.TRACK
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                     elif self.supplier_cardinality == SupplierCardinalityLevel.ONE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                 elif self.report_credibility == ReportCredibilityLevel.NOT_CREDIBLE:
                     if self.supplier_cardinality == SupplierCardinalityLevel.MULTIPLE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                     elif self.supplier_cardinality == SupplierCardinalityLevel.ONE:
                         if self.utility == UtilityLevel.SUPER_EFFECTIVE:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.EFFICIENT:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
                         elif self.utility == UtilityLevel.LABORIOUS:
-                            if self.public_safety_impact == PublicSafetyImpactLevel.SIGNIFICANT:
+                            if (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.SIGNIFICANT
+                            ):
                                 return ActionType.DECLINE
-                            elif self.public_safety_impact == PublicSafetyImpactLevel.MINIMAL:
+                            elif (
+                                self.public_safety_impact
+                                == PublicSafetyImpactLevel.MINIMAL
+                            ):
                                 return ActionType.DECLINE
-        
+
         # Default action for unmapped paths
         return ActionType.DECLINE
 
-
     def to_vector(self) -> str:
         """Generate SSVC vector string representation."""
-        if not hasattr(self, 'outcome') or not self.outcome:
+        if not hasattr(self, "outcome") or not self.outcome:
             self.evaluate()
-        
-        report_public_vector = {'YES': 'Y', 'NO': 'N'}.get(str(self.report_public).split('.')[-1] if self.report_public else '', '')
-        supplier_contacted_vector = {'YES': 'Y', 'NO': 'N'}.get(str(self.supplier_contacted).split('.')[-1] if self.supplier_contacted else '', '')
-        report_credibility_vector = {'CREDIBLE': 'C', 'NOT_CREDIBLE': 'N'}.get(str(self.report_credibility).split('.')[-1] if self.report_credibility else '', '')
-        supplier_cardinality_vector = {'ONE': 'O', 'MULTIPLE': 'M'}.get(str(self.supplier_cardinality).split('.')[-1] if self.supplier_cardinality else '', '')
-        utility_vector = {'LABORIOUS': 'L', 'EFFICIENT': 'E', 'SUPER_EFFECTIVE': 'S'}.get(str(self.utility).split('.')[-1] if self.utility else '', '')
-        public_safety_vector = {'MINIMAL': 'M', 'SIGNIFICANT': 'S'}.get(str(self.public_safety_impact).split('.')[-1] if self.public_safety_impact else '', '')
+
+        report_public_vector = {"YES": "Y", "NO": "N"}.get(
+            str(self.report_public).split(".")[-1] if self.report_public else "", ""
+        )
+        supplier_contacted_vector = {"YES": "Y", "NO": "N"}.get(
+            str(self.supplier_contacted).split(".")[-1]
+            if self.supplier_contacted
+            else "",
+            "",
+        )
+        report_credibility_vector = {"CREDIBLE": "C", "NOT_CREDIBLE": "N"}.get(
+            str(self.report_credibility).split(".")[-1]
+            if self.report_credibility
+            else "",
+            "",
+        )
+        supplier_cardinality_vector = {"ONE": "O", "MULTIPLE": "M"}.get(
+            str(self.supplier_cardinality).split(".")[-1]
+            if self.supplier_cardinality
+            else "",
+            "",
+        )
+        utility_vector = {
+            "LABORIOUS": "L",
+            "EFFICIENT": "E",
+            "SUPER_EFFECTIVE": "S",
+        }.get(str(self.utility).split(".")[-1] if self.utility else "", "")
+        public_safety_vector = {"MINIMAL": "M", "SIGNIFICANT": "S"}.get(
+            str(self.public_safety_impact).split(".")[-1]
+            if self.public_safety_impact
+            else "",
+            "",
+        )
         timestamp = datetime.now().isoformat()
         return f"COORD_TRIAGEv1/RP:{report_public_vector}/SC:{supplier_contacted_vector}/RC:{report_credibility_vector}/CA:{supplier_cardinality_vector}/U:{utility_vector}/PS:{public_safety_vector}/{timestamp}/"
-    
+
     @classmethod
-    def from_vector(cls, vector_string: str) -> 'DecisionCoordinatorTriage':
+    def from_vector(cls, vector_string: str) -> "DecisionCoordinatorTriage":
         """Parse SSVC vector string to create decision instance."""
-        pattern = r'^COORD_TRIAGEv1/(.+)/([0-9T:\-\.Z]+)/?$'
+        pattern = r"^COORD_TRIAGEv1/(.+)/([0-9T:\-\.Z]+)/?$"
         match = re.match(pattern, vector_string)
-        
+
         if not match:
-            raise ValueError(f"Invalid vector string format for Coordinator Triage: {vector_string}")
-        
+            raise ValueError(
+                f"Invalid vector string format for Coordinator Triage: {vector_string}"
+            )
+
         params_string = match.group(1)
         params = {}
-        
-        param_pairs = params_string.split('/')
+
+        param_pairs = params_string.split("/")
         for pair in param_pairs:
-            if ':' in pair:
-                key, value = pair.split(':', 1)
+            if ":" in pair:
+                key, value = pair.split(":", 1)
                 params[key] = value
-        
-        report_public_match = params.get('RP')
-        supplier_contacted_match = params.get('SC')
-        report_credibility_match = params.get('RC')
-        supplier_cardinality_match = params.get('CA')
-        utility_match = params.get('U')
-        public_safety_match = params.get('PS')
-        
+
+        report_public_match = params.get("RP")
+        supplier_contacted_match = params.get("SC")
+        report_credibility_match = params.get("RC")
+        supplier_cardinality_match = params.get("CA")
+        utility_match = params.get("U")
+        public_safety_match = params.get("PS")
+
         return cls(
-            report_public={'Y': 'YES', 'N': 'NO'}.get(report_public_match, report_public_match) if report_public_match else None,
-            supplier_contacted={'Y': 'YES', 'N': 'NO'}.get(supplier_contacted_match, supplier_contacted_match) if supplier_contacted_match else None,
-            report_credibility={'C': 'CREDIBLE', 'N': 'NOT_CREDIBLE'}.get(report_credibility_match, report_credibility_match) if report_credibility_match else None,
-            supplier_cardinality={'O': 'ONE', 'M': 'MULTIPLE'}.get(supplier_cardinality_match, supplier_cardinality_match) if supplier_cardinality_match else None,
-            utility={'L': 'LABORIOUS', 'E': 'EFFICIENT', 'S': 'SUPER_EFFECTIVE'}.get(utility_match, utility_match) if utility_match else None,
-            public_safety_impact={'M': 'MINIMAL', 'S': 'SIGNIFICANT'}.get(public_safety_match, public_safety_match) if public_safety_match else None,
+            report_public={"Y": "YES", "N": "NO"}.get(
+                report_public_match, report_public_match
+            )
+            if report_public_match
+            else None,
+            supplier_contacted={"Y": "YES", "N": "NO"}.get(
+                supplier_contacted_match, supplier_contacted_match
+            )
+            if supplier_contacted_match
+            else None,
+            report_credibility={"C": "CREDIBLE", "N": "NOT_CREDIBLE"}.get(
+                report_credibility_match, report_credibility_match
+            )
+            if report_credibility_match
+            else None,
+            supplier_cardinality={"O": "ONE", "M": "MULTIPLE"}.get(
+                supplier_cardinality_match, supplier_cardinality_match
+            )
+            if supplier_cardinality_match
+            else None,
+            utility={"L": "LABORIOUS", "E": "EFFICIENT", "S": "SUPER_EFFECTIVE"}.get(
+                utility_match, utility_match
+            )
+            if utility_match
+            else None,
+            public_safety_impact={"M": "MINIMAL", "S": "SIGNIFICANT"}.get(
+                public_safety_match, public_safety_match
+            )
+            if public_safety_match
+            else None,
         )

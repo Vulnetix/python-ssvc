@@ -12,11 +12,10 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/coordinator_publication.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T23:51:54.776800
+@lastGenerated 2025-08-30T00:13:44.189903
 """
 
 from enum import Enum
-from typing import Dict, Any, Optional
 from datetime import datetime
 import re
 
@@ -26,10 +25,12 @@ class SupplierInvolvementLevel(Enum):
     cooperative = "cooperative"
     uncooperative_unresponsive = "uncooperative_unresponsive"
 
+
 class ExploitationStatus(Enum):
     none = "none"
     public_poc = "public_poc"
     active = "active"
+
 
 class PublicValueAddedLevel(Enum):
     limited = "limited"
@@ -41,13 +42,15 @@ class ActionType(Enum):
     PUBLISH = "publish"
     DONT_PUBLISH = "dont_publish"
 
+
 class DecisionPriorityLevel(Enum):
-    HIGH = "high"
     LOW = "low"
+    HIGH = "high"
+
 
 priority_map = {
     ActionType.PUBLISH: DecisionPriorityLevel.HIGH,
-    ActionType.DONT_PUBLISH: DecisionPriorityLevel.LOW
+    ActionType.DONT_PUBLISH: DecisionPriorityLevel.LOW,
 }
 
 
@@ -58,20 +61,33 @@ class OutcomeCoordinatorPublication:
 
 
 class DecisionCoordinatorPublication:
-    def __init__(self, supplier_involvement: SupplierInvolvementLevel | str = None, exploitation: ExploitationStatus | str = None, public_value_added: PublicValueAddedLevel | str = None):
+    def __init__(
+        self,
+        supplier_involvement: SupplierInvolvementLevel | str = None,
+        exploitation: ExploitationStatus | str = None,
+        public_value_added: PublicValueAddedLevel | str = None,
+    ):
         if isinstance(supplier_involvement, str):
-            supplier_involvement = SupplierInvolvementLevel(supplier_involvement.upper())
+            supplier_involvement = SupplierInvolvementLevel(
+                supplier_involvement.upper()
+            )
         if isinstance(exploitation, str):
             exploitation = ExploitationStatus(exploitation.upper())
         if isinstance(public_value_added, str):
             public_value_added = PublicValueAddedLevel(public_value_added.upper())
-        
+
         self.supplier_involvement = supplier_involvement
         self.exploitation = exploitation
         self.public_value_added = public_value_added
-        
+
         # Always try to evaluate if we have the minimum required parameters
-        if all([self.supplier_involvement is not None, self.exploitation is not None, self.public_value_added is not None]):
+        if all(
+            [
+                self.supplier_involvement is not None,
+                self.exploitation is not None,
+                self.public_value_added is not None,
+            ]
+        ):
             self.outcome = self.evaluate()
 
     def evaluate(self) -> OutcomeCoordinatorPublication:
@@ -125,7 +141,10 @@ class DecisionCoordinatorPublication:
                     return ActionType.publish
                 elif self.public_value_added == PublicValueAddedLevel.precedence:
                     return ActionType.publish
-        elif self.supplier_involvement == SupplierInvolvementLevel.uncooperative_unresponsive:
+        elif (
+            self.supplier_involvement
+            == SupplierInvolvementLevel.uncooperative_unresponsive
+        ):
             if self.exploitation == ExploitationStatus.none:
                 if self.public_value_added == PublicValueAddedLevel.limited:
                     return ActionType.dont_publish
@@ -147,46 +166,83 @@ class DecisionCoordinatorPublication:
                     return ActionType.publish
                 elif self.public_value_added == PublicValueAddedLevel.precedence:
                     return ActionType.publish
-        
+
         # Default action for unmapped paths
         return ActionType.dont_publish
 
-
     def to_vector(self) -> str:
         """Generate SSVC vector string representation."""
-        if not hasattr(self, 'outcome') or not self.outcome:
+        if not hasattr(self, "outcome") or not self.outcome:
             self.evaluate()
-        
-        supplier_involvement_vector = {'FIX_READY': 'F', 'COOPERATIVE': 'C', 'UNCOOPERATIVE_UNRESPONSIVE': 'U'}.get(str(self.supplier_involvement).split('.')[-1] if self.supplier_involvement else '', '')
-        exploitation_vector = {'NONE': 'N', 'PUBLIC_POC': 'P', 'ACTIVE': 'A'}.get(str(self.exploitation).split('.')[-1] if self.exploitation else '', '')
-        public_value_added_vector = {'LIMITED': 'L', 'AMPLIATIVE': 'A', 'PRECEDENCE': 'P'}.get(str(self.public_value_added).split('.')[-1] if self.public_value_added else '', '')
+
+        supplier_involvement_vector = {
+            "FIX_READY": "F",
+            "COOPERATIVE": "C",
+            "UNCOOPERATIVE_UNRESPONSIVE": "U",
+        }.get(
+            str(self.supplier_involvement).split(".")[-1]
+            if self.supplier_involvement
+            else "",
+            "",
+        )
+        exploitation_vector = {"NONE": "N", "PUBLIC_POC": "P", "ACTIVE": "A"}.get(
+            str(self.exploitation).split(".")[-1] if self.exploitation else "", ""
+        )
+        public_value_added_vector = {
+            "LIMITED": "L",
+            "AMPLIATIVE": "A",
+            "PRECEDENCE": "P",
+        }.get(
+            str(self.public_value_added).split(".")[-1]
+            if self.public_value_added
+            else "",
+            "",
+        )
         timestamp = datetime.now().isoformat()
         return f"COORD_PUBv1/SI:{supplier_involvement_vector}/E:{exploitation_vector}/PV:{public_value_added_vector}/{timestamp}/"
-    
+
     @classmethod
-    def from_vector(cls, vector_string: str) -> 'DecisionCoordinatorPublication':
+    def from_vector(cls, vector_string: str) -> "DecisionCoordinatorPublication":
         """Parse SSVC vector string to create decision instance."""
-        pattern = r'^COORD_PUBv1/(.+)/([0-9T:\-\.Z]+)/?$'
+        pattern = r"^COORD_PUBv1/(.+)/([0-9T:\-\.Z]+)/?$"
         match = re.match(pattern, vector_string)
-        
+
         if not match:
-            raise ValueError(f"Invalid vector string format for Coordinator Publication: {vector_string}")
-        
+            raise ValueError(
+                f"Invalid vector string format for Coordinator Publication: {vector_string}"
+            )
+
         params_string = match.group(1)
         params = {}
-        
-        param_pairs = params_string.split('/')
+
+        param_pairs = params_string.split("/")
         for pair in param_pairs:
-            if ':' in pair:
-                key, value = pair.split(':', 1)
+            if ":" in pair:
+                key, value = pair.split(":", 1)
                 params[key] = value
-        
-        supplier_involvement_match = params.get('SI')
-        exploitation_match = params.get('E')
-        public_value_added_match = params.get('PV')
-        
+
+        supplier_involvement_match = params.get("SI")
+        exploitation_match = params.get("E")
+        public_value_added_match = params.get("PV")
+
         return cls(
-            supplier_involvement={'F': 'fix_ready', 'C': 'cooperative', 'U': 'uncooperative_unresponsive'}.get(supplier_involvement_match, supplier_involvement_match) if supplier_involvement_match else None,
-            exploitation={'N': 'none', 'P': 'public_poc', 'A': 'active'}.get(exploitation_match, exploitation_match) if exploitation_match else None,
-            public_value_added={'L': 'limited', 'A': 'ampliative', 'P': 'precedence'}.get(public_value_added_match, public_value_added_match) if public_value_added_match else None,
+            supplier_involvement={
+                "F": "fix_ready",
+                "C": "cooperative",
+                "U": "uncooperative_unresponsive",
+            }.get(supplier_involvement_match, supplier_involvement_match)
+            if supplier_involvement_match
+            else None,
+            exploitation={"N": "none", "P": "public_poc", "A": "active"}.get(
+                exploitation_match, exploitation_match
+            )
+            if exploitation_match
+            else None,
+            public_value_added={
+                "L": "limited",
+                "A": "ampliative",
+                "P": "precedence",
+            }.get(public_value_added_match, public_value_added_match)
+            if public_value_added_match
+            else None,
         )

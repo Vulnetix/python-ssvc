@@ -5,7 +5,6 @@ These tests ensure the old API still works but with deprecation warnings.
 
 import pytest
 import warnings
-import ssvc
 from ssvc import (
     ExploitationLevel,
     Automatable,
@@ -103,7 +102,7 @@ def test_legacy_incremental():
         decision.automatable = Automatable.YES
         decision.technical_impact = TechnicalImpact.PARTIAL
         decision.mission_wellbeing = MissionWellbeingImpact.MEDIUM
-        
+
         outcome = decision.evaluate()
         assert outcome.priority == DecisionPriority.LOW
         assert outcome.action == ActionCISA.TRACK

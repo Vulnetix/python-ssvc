@@ -12,11 +12,10 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/ai_llm_triage.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T23:51:54.828806
+@lastGenerated 2025-08-30T00:13:44.426643
 """
 
 from enum import Enum
-from typing import Dict, Any, Optional
 from datetime import datetime
 import re
 
@@ -26,15 +25,18 @@ class ExploitationStatus(Enum):
     POC = "POC"
     ACTIVE = "ACTIVE"
 
+
 class StakeholderRole(Enum):
     DEPLOYER = "DEPLOYER"
     APPLICATION = "APPLICATION"
     USER = "USER"
 
+
 class DeployerAttackVector(Enum):
     SUPPLY_CHAIN = "SUPPLY_CHAIN"
     MODEL_POISONING = "MODEL_POISONING"
     INFRASTRUCTURE_COMPROMISE = "INFRASTRUCTURE_COMPROMISE"
+
 
 class ApplicationAttackVector(Enum):
     PROMPT_INJECTION = "PROMPT_INJECTION"
@@ -42,6 +44,7 @@ class ApplicationAttackVector(Enum):
     PRIVILEGE_ESCALATION = "PRIVILEGE_ESCALATION"
     MEMORY_MANIPULATION = "MEMORY_MANIPULATION"
     ALIGNMENT_BYPASS = "ALIGNMENT_BYPASS"
+
 
 class UserAttackVector(Enum):
     DATA_EXTRACTION = "DATA_EXTRACTION"
@@ -59,11 +62,13 @@ class ActionType(Enum):
     LOW_TRUST = "low_trust"
     IMMEDIATE_ACTION = "immediate_action"
 
+
 class DecisionPriorityLevel(Enum):
-    LOW = "low"
     MEDIUM = "medium"
-    HIGH = "high"
     IMMEDIATE = "immediate"
+    LOW = "low"
+    HIGH = "high"
+
 
 priority_map = {
     ActionType.MONITOR: DecisionPriorityLevel.LOW,
@@ -73,7 +78,7 @@ priority_map = {
     ActionType.RETRAIN_MODEL: DecisionPriorityLevel.HIGH,
     ActionType.HIGH_RISK: DecisionPriorityLevel.HIGH,
     ActionType.LOW_TRUST: DecisionPriorityLevel.MEDIUM,
-    ActionType.IMMEDIATE_ACTION: DecisionPriorityLevel.IMMEDIATE
+    ActionType.IMMEDIATE_ACTION: DecisionPriorityLevel.IMMEDIATE,
 }
 
 
@@ -84,26 +89,45 @@ class OutcomeAiLlmTriage:
 
 
 class DecisionAiLlmTriage:
-    def __init__(self, exploitation: ExploitationStatus | str = None, stakeholder_role: StakeholderRole | str = None, deployer_attack_vector: DeployerAttackVector | str = None, application_attack_vector: ApplicationAttackVector | str = None, user_attack_vector: UserAttackVector | str = None):
+    def __init__(
+        self,
+        exploitation: ExploitationStatus | str = None,
+        stakeholder_role: StakeholderRole | str = None,
+        deployer_attack_vector: DeployerAttackVector | str = None,
+        application_attack_vector: ApplicationAttackVector | str = None,
+        user_attack_vector: UserAttackVector | str = None,
+    ):
         if isinstance(exploitation, str):
             exploitation = ExploitationStatus(exploitation.upper())
         if isinstance(stakeholder_role, str):
             stakeholder_role = StakeholderRole(stakeholder_role.upper())
         if isinstance(deployer_attack_vector, str):
-            deployer_attack_vector = DeployerAttackVector(deployer_attack_vector.upper())
+            deployer_attack_vector = DeployerAttackVector(
+                deployer_attack_vector.upper()
+            )
         if isinstance(application_attack_vector, str):
-            application_attack_vector = ApplicationAttackVector(application_attack_vector.upper())
+            application_attack_vector = ApplicationAttackVector(
+                application_attack_vector.upper()
+            )
         if isinstance(user_attack_vector, str):
             user_attack_vector = UserAttackVector(user_attack_vector.upper())
-        
+
         self.exploitation = exploitation
         self.stakeholder_role = stakeholder_role
         self.deployer_attack_vector = deployer_attack_vector
         self.application_attack_vector = application_attack_vector
         self.user_attack_vector = user_attack_vector
-        
+
         # Always try to evaluate if we have the minimum required parameters
-        if all([self.exploitation is not None, self.stakeholder_role is not None, self.deployer_attack_vector is not None, self.application_attack_vector is not None, self.user_attack_vector is not None]):
+        if all(
+            [
+                self.exploitation is not None,
+                self.stakeholder_role is not None,
+                self.deployer_attack_vector is not None,
+                self.application_attack_vector is not None,
+                self.user_attack_vector is not None,
+            ]
+        ):
             self.outcome = self.evaluate()
 
     def evaluate(self) -> OutcomeAiLlmTriage:
@@ -117,20 +141,40 @@ class DecisionAiLlmTriage:
             if self.stakeholder_role == StakeholderRole.DEPLOYER:
                 if self.deployer_attack_vector == DeployerAttackVector.SUPPLY_CHAIN:
                     return ActionType.ASSESS_RISK
-                elif self.deployer_attack_vector == DeployerAttackVector.MODEL_POISONING:
+                elif (
+                    self.deployer_attack_vector == DeployerAttackVector.MODEL_POISONING
+                ):
                     return ActionType.ASSESS_RISK
-                elif self.deployer_attack_vector == DeployerAttackVector.INFRASTRUCTURE_COMPROMISE:
+                elif (
+                    self.deployer_attack_vector
+                    == DeployerAttackVector.INFRASTRUCTURE_COMPROMISE
+                ):
                     return ActionType.MONITOR
             elif self.stakeholder_role == StakeholderRole.APPLICATION:
-                if self.application_attack_vector == ApplicationAttackVector.PROMPT_INJECTION:
+                if (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.PROMPT_INJECTION
+                ):
                     return ActionType.MONITOR
-                elif self.application_attack_vector == ApplicationAttackVector.TOOL_MISUSE:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.TOOL_MISUSE
+                ):
                     return ActionType.PROMPT_SANITIZATION
-                elif self.application_attack_vector == ApplicationAttackVector.PRIVILEGE_ESCALATION:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.PRIVILEGE_ESCALATION
+                ):
                     return ActionType.FINETUNE_GUARDRAILS
-                elif self.application_attack_vector == ApplicationAttackVector.MEMORY_MANIPULATION:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.MEMORY_MANIPULATION
+                ):
                     return ActionType.MONITOR
-                elif self.application_attack_vector == ApplicationAttackVector.ALIGNMENT_BYPASS:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.ALIGNMENT_BYPASS
+                ):
                     return ActionType.MONITOR
             elif self.stakeholder_role == StakeholderRole.USER:
                 if self.user_attack_vector == UserAttackVector.DATA_EXTRACTION:
@@ -143,20 +187,40 @@ class DecisionAiLlmTriage:
             if self.stakeholder_role == StakeholderRole.DEPLOYER:
                 if self.deployer_attack_vector == DeployerAttackVector.SUPPLY_CHAIN:
                     return ActionType.FINETUNE_GUARDRAILS
-                elif self.deployer_attack_vector == DeployerAttackVector.MODEL_POISONING:
+                elif (
+                    self.deployer_attack_vector == DeployerAttackVector.MODEL_POISONING
+                ):
                     return ActionType.RETRAIN_MODEL
-                elif self.deployer_attack_vector == DeployerAttackVector.INFRASTRUCTURE_COMPROMISE:
+                elif (
+                    self.deployer_attack_vector
+                    == DeployerAttackVector.INFRASTRUCTURE_COMPROMISE
+                ):
                     return ActionType.ASSESS_RISK
             elif self.stakeholder_role == StakeholderRole.APPLICATION:
-                if self.application_attack_vector == ApplicationAttackVector.PROMPT_INJECTION:
+                if (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.PROMPT_INJECTION
+                ):
                     return ActionType.PROMPT_SANITIZATION
-                elif self.application_attack_vector == ApplicationAttackVector.TOOL_MISUSE:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.TOOL_MISUSE
+                ):
                     return ActionType.FINETUNE_GUARDRAILS
-                elif self.application_attack_vector == ApplicationAttackVector.PRIVILEGE_ESCALATION:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.PRIVILEGE_ESCALATION
+                ):
                     return ActionType.RETRAIN_MODEL
-                elif self.application_attack_vector == ApplicationAttackVector.MEMORY_MANIPULATION:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.MEMORY_MANIPULATION
+                ):
                     return ActionType.FINETUNE_GUARDRAILS
-                elif self.application_attack_vector == ApplicationAttackVector.ALIGNMENT_BYPASS:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.ALIGNMENT_BYPASS
+                ):
                     return ActionType.PROMPT_SANITIZATION
             elif self.stakeholder_role == StakeholderRole.USER:
                 if self.user_attack_vector == UserAttackVector.DATA_EXTRACTION:
@@ -169,20 +233,40 @@ class DecisionAiLlmTriage:
             if self.stakeholder_role == StakeholderRole.DEPLOYER:
                 if self.deployer_attack_vector == DeployerAttackVector.SUPPLY_CHAIN:
                     return ActionType.IMMEDIATE_ACTION
-                elif self.deployer_attack_vector == DeployerAttackVector.MODEL_POISONING:
+                elif (
+                    self.deployer_attack_vector == DeployerAttackVector.MODEL_POISONING
+                ):
                     return ActionType.IMMEDIATE_ACTION
-                elif self.deployer_attack_vector == DeployerAttackVector.INFRASTRUCTURE_COMPROMISE:
+                elif (
+                    self.deployer_attack_vector
+                    == DeployerAttackVector.INFRASTRUCTURE_COMPROMISE
+                ):
                     return ActionType.RETRAIN_MODEL
             elif self.stakeholder_role == StakeholderRole.APPLICATION:
-                if self.application_attack_vector == ApplicationAttackVector.PROMPT_INJECTION:
+                if (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.PROMPT_INJECTION
+                ):
                     return ActionType.FINETUNE_GUARDRAILS
-                elif self.application_attack_vector == ApplicationAttackVector.TOOL_MISUSE:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.TOOL_MISUSE
+                ):
                     return ActionType.RETRAIN_MODEL
-                elif self.application_attack_vector == ApplicationAttackVector.PRIVILEGE_ESCALATION:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.PRIVILEGE_ESCALATION
+                ):
                     return ActionType.IMMEDIATE_ACTION
-                elif self.application_attack_vector == ApplicationAttackVector.MEMORY_MANIPULATION:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.MEMORY_MANIPULATION
+                ):
                     return ActionType.RETRAIN_MODEL
-                elif self.application_attack_vector == ApplicationAttackVector.ALIGNMENT_BYPASS:
+                elif (
+                    self.application_attack_vector
+                    == ApplicationAttackVector.ALIGNMENT_BYPASS
+                ):
                     return ActionType.FINETUNE_GUARDRAILS
             elif self.stakeholder_role == StakeholderRole.USER:
                 if self.user_attack_vector == UserAttackVector.DATA_EXTRACTION:
@@ -191,52 +275,119 @@ class DecisionAiLlmTriage:
                     return ActionType.IMMEDIATE_ACTION
                 elif self.user_attack_vector == UserAttackVector.OUTPUT_MANIPULATION:
                     return ActionType.IMMEDIATE_ACTION
-        
+
         # Default action for unmapped paths
         return ActionType.MONITOR
 
-
     def to_vector(self) -> str:
         """Generate SSVC vector string representation."""
-        if not hasattr(self, 'outcome') or not self.outcome:
+        if not hasattr(self, "outcome") or not self.outcome:
             self.evaluate()
-        
-        exploitation_vector = {'NONE': 'N', 'POC': 'P', 'ACTIVE': 'A'}.get(str(self.exploitation).split('.')[-1] if self.exploitation else '', '')
-        stakeholder_role_vector = {'DEPLOYER': 'D', 'APPLICATION': 'A', 'USER': 'U'}.get(str(self.stakeholder_role).split('.')[-1] if self.stakeholder_role else '', '')
-        deployer_attack_vector_vector = {'SUPPLY_CHAIN': 'SC', 'MODEL_POISONING': 'MP', 'INFRASTRUCTURE_COMPROMISE': 'IC'}.get(str(self.deployer_attack_vector).split('.')[-1] if self.deployer_attack_vector else '', '')
-        application_attack_vector_vector = {'PROMPT_INJECTION': 'PI', 'TOOL_MISUSE': 'TM', 'PRIVILEGE_ESCALATION': 'PE', 'MEMORY_MANIPULATION': 'MM', 'ALIGNMENT_BYPASS': 'AB'}.get(str(self.application_attack_vector).split('.')[-1] if self.application_attack_vector else '', '')
-        user_attack_vector_vector = {'DATA_EXTRACTION': 'DE', 'PROMPT_MANIPULATION': 'PM', 'OUTPUT_MANIPULATION': 'OM'}.get(str(self.user_attack_vector).split('.')[-1] if self.user_attack_vector else '', '')
+
+        exploitation_vector = {"NONE": "N", "POC": "P", "ACTIVE": "A"}.get(
+            str(self.exploitation).split(".")[-1] if self.exploitation else "", ""
+        )
+        stakeholder_role_vector = {
+            "DEPLOYER": "D",
+            "APPLICATION": "A",
+            "USER": "U",
+        }.get(
+            str(self.stakeholder_role).split(".")[-1] if self.stakeholder_role else "",
+            "",
+        )
+        deployer_attack_vector_vector = {
+            "SUPPLY_CHAIN": "SC",
+            "MODEL_POISONING": "MP",
+            "INFRASTRUCTURE_COMPROMISE": "IC",
+        }.get(
+            str(self.deployer_attack_vector).split(".")[-1]
+            if self.deployer_attack_vector
+            else "",
+            "",
+        )
+        application_attack_vector_vector = {
+            "PROMPT_INJECTION": "PI",
+            "TOOL_MISUSE": "TM",
+            "PRIVILEGE_ESCALATION": "PE",
+            "MEMORY_MANIPULATION": "MM",
+            "ALIGNMENT_BYPASS": "AB",
+        }.get(
+            str(self.application_attack_vector).split(".")[-1]
+            if self.application_attack_vector
+            else "",
+            "",
+        )
+        user_attack_vector_vector = {
+            "DATA_EXTRACTION": "DE",
+            "PROMPT_MANIPULATION": "PM",
+            "OUTPUT_MANIPULATION": "OM",
+        }.get(
+            str(self.user_attack_vector).split(".")[-1]
+            if self.user_attack_vector
+            else "",
+            "",
+        )
         timestamp = datetime.now().isoformat()
         return f"AI_LLMv2/E:{exploitation_vector}/SR:{stakeholder_role_vector}/DAV:{deployer_attack_vector_vector}/AAV:{application_attack_vector_vector}/UAV:{user_attack_vector_vector}/{timestamp}/"
-    
+
     @classmethod
-    def from_vector(cls, vector_string: str) -> 'DecisionAiLlmTriage':
+    def from_vector(cls, vector_string: str) -> "DecisionAiLlmTriage":
         """Parse SSVC vector string to create decision instance."""
-        pattern = r'^AI_LLMv2/(.+)/([0-9T:\-\.Z]+)/?$'
+        pattern = r"^AI_LLMv2/(.+)/([0-9T:\-\.Z]+)/?$"
         match = re.match(pattern, vector_string)
-        
+
         if not match:
-            raise ValueError(f"Invalid vector string format for AI/LLM Triage: {vector_string}")
-        
+            raise ValueError(
+                f"Invalid vector string format for AI/LLM Triage: {vector_string}"
+            )
+
         params_string = match.group(1)
         params = {}
-        
-        param_pairs = params_string.split('/')
+
+        param_pairs = params_string.split("/")
         for pair in param_pairs:
-            if ':' in pair:
-                key, value = pair.split(':', 1)
+            if ":" in pair:
+                key, value = pair.split(":", 1)
                 params[key] = value
-        
-        exploitation_match = params.get('E')
-        stakeholder_role_match = params.get('SR')
-        deployer_attack_vector_match = params.get('DAV')
-        application_attack_vector_match = params.get('AAV')
-        user_attack_vector_match = params.get('UAV')
-        
+
+        exploitation_match = params.get("E")
+        stakeholder_role_match = params.get("SR")
+        deployer_attack_vector_match = params.get("DAV")
+        application_attack_vector_match = params.get("AAV")
+        user_attack_vector_match = params.get("UAV")
+
         return cls(
-            exploitation={'N': 'NONE', 'P': 'POC', 'A': 'ACTIVE'}.get(exploitation_match, exploitation_match) if exploitation_match else None,
-            stakeholder_role={'D': 'DEPLOYER', 'A': 'APPLICATION', 'U': 'USER'}.get(stakeholder_role_match, stakeholder_role_match) if stakeholder_role_match else None,
-            deployer_attack_vector={'SC': 'SUPPLY_CHAIN', 'MP': 'MODEL_POISONING', 'IC': 'INFRASTRUCTURE_COMPROMISE'}.get(deployer_attack_vector_match, deployer_attack_vector_match) if deployer_attack_vector_match else None,
-            application_attack_vector={'PI': 'PROMPT_INJECTION', 'TM': 'TOOL_MISUSE', 'PE': 'PRIVILEGE_ESCALATION', 'MM': 'MEMORY_MANIPULATION', 'AB': 'ALIGNMENT_BYPASS'}.get(application_attack_vector_match, application_attack_vector_match) if application_attack_vector_match else None,
-            user_attack_vector={'DE': 'DATA_EXTRACTION', 'PM': 'PROMPT_MANIPULATION', 'OM': 'OUTPUT_MANIPULATION'}.get(user_attack_vector_match, user_attack_vector_match) if user_attack_vector_match else None,
+            exploitation={"N": "NONE", "P": "POC", "A": "ACTIVE"}.get(
+                exploitation_match, exploitation_match
+            )
+            if exploitation_match
+            else None,
+            stakeholder_role={"D": "DEPLOYER", "A": "APPLICATION", "U": "USER"}.get(
+                stakeholder_role_match, stakeholder_role_match
+            )
+            if stakeholder_role_match
+            else None,
+            deployer_attack_vector={
+                "SC": "SUPPLY_CHAIN",
+                "MP": "MODEL_POISONING",
+                "IC": "INFRASTRUCTURE_COMPROMISE",
+            }.get(deployer_attack_vector_match, deployer_attack_vector_match)
+            if deployer_attack_vector_match
+            else None,
+            application_attack_vector={
+                "PI": "PROMPT_INJECTION",
+                "TM": "TOOL_MISUSE",
+                "PE": "PRIVILEGE_ESCALATION",
+                "MM": "MEMORY_MANIPULATION",
+                "AB": "ALIGNMENT_BYPASS",
+            }.get(application_attack_vector_match, application_attack_vector_match)
+            if application_attack_vector_match
+            else None,
+            user_attack_vector={
+                "DE": "DATA_EXTRACTION",
+                "PM": "PROMPT_MANIPULATION",
+                "OM": "OUTPUT_MANIPULATION",
+            }.get(user_attack_vector_match, user_attack_vector_match)
+            if user_attack_vector_match
+            else None,
         )

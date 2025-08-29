@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/coordinator_triage.yaml
 generator: scripts/generate_plugins.py
-lastGenerated: 2025-08-29T23:51:54.819413
+lastGenerated: 2025-08-30T00:13:44.418681
 generatedFiles:
   python:
     path: src/ssvc/plugins/coordinator_triage.py
-    checksum: 8eaf0048fc6afd0a70501d1ecacd377a5b71ac00
+    checksum: 7571eb6f71b49b64a5f4b7ec891eed6b7c4ca617
 ---
 
 # Coordinator Triage Decision Model
@@ -453,7 +453,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify Python plugin file
-echo "8eaf0048fc6afd0a70501d1ecacd377a5b71ac00  src/ssvc/plugins/coordinator_triage.py" | sha1sum -c
+echo "7571eb6f71b49b64a5f4b7ec891eed6b7c4ca617  src/ssvc/plugins/coordinator_triage.py" | sha1sum -c
 
 # Verify all generated files using the justfile task
 just verify-checksums
