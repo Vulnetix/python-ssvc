@@ -1,271 +1,298 @@
-name: "Deployer Decision Model"
-description: "CERT/CC Deployer Decision Model for prioritizing patch deployment"
+name: "Deployer"
+description: "CERT/CC Deployer Decision Model"
 version: "1.0"
 url: "https://certcc.github.io/SSVC/howto/deployer_tree/"
 
 enums:
   ExploitationStatus:
-    - NONE
-    - POC
-    - ACTIVE
+    - none
+    - public_poc
+    - active
+
   SystemExposureLevel:
-    - SMALL
-    - CONTROLLED
-    - OPEN
+    - small
+    - controlled
+    - open
+
   UtilityLevel:
-    - LABORIOUS
-    - EFFICIENT
-    - SUPER_EFFECTIVE
+    - laborious
+    - efficient
+    - super_effective
+
   HumanImpactLevel:
-    - LOW
-    - MEDIUM
-    - HIGH
-    - VERY_HIGH
-  ActionType:
-    - DEFER
-    - SCHEDULED
-    - OUT_OF_CYCLE
-    - IMMEDIATE
-  DecisionPriorityLevel:
-    - DEFER
-    - SCHEDULED
-    - OUT_OF_CYCLE
-    - IMMEDIATE
+    - low
+    - medium
+    - high
+    - very_high
+
 
 priorityMap:
-  DEFER: DEFER
-  SCHEDULED: SCHEDULED
-  OUT_OF_CYCLE: OUT_OF_CYCLE
-  IMMEDIATE: IMMEDIATE
+  defer: low
+  scheduled: medium
+  out_of_cycle: high
+  immediate: immediate
+
+defaultAction: defer
 
 decisionTree:
   type: ExploitationStatus
   children:
-    NONE:
+    none:
       type: SystemExposureLevel
       children:
-        SMALL:
+        small:
           type: UtilityLevel
           children:
-            LABORIOUS:
+            laborious:
               type: HumanImpactLevel
               children:
-                LOW: DEFER
-                MEDIUM: DEFER
-                HIGH: DEFER
-                VERY_HIGH: SCHEDULED
-            EFFICIENT:
+                low: defer
+                medium: defer
+                high: scheduled
+                very_high: scheduled
+            efficient:
               type: HumanImpactLevel
               children:
-                LOW: DEFER
-                MEDIUM: DEFER
-                HIGH: SCHEDULED
-                VERY_HIGH: SCHEDULED
-            SUPER_EFFECTIVE:
+                low: defer
+                medium: defer
+                high: scheduled
+                very_high: scheduled
+            super_effective:
               type: HumanImpactLevel
               children:
-                LOW: DEFER
-                MEDIUM: SCHEDULED
-                HIGH: SCHEDULED
-                VERY_HIGH: OUT_OF_CYCLE
-        CONTROLLED:
+                low: defer
+                medium: scheduled
+                high: scheduled
+                very_high: out_of_cycle
+        controlled:
           type: UtilityLevel
           children:
-            LABORIOUS:
+            laborious:
               type: HumanImpactLevel
               children:
-                LOW: DEFER
-                MEDIUM: DEFER
-                HIGH: SCHEDULED
-                VERY_HIGH: SCHEDULED
-            EFFICIENT:
+                low: defer
+                medium: defer
+                high: scheduled
+                very_high: scheduled
+            efficient:
               type: HumanImpactLevel
               children:
-                LOW: DEFER
-                MEDIUM: SCHEDULED
-                HIGH: SCHEDULED
-                VERY_HIGH: OUT_OF_CYCLE
-            SUPER_EFFECTIVE:
+                low: defer
+                medium: scheduled
+                high: scheduled
+                very_high: out_of_cycle
+            super_effective:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: SCHEDULED
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: OUT_OF_CYCLE
-        OPEN:
+                low: defer
+                medium: scheduled
+                high: out_of_cycle
+                very_high: out_of_cycle
+        open:
           type: UtilityLevel
           children:
-            LABORIOUS:
+            laborious:
               type: HumanImpactLevel
               children:
-                LOW: DEFER
-                MEDIUM: SCHEDULED
-                HIGH: SCHEDULED
-                VERY_HIGH: OUT_OF_CYCLE
-            EFFICIENT:
+                low: defer
+                medium: scheduled
+                high: scheduled
+                very_high: out_of_cycle
+            efficient:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: SCHEDULED
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: OUT_OF_CYCLE
-            SUPER_EFFECTIVE:
+                low: scheduled
+                medium: scheduled
+                high: out_of_cycle
+                very_high: out_of_cycle
+            super_effective:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: OUT_OF_CYCLE
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: IMMEDIATE
-    POC:
+                low: scheduled
+                medium: out_of_cycle
+                high: out_of_cycle
+                very_high: immediate
+    public_poc:
       type: SystemExposureLevel
       children:
-        SMALL:
+        small:
           type: UtilityLevel
           children:
-            LABORIOUS:
+            laborious:
               type: HumanImpactLevel
               children:
-                LOW: DEFER
-                MEDIUM: DEFER
-                HIGH: SCHEDULED
-                VERY_HIGH: SCHEDULED
-            EFFICIENT:
+                low: defer
+                medium: scheduled
+                high: scheduled
+                very_high: out_of_cycle
+            efficient:
               type: HumanImpactLevel
               children:
-                LOW: DEFER
-                MEDIUM: SCHEDULED
-                HIGH: SCHEDULED
-                VERY_HIGH: OUT_OF_CYCLE
-            SUPER_EFFECTIVE:
+                low: scheduled
+                medium: scheduled
+                high: out_of_cycle
+                very_high: out_of_cycle
+            super_effective:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: SCHEDULED
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: OUT_OF_CYCLE
-        CONTROLLED:
+                low: scheduled
+                medium: out_of_cycle
+                high: out_of_cycle
+                very_high: immediate
+        controlled:
           type: UtilityLevel
           children:
-            LABORIOUS:
+            laborious:
               type: HumanImpactLevel
               children:
-                LOW: DEFER
-                MEDIUM: SCHEDULED
-                HIGH: SCHEDULED
-                VERY_HIGH: OUT_OF_CYCLE
-            EFFICIENT:
+                low: scheduled
+                medium: scheduled
+                high: out_of_cycle
+                very_high: out_of_cycle
+            efficient:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: SCHEDULED
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: OUT_OF_CYCLE
-            SUPER_EFFECTIVE:
+                low: scheduled
+                medium: out_of_cycle
+                high: out_of_cycle
+                very_high: immediate
+            super_effective:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: OUT_OF_CYCLE
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: IMMEDIATE
-        OPEN:
+                low: out_of_cycle
+                medium: out_of_cycle
+                high: immediate
+                very_high: immediate
+        open:
           type: UtilityLevel
           children:
-            LABORIOUS:
+            laborious:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: SCHEDULED
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: OUT_OF_CYCLE
-            EFFICIENT:
+                low: scheduled
+                medium: out_of_cycle
+                high: out_of_cycle
+                very_high: immediate
+            efficient:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: OUT_OF_CYCLE
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: IMMEDIATE
-            SUPER_EFFECTIVE:
+                low: out_of_cycle
+                medium: out_of_cycle
+                high: immediate
+                very_high: immediate
+            super_effective:
               type: HumanImpactLevel
               children:
-                LOW: OUT_OF_CYCLE
-                MEDIUM: OUT_OF_CYCLE
-                HIGH: IMMEDIATE
-                VERY_HIGH: IMMEDIATE
-    ACTIVE:
+                low: out_of_cycle
+                medium: immediate
+                high: immediate
+                very_high: immediate
+    active:
       type: SystemExposureLevel
       children:
-        SMALL:
+        small:
           type: UtilityLevel
           children:
-            LABORIOUS:
+            laborious:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: SCHEDULED
-                HIGH: SCHEDULED
-                VERY_HIGH: OUT_OF_CYCLE
-            EFFICIENT:
+                low: scheduled
+                medium: scheduled
+                high: out_of_cycle
+                very_high: immediate
+            efficient:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: SCHEDULED
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: OUT_OF_CYCLE
-            SUPER_EFFECTIVE:
+                low: scheduled
+                medium: out_of_cycle
+                high: out_of_cycle
+                very_high: immediate
+            super_effective:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: OUT_OF_CYCLE
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: IMMEDIATE
-        CONTROLLED:
+                low: out_of_cycle
+                medium: out_of_cycle
+                high: immediate
+                very_high: immediate
+        controlled:
           type: UtilityLevel
           children:
-            LABORIOUS:
+            laborious:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: SCHEDULED
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: OUT_OF_CYCLE
-            EFFICIENT:
+                low: scheduled
+                medium: out_of_cycle
+                high: out_of_cycle
+                very_high: immediate
+            efficient:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: OUT_OF_CYCLE
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: IMMEDIATE
-            SUPER_EFFECTIVE:
+                low: out_of_cycle
+                medium: out_of_cycle
+                high: immediate
+                very_high: immediate
+            super_effective:
               type: HumanImpactLevel
               children:
-                LOW: OUT_OF_CYCLE
-                MEDIUM: OUT_OF_CYCLE
-                HIGH: IMMEDIATE
-                VERY_HIGH: IMMEDIATE
-        OPEN:
+                low: out_of_cycle
+                medium: immediate
+                high: immediate
+                very_high: immediate
+        open:
           type: UtilityLevel
           children:
-            LABORIOUS:
+            laborious:
               type: HumanImpactLevel
               children:
-                LOW: SCHEDULED
-                MEDIUM: OUT_OF_CYCLE
-                HIGH: OUT_OF_CYCLE
-                VERY_HIGH: IMMEDIATE
-            EFFICIENT:
+                low: out_of_cycle
+                medium: out_of_cycle
+                high: immediate
+                very_high: immediate
+            efficient:
               type: HumanImpactLevel
               children:
-                LOW: OUT_OF_CYCLE
-                MEDIUM: OUT_OF_CYCLE
-                HIGH: IMMEDIATE
-                VERY_HIGH: IMMEDIATE
-            SUPER_EFFECTIVE:
+                low: out_of_cycle
+                medium: immediate
+                high: immediate
+                very_high: immediate
+            super_effective:
               type: HumanImpactLevel
               children:
-                LOW: OUT_OF_CYCLE
-                MEDIUM: IMMEDIATE
-                HIGH: IMMEDIATE
-                VERY_HIGH: IMMEDIATE
-
-# Default action for unmapped paths
-defaultAction: DEFER
+                low: immediate
+                medium: immediate
+                high: immediate
+                very_high: immediate
+# Vector string metadata
+vectorMetadata:
+  prefix: DEPLOYER
+  version: v1
+  parameterMappings:
+    exploitation:
+      abbrev: E
+      enumType: ExploitationStatus
+      valueMappings:
+        none: N
+        public_poc: P
+        active: A
+    system_exposure:
+      abbrev: SE
+      enumType: SystemExposureLevel
+      valueMappings:
+        small: S
+        controlled: C
+        open: O
+    utility:
+      abbrev: U
+      enumType: UtilityLevel
+      valueMappings:
+        laborious: L
+        efficient: E
+        super_effective: S
+    human_impact:
+      abbrev: HI
+      enumType: HumanImpactLevel
+      valueMappings:
+        low: L
+        medium: M
+        high: H
+        very_high: V

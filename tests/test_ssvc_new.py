@@ -70,7 +70,6 @@ def test_coordinator_triage_methodology():
         supplier_contacted='yes',
         report_credibility='credible',
         supplier_cardinality='multiple',
-        supplier_engagement='active',
         utility='super_effective',
         public_safety_impact='significant'
     )
@@ -88,8 +87,7 @@ def test_coordinator_triage_decline():
         report_credibility='not_credible',
         supplier_cardinality='one',
         utility='laborious',
-        public_safety_impact='minimal',
-        supplier_engagement='active'  # This parameter is required
+        public_safety_impact='minimal'
     )
     
     assert decision.outcome.action.value == 'decline'
@@ -324,7 +322,6 @@ class TestCoordinatorTriageDecisionMatrix:
             supplier_contacted='yes',
             report_credibility='credible',
             supplier_cardinality='multiple',
-            supplier_engagement='active',
             utility='super_effective',
             public_safety_impact='significant'
         )
@@ -339,7 +336,6 @@ class TestCoordinatorTriageDecisionMatrix:
             supplier_contacted='yes',
             report_credibility='credible',
             supplier_cardinality='multiple',
-            supplier_engagement='active',
             utility='efficient',
             public_safety_impact='minimal'
         )
@@ -354,7 +350,6 @@ class TestCoordinatorTriageDecisionMatrix:
             supplier_contacted='no',
             report_credibility='not_credible',
             supplier_cardinality='one',
-            supplier_engagement='unresponsive',
             utility='laborious',
             public_safety_impact='minimal'
         )

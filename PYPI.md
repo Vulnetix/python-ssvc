@@ -1,22 +1,53 @@
 # Python implementation of SSVC (Stakeholder-Specific Vulnerability Categorization)
 
-This library now supports multiple SSVC methodologies through a plugin-based architecture. You can use the built-in methodologies or create your own.
+A comprehensive Python library implementing the Stakeholder-Specific Vulnerability Categorization (SSVC) framework with a plugin-based architecture supporting multiple decision methodologies.
 
 The SSVC framework was developed by the CERT/CC Software Engineering Institute at Carnegie Mellon University. More information can be found at https://certcc.github.io/SSVC/
 
 ## Installation
 
-From pypi.org `pip install ssvc`
+### Via Package Managers
 
-### Available Methodologies
+```bash
+# Using pip
+pip install ssvc
 
-- **CISA**: The CISA Stakeholder-Specific Vulnerability Categorization methodology
-- **Coordinator Triage**: The CERT/CC Coordinator Triage Decision Model
-- **Supplier Decision Model**: The CERT/CC Supplier Decision Model for prioritizing patch creation
-- **Deployer Decision Model**: The CERT/CC Deployer Decision Model for prioritizing patch deployment
-- **Coordinator Publication Decision Model**: The CERT/CC Coordinator Publication Decision Model for determining vulnerability disclosure
+# Using uv (recommended)
+uv add ssvc
 
-### Quick Start
+# Using Poetry
+poetry add ssvc
+
+# Using Pipenv
+pipenv install ssvc
+
+# Using Conda
+conda install -c conda-forge ssvc
+```
+
+### From Source
+
+```bash
+# Clone and install from GitHub
+git clone https://github.com/Vulnetix/python-ssvc.git
+cd python-ssvc
+uv sync
+uv run python -m pip install -e .
+```
+
+## Available Methodologies
+
+This library supports multiple SSVC methodologies through a plugin-based architecture:
+
+| Methodology | Description | Documentation | Official Source |
+|-------------|-------------|---------------|-----------------|
+| **CISA** | CISA Stakeholder-Specific Vulnerability Categorization | [docs/cisa.md](https://github.com/Vulnetix/python-ssvc/blob/main/docs/cisa.md) | [CISA SSVC](https://www.cisa.gov/stakeholder-specific-vulnerability-categorization-ssvc) |
+| **Coordinator Triage** | CERT/CC Coordinator Triage Decision Model | [docs/coordinator_triage.md](https://github.com/Vulnetix/python-ssvc/blob/main/docs/coordinator_triage.md) | [CERT/CC Coordinator Triage](https://certcc.github.io/SSVC/howto/coordination_triage_decision/) |
+| **Coordinator Publication** | CERT/CC Coordinator Publication Decision Model | [docs/coordinator_publication.md](https://github.com/Vulnetix/python-ssvc/blob/main/docs/coordinator_publication.md) | [CERT/CC Publication Decision](https://certcc.github.io/SSVC/howto/publication_decision/) |
+| **Supplier** | CERT/CC Supplier Decision Model | [docs/supplier.md](https://github.com/Vulnetix/python-ssvc/blob/main/docs/supplier.md) | [CERT/CC Supplier Tree](https://certcc.github.io/SSVC/howto/supplier_tree/) |
+| **Deployer** | CERT/CC Deployer Decision Model | [docs/deployer.md](https://github.com/Vulnetix/python-ssvc/blob/main/docs/deployer.md) | [CERT/CC Deployer Tree](https://certcc.github.io/SSVC/howto/deployer_tree/) |
+
+## Quick Start
 
 ```python
 import ssvc
@@ -24,9 +55,9 @@ import ssvc
 # List available methodologies
 print("Available methodologies:", ssvc.list_methodologies())
 
-# Use CISA methodology (default)
+# Use CISA methodology
 decision = ssvc.Decision(
-    methodology='cisa',  # or omit for default
+    methodology='cisa',
     exploitation='active',
     automatable='no',
     technical_impact='total',
@@ -41,284 +72,135 @@ decision = ssvc.Decision(
     supplier_contacted='yes', 
     report_credibility='credible',
     supplier_cardinality='multiple',
-    supplier_engagement='active',
     utility='super_effective',
     public_safety_impact='significant'
 )
 print(f"Coordinator Triage Decision: {decision.outcome.action.value} (Priority: {decision.outcome.priority.value})")
-
-# Use Supplier Decision Model
-decision = ssvc.Decision(
-    methodology='supplier',
-    exploitation='active',
-    utility='super_effective',
-    technical_impact='total',
-    public_safety_impact='significant'
-)
-print(f"Supplier Decision: {decision.outcome.action.value} (Priority: {decision.outcome.priority.value})")
-
-# Use Deployer Decision Model
-decision = ssvc.Decision(
-    methodology='deployer',
-    exploitation='active',
-    system_exposure='open',
-    utility='super_effective',
-    human_impact='very_high'
-)
-print(f"Deployer Decision: {decision.outcome.action.value} (Priority: {decision.outcome.priority.value})")
-
-# Use Coordinator Publication Decision Model
-decision = ssvc.Decision(
-    methodology='coordinator_publication',
-    supplier_involvement='uncooperative_unresponsive',
-    exploitation='active',
-    public_value_added='precedence'
-)
-print(f"Coordinator Publication Decision: {decision.outcome.action.value} (Priority: {decision.outcome.priority.value})")
 ```
 
-### CISA Methodology Examples
+## Key Features
 
-The CISA methodology follows these steps:
-1. Determine the exploitation status of the vulnerability
-2. Assess the technical impact, considering the automatability, mission prevalence, and public well-being impact  
-3. Navigate through the decision tree to arrive at a decision point: Track, Track*, Attend, or Act
+### SSVC Vector Strings
+All methodologies support vector strings for compact representation:
 
 ```python
 import ssvc
 
-# Using enum-style values
-decision = ssvc.Decision(
-    methodology='cisa',
-    exploitation='poc',
+# Generate vector string
+decision = ssvc.Decision('cisa',
+    exploitation='active',
     automatable='yes', 
-    technical_impact='partial',
-    mission_wellbeing_impact='medium'
+    technical_impact='total',
+    mission_wellbeing_impact='high'
 )
-assert decision.outcome.action.value == 'track'
-assert decision.outcome.priority.value == 'low'
+vector = decision.to_vector()
+# Output: CISAv1/E:A/A:Y/T:T/M:H/2024-07-23T20:34:21.000000/
 
-# Incremental input 
-decision = ssvc.Decision(methodology='cisa')
-decision.exploitation = 'active'
-decision.automatable = 'yes'
-decision.technical_impact = 'total' 
-decision.mission_wellbeing_impact = 'high'
-
-outcome = decision.evaluate()
-assert outcome.action.value == 'act'
-assert outcome.priority.value == 'immediate'
+# Parse vector string
+parsed = ssvc.Decision.from_vector(vector)
+outcome = parsed.evaluate()
 ```
 
-### Coordinator Triage Methodology Examples
-
-The Coordinator Triage methodology evaluates whether a vulnerability coordination center should coordinate disclosure:
+### Schema Validation
+All methodology definitions are validated against a JSON schema:
 
 ```python
-import ssvc
-
-# High-priority coordination case
-decision = ssvc.Decision(
-    methodology='coordinator_triage',
-    report_public='no',
-    supplier_contacted='yes',
-    report_credibility='credible', 
-    supplier_cardinality='multiple',
-    supplier_engagement='active',
-    utility='super_effective',
-    public_safety_impact='significant'
-)
-assert decision.outcome.action.value == 'coordinate'
-assert decision.outcome.priority.value == 'high'
-
-# Low-priority decline case
-decision = ssvc.Decision(
-    methodology='coordinator_triage', 
-    report_public='yes',
-    supplier_contacted='no',
-    report_credibility='not_credible',
-    supplier_cardinality='one',
-    utility='laborious',
-    public_safety_impact='minimal'
-)
-assert decision.outcome.action.value == 'decline'
-assert decision.outcome.priority.value == 'low'
+# Methodologies are defined in YAML and validated against schema.json
+# See: src/ssvc/methodologies/schema.json
 ```
 
-## Creating New Methodologies
+### Plugin System
+Create custom methodologies using YAML definitions:
 
-This library supports extensible methodologies through a YAML-based plugin system. You can create your own decision methodologies by defining them in YAML format and generating Python plugins.
+1. Define methodology in YAML format
+2. Place in `src/ssvc/methodologies/`
+3. Run `python scripts/generate_plugins.py`
+4. Generated plugin becomes available via `ssvc.Decision(methodology='custom')`
 
-### YAML Methodology Structure
+## Language Implementations
 
-Each methodology is defined in a YAML file with the following structure:
+SSVC is available in multiple programming languages:
+
+- **Python**: This library - [python-ssvc](https://github.com/Vulnetix/python-ssvc)
+- **TypeScript**: [typescript-ssvc](https://github.com/Vulnetix/typescript-ssvc)
+- **Go**: 🚧 In Development
+
+## Contributing
+
+We welcome contributions! To add new methodologies or improve the library:
+
+### Adding New Methodologies
+
+1. **Fork the repository** on [GitHub](https://github.com/Vulnetix/python-ssvc)
+2. **Create YAML definition** following the schema structure
+3. **Generate plugin** using the built-in generator
+4. **Add comprehensive tests** with 100% coverage
+5. **Submit Pull Request** with:
+   - YAML methodology definition
+   - Generated plugin code
+   - Complete test suite
+   - Documentation updates
+   - Links to official methodology sources
+
+### Plugin Development
+
+The plugin system supports extensible methodologies through YAML:
 
 ```yaml
-name: "Your Methodology Name"
+name: "Your Methodology"
 description: "Description of your methodology"
 version: "1.0"
 url: "https://example.com/methodology-docs"
 
 enums:
-  DecisionPointName:
+  DecisionPoint:
     - VALUE_ONE
     - VALUE_TWO
-    - VALUE_THREE
-  AnotherDecisionPoint:
-    - OPTION_A
-    - OPTION_B
   ActionType:
     - ACTION_ONE
     - ACTION_TWO
-    - ACTION_THREE
-  DecisionPriorityLevel:
-    - LOW
-    - MEDIUM
-    - HIGH
 
 priorityMap:
   ACTION_ONE: LOW
-  ACTION_TWO: MEDIUM
-  ACTION_THREE: HIGH
+  ACTION_TWO: HIGH
 
 decisionTree:
-  type: DecisionPointName
+  type: DecisionPoint
   children:
-    VALUE_ONE:
-      type: AnotherDecisionPoint
-      children:
-        OPTION_A: ACTION_ONE
-        OPTION_B: ACTION_TWO
-    VALUE_TWO: ACTION_THREE
-    VALUE_THREE:
-      type: AnotherDecisionPoint
-      children:
-        OPTION_A: ACTION_TWO
-        OPTION_B: ACTION_THREE
+    VALUE_ONE: ACTION_ONE
+    VALUE_TWO: ACTION_TWO
 
 defaultAction: ACTION_ONE
 ```
 
-### Required YAML Elements
+### Development Setup
 
-1. **Metadata Fields**:
-   - `name`: Human-readable name for the methodology
-   - `description`: Brief description of the methodology's purpose  
-   - `version`: Version string (e.g., "1.0")
-   - `url`: Reference URL for methodology documentation
-
-2. **enums Section**:
-   - Define all decision points as enum classes
-   - Must include `ActionType` enum for possible actions
-   - Must include a priority enum (ending with "PriorityLevel")
-   - Use UPPERCASE values for enum entries
-   - Quote boolean-like values: `"YES"` and `"NO"` instead of `YES` and `NO`
-
-3. **priorityMap Section**:
-   - Maps each action to a priority level
-   - Keys must match `ActionType` enum values
-   - Values must match the priority enum values
-
-4. **decisionTree Section**:
-   - Defines the decision tree structure
-   - Each node has a `type` (enum name) and `children` (possible values)
-   - Leaf nodes contain action names directly
-   - Non-leaf nodes contain nested decision structures
-
-5. **defaultAction**:
-   - Fallback action for unmapped decision paths
-   - Must match an `ActionType` enum value
-
-### Example: Custom Risk Assessment Methodology
-
-```yaml
-name: "Custom Risk Assessment"
-description: "A simplified risk-based vulnerability assessment methodology"
-version: "1.0"
-url: "https://example.com/custom-risk-methodology"
-
-enums:
-  SeverityLevel:
-    - LOW
-    - MEDIUM
-    - HIGH
-    - CRITICAL
-  ExposureLevel:
-    - INTERNAL
-    - EXTERNAL
-  BusinessImpactLevel:
-    - MINIMAL
-    - MODERATE
-    - SIGNIFICANT
-  ActionType:
-    - MONITOR
-    - SCHEDULE
-    - EXPEDITE
-    - EMERGENCY
-  DecisionPriorityLevel:
-    - LOW
-    - MEDIUM
-    - HIGH
-    - CRITICAL
-
-priorityMap:
-  MONITOR: LOW
-  SCHEDULE: MEDIUM
-  EXPEDITE: HIGH
-  EMERGENCY: CRITICAL
-
-decisionTree:
-  type: SeverityLevel
-  children:
-    CRITICAL:
-      type: ExposureLevel
-      children:
-        EXTERNAL: EMERGENCY
-        INTERNAL:
-          type: BusinessImpactLevel
-          children:
-            SIGNIFICANT: EMERGENCY
-            MODERATE: EXPEDITE
-            MINIMAL: SCHEDULE
-    HIGH:
-      type: ExposureLevel
-      children:
-        EXTERNAL:
-          type: BusinessImpactLevel
-          children:
-            SIGNIFICANT: EXPEDITE
-            MODERATE: SCHEDULE
-            MINIMAL: SCHEDULE
-        INTERNAL: SCHEDULE
-    MEDIUM: SCHEDULE
-    LOW: MONITOR
-
-defaultAction: MONITOR
+```bash
+git clone https://github.com/Vulnetix/python-ssvc.git
+cd python-ssvc
+uv sync
+uv run python -c "import ssvc; print('SSVC ready for development!')"
 ```
 
-### Generating Plugins from YAML
+### Testing
 
-1. **Place YAML files** in `src/ssvc/methodologies/`
-2. **Run the generator**:
-   ```bash
-   python scripts/generate_plugins.py
-   ```
-3. **Generated files**:
-   - Python plugin: `src/ssvc/plugins/{methodology_name}.py`
-   - Documentation: `docs/{methodology_name}.md`
+```bash
+# Run tests
+uv run pytest --cov
 
-The generator creates:
-- Enum classes for all decision points
-- Priority mapping dictionary
-- Outcome class with priority/action mapping
-- Decision class with parameter validation
-- Decision tree traversal logic
-- Markdown documentation with mermaid diagrams
+# Validate YAML files
+uv run python scripts/validate_methodologies.py
 
-### Plugin Registration
+# Generate plugins
+uv run python scripts/generate_plugins.py
+```
 
-Plugins are automatically discovered and registered when the library loads. The plugin system:
+## Links
 
-1. **Auto-discovery**: Scans the `src/ssvc/plugins/` directory
-2. **Registration**: Registers Decision classes found in plugin modules
-3. **Usage**: Access via `ssvc.Decision(methodology='plugin_name')`
+- **Documentation**: [GitHub Repository](https://github.com/Vulnetix/python-ssvc)
+- **Issues & Bug Reports**: [GitHub Issues](https://github.com/Vulnetix/python-ssvc/issues)
+- **Official SSVC**: [certcc.github.io/SSVC](https://certcc.github.io/SSVC/)
+
+## License
+
+Licensed under the Apache License 2.0. See [LICENSE](https://github.com/Vulnetix/python-ssvc/blob/main/LICENSE) for details.

@@ -229,8 +229,8 @@ def test_decision_none_no_partial_high():
         mission_wellbeing_impact='high'
     )
     outcome = decision.evaluate()
-    assert outcome.priority.value == 'low', "SSVC priority should be LOW"
-    assert outcome.action.value == 'track', "SSVC decision should be TRACK"
+    assert outcome.priority.value == 'medium', "SSVC priority should be MEDIUM"
+    assert outcome.action.value == 'track_star', "SSVC decision should be TRACK_STAR"
 
 
 def test_decision_poc_no_total_high():

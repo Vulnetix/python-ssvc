@@ -1,98 +1,120 @@
-name: "Coordinator Publication Decision Model"
-description: "CERT/CC Coordinator Publication Decision Model for determining vulnerability disclosure"
+name: "Coordinator Publication"
+description: "CERT/CC Coordinator Publication Decision Model"
 version: "1.0"
 url: "https://certcc.github.io/SSVC/howto/publication_decision/"
 
 enums:
-  SupplierInvolvement:
-    - FIX_READY
-    - COOPERATIVE
-    - UNCOOPERATIVE_UNRESPONSIVE
+  SupplierInvolvementLevel:
+    - fix_ready
+    - cooperative
+    - uncooperative_unresponsive
+
   ExploitationStatus:
-    - NONE
-    - PUBLIC_POC
-    - ACTIVE
-  PublicValueAdded:
-    - LIMITED
-    - AMPLIATIVE
-    - PRECEDENCE
-  ActionType:
-    - PUBLISH
-    - DO_NOT_PUBLISH
-  DecisionPriorityLevel:
-    - PUBLISH
-    - DO_NOT_PUBLISH
+    - none
+    - public_poc
+    - active
+
+  PublicValueAddedLevel:
+    - limited
+    - ampliative
+    - precedence
+
 
 priorityMap:
-  PUBLISH: PUBLISH
-  DO_NOT_PUBLISH: DO_NOT_PUBLISH
+  publish: high
+  dont_publish: low
+
+defaultAction: dont_publish
 
 decisionTree:
-  type: SupplierInvolvement
+  type: SupplierInvolvementLevel
   children:
-    FIX_READY:
+    fix_ready:
       type: ExploitationStatus
       children:
-        NONE:
-          type: PublicValueAdded
+        none:
+          type: PublicValueAddedLevel
           children:
-            LIMITED: DO_NOT_PUBLISH
-            AMPLIATIVE: DO_NOT_PUBLISH
-            PRECEDENCE: PUBLISH
-        PUBLIC_POC:
-          type: PublicValueAdded
+            limited: dont_publish
+            ampliative: publish
+            precedence: publish
+        public_poc:
+          type: PublicValueAddedLevel
           children:
-            LIMITED: DO_NOT_PUBLISH
-            AMPLIATIVE: PUBLISH
-            PRECEDENCE: PUBLISH
-        ACTIVE:
-          type: PublicValueAdded
+            limited: dont_publish
+            ampliative: publish
+            precedence: publish
+        active:
+          type: PublicValueAddedLevel
           children:
-            LIMITED: PUBLISH
-            AMPLIATIVE: PUBLISH
-            PRECEDENCE: PUBLISH
-    COOPERATIVE:
+            limited: publish
+            ampliative: publish
+            precedence: publish
+    cooperative:
       type: ExploitationStatus
       children:
-        NONE:
-          type: PublicValueAdded
+        none:
+          type: PublicValueAddedLevel
           children:
-            LIMITED: DO_NOT_PUBLISH
-            AMPLIATIVE: DO_NOT_PUBLISH
-            PRECEDENCE: PUBLISH
-        PUBLIC_POC:
-          type: PublicValueAdded
+            limited: dont_publish
+            ampliative: dont_publish
+            precedence: publish
+        public_poc:
+          type: PublicValueAddedLevel
           children:
-            LIMITED: DO_NOT_PUBLISH
-            AMPLIATIVE: PUBLISH
-            PRECEDENCE: PUBLISH
-        ACTIVE:
-          type: PublicValueAdded
+            limited: dont_publish
+            ampliative: publish
+            precedence: publish
+        active:
+          type: PublicValueAddedLevel
           children:
-            LIMITED: PUBLISH
-            AMPLIATIVE: PUBLISH
-            PRECEDENCE: PUBLISH
-    UNCOOPERATIVE_UNRESPONSIVE:
+            limited: publish
+            ampliative: publish
+            precedence: publish
+    uncooperative_unresponsive:
       type: ExploitationStatus
       children:
-        NONE:
-          type: PublicValueAdded
+        none:
+          type: PublicValueAddedLevel
           children:
-            LIMITED: PUBLISH
-            AMPLIATIVE: PUBLISH
-            PRECEDENCE: PUBLISH
-        PUBLIC_POC:
-          type: PublicValueAdded
+            limited: dont_publish
+            ampliative: dont_publish
+            precedence: publish
+        public_poc:
+          type: PublicValueAddedLevel
           children:
-            LIMITED: PUBLISH
-            AMPLIATIVE: PUBLISH
-            PRECEDENCE: PUBLISH
-        ACTIVE:
-          type: PublicValueAdded
+            limited: publish
+            ampliative: publish
+            precedence: publish
+        active:
+          type: PublicValueAddedLevel
           children:
-            LIMITED: PUBLISH
-            AMPLIATIVE: PUBLISH
-            PRECEDENCE: PUBLISH
-
-# Default action for unmapped paths
-defaultAction: DO_NOT_PUBLISH
+            limited: publish
+            ampliative: publish
+            precedence: publish
+# Vector string metadata
+vectorMetadata:
+  prefix: COORD_PUB
+  version: v1
+  parameterMappings:
+    supplier_involvement:
+      abbrev: SI
+      enumType: SupplierInvolvementLevel
+      valueMappings:
+        fix_ready: F
+        cooperative: C
+        uncooperative_unresponsive: U
+    exploitation:
+      abbrev: E
+      enumType: ExploitationStatus
+      valueMappings:
+        none: N
+        public_poc: P
+        active: A
+    public_value_added:
+      abbrev: PV
+      enumType: PublicValueAddedLevel
+      valueMappings:
+        limited: L
+        ampliative: A
+        precedence: P
