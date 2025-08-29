@@ -12,7 +12,7 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/coordinator_publication.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-30T00:13:44.189903
+@lastGenerated 2025-08-30T00:35:05.895176
 """
 
 from enum import Enum

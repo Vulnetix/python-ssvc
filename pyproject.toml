@@ -1,6 +1,6 @@
 [project]
 name = "ssvc"
-version = "1.2.2"
+version = "1.2.3"
 description = "A Python implementation of the Stakeholder-Specific Vulnerability Categorization framework."
 authors = [{name = "Christopher Langton", email = "chris@vulnetix.com"}]
 readme = "PYPI.md"

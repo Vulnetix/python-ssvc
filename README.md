@@ -46,6 +46,135 @@ uv run python -m pip install -e .
 just dev-install
 ```
 
+## 🤖 AI Methodology Update Notice
+
+**New AI Methodology Available!** We've recently added support for an AI-specific SSVC methodology designed for vulnerability assessment in artificial intelligence systems. This methodology addresses unique AI security considerations including:
+
+- **Model Exploitation**: Assessment of AI model-specific attack vectors
+- **Training Data Impact**: Evaluation of vulnerabilities in training datasets  
+- **AI Safety Concerns**: Consideration of AI alignment and safety risks
+- **Automated Decision Impact**: Assessment of consequences from AI-driven decisions
+
+The AI methodology is available alongside traditional cybersecurity methodologies and uses the same simple API. See the [AI methodology documentation](docs/ai_llm_triage.md) for complete usage examples and decision trees.
+
+## Complete Example
+
+Here's a comprehensive example showing the library's key features:
+
+```python
+import ssvc
+
+# 1. List all available methodologies
+print("Available SSVC methodologies:")
+for methodology in ssvc.list_methodologies():
+    print(f"  - {methodology}")
+
+# 2. CISA methodology for enterprise vulnerability management
+print("\n=== CISA Enterprise Assessment ===")
+cisa_decision = ssvc.Decision(
+    methodology='cisa',
+    exploitation='active',           # Exploits available in the wild
+    automatable='yes',              # Can be automated by attackers
+    technical_impact='total',       # Complete system compromise possible
+    mission_wellbeing_impact='high' # Significant organizational impact
+)
+
+print(f"Decision: {cisa_decision.outcome.action.value}")
+print(f"Priority: {cisa_decision.outcome.priority.value}")
+print(f"Vector: {cisa_decision.to_vector()}")
+
+# 3. Coordinator triage for vulnerability disclosure
+print("\n=== Coordinator Triage Assessment ===")
+coord_decision = ssvc.Decision(
+    methodology='coordinator_triage',
+    report_public='no',              # Report not yet public
+    supplier_contacted='yes',        # Vendor has been notified
+    report_credibility='credible',   # Report appears legitimate
+    supplier_cardinality='multiple', # Affects multiple vendors
+    utility='super_effective',       # High exploit utility for attackers
+    public_safety_impact='significant' # Could impact public safety
+)
+
+print(f"Decision: {coord_decision.outcome.action.value}")
+print(f"Priority: {coord_decision.outcome.priority.value}")
+
+# 4. Supplier assessment for patch development prioritization
+print("\n=== Supplier Patch Development ===")
+supplier_decision = ssvc.Decision(
+    methodology='supplier',
+    exploitation='poc',              # Proof of concept exists
+    utility='efficient',            # Moderately useful to attackers
+    technical_impact='partial',     # Limited system access
+    public_safety_impact='minimal'  # Low public safety risk
+)
+
+print(f"Decision: {supplier_decision.outcome.action.value}")
+print(f"Priority: {supplier_decision.outcome.priority.value}")
+
+# 5. Vector string parsing and data exchange
+print("\n=== Vector String Operations ===")
+vector_string = cisa_decision.to_vector()
+print(f"Generated vector: {vector_string}")
+
+# Parse the vector back into a decision
+parsed_decision = ssvc.Decision.from_vector(vector_string)
+print(f"Parsed action: {parsed_decision.outcome.action.value}")
+print(f"Decisions match: {cisa_decision.outcome.action == parsed_decision.outcome.action}")
+
+# 6. Error handling and validation
+print("\n=== Input Validation ===")
+try:
+    invalid_decision = ssvc.Decision('cisa', exploitation='invalid_value')
+except ValueError as e:
+    print(f"Validation error caught: {e}")
+
+# 7. Case-insensitive input handling
+print("\n=== Case-Insensitive Input ===")
+flexible_decision = ssvc.Decision(
+    methodology='CISA',              # Uppercase methodology
+    exploitation='ACTIVE',          # Uppercase parameters
+    automatable='No',               # Mixed case
+    technical_impact='total',       # Lowercase
+    mission_wellbeing_impact='HIGH' # Uppercase
+)
+print(f"Flexible input result: {flexible_decision.outcome.action.value}")
+```
+
+**Output:**
+```
+Available SSVC methodologies:
+  - ai_llm_triage
+  - cisa
+  - coordinator_triage
+  - coordinator_publication
+  - supplier
+  - deployer
+
+=== CISA Enterprise Assessment ===
+Decision: act
+Priority: immediate
+Vector: CISAv1/E:A/A:Y/T:T/M:H/2025-08-29T17:53:26.057876/
+
+=== Coordinator Triage Assessment ===
+Decision: coordinate
+Priority: high
+
+=== Supplier Patch Development ===
+Decision: scheduled
+Priority: medium
+
+=== Vector String Operations ===
+Generated vector: CISAv1/E:A/A:Y/T:T/M:H/2025-08-29T17:53:26.057876/
+Parsed action: act
+Decisions match: True
+
+=== Input Validation ===
+Validation error caught: 'INVALID_VALUE' is not a valid ExploitationStatus
+
+=== Case-Insensitive Input ===
+Flexible input result: act
+```
+
 ## Background and Rationale
 
 ### What is SSVC?
@@ -73,6 +202,7 @@ This library supports multiple SSVC methodologies through a plugin-based archite
 
 | Methodology | Description | Documentation | Official Source |
 |-------------|-------------|---------------|-----------------|
+| **AI LLM Triage** | AI-specific vulnerability triage for ML LLMs | [docs/ai_llm_triage.md](docs/ai_llm_triage.md) | [NIST AI Risk Management](https://www.nist.gov/ai-risk-management) |
 | **CISA** | CISA Stakeholder-Specific Vulnerability Categorization | [docs/cisa.md](docs/cisa.md) | [CISA SSVC Guide](https://www.cisa.gov/stakeholder-specific-vulnerability-categorization-ssvc) |
 | **Coordinator Triage** | CERT/CC Coordinator Triage Decision Model | [docs/coordinator_triage.md](docs/coordinator_triage.md) | [CERT/CC Coordinator Triage](https://certcc.github.io/SSVC/howto/coordination_triage_decision/) |
 | **Coordinator Publication** | CERT/CC Coordinator Publication Decision Model | [docs/coordinator_publication.md](docs/coordinator_publication.md) | [CERT/CC Publication Decision](https://certcc.github.io/SSVC/howto/publication_decision/) |
@@ -101,7 +231,7 @@ import ssvc
 # List all available methodologies
 methodologies = ssvc.list_methodologies()
 print("Available methodologies:", methodologies)
-# Output: ['cisa', 'coordinator_triage', 'coordinator_publication', 'supplier', 'deployer']
+# Output: ['ai_llm_triage', 'cisa', 'coordinator_triage', 'coordinator_publication', 'supplier', 'deployer']
 
 # CISA Methodology - Government/Enterprise vulnerability prioritization
 decision = ssvc.Decision(

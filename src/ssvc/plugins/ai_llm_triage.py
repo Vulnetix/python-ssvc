@@ -12,7 +12,7 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/ai_llm_triage.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-30T00:13:44.426643
+@lastGenerated 2025-08-30T00:35:06.074362
 """
 
 from enum import Enum
@@ -64,10 +64,10 @@ class ActionType(Enum):
 
 
 class DecisionPriorityLevel(Enum):
-    MEDIUM = "medium"
-    IMMEDIATE = "immediate"
-    LOW = "low"
     HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+    IMMEDIATE = "immediate"
 
 
 priority_map = {

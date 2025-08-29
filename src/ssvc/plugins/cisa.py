@@ -12,7 +12,7 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/cisa.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-30T00:13:44.264014
+@lastGenerated 2025-08-30T00:35:05.952524
 """
 
 from enum import Enum
