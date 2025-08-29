@@ -12,7 +12,7 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/cisa.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T21:05:04.889749
+@lastGenerated 2025-08-29T23:51:54.787381
 """
 
 from enum import Enum
@@ -47,9 +47,9 @@ class ActionType(Enum):
     ACT = "act"
 
 class DecisionPriorityLevel(Enum):
-    IMMEDIATE = "immediate"
     LOW = "low"
     MEDIUM = "medium"
+    IMMEDIATE = "immediate"
 
 priority_map = {
     ActionType.TRACK: DecisionPriorityLevel.LOW,
@@ -192,8 +192,8 @@ class DecisionCisa:
         mission_wellbeing_match = params.get('M')
         
         return cls(
-            exploitation={'N': 'NONE', 'P': 'POC', 'A': 'ACTIVE'}.get(exploitation_match, exploitation_match),
-            automatable={'Y': 'YES', 'N': 'NO'}.get(automatable_match, automatable_match),
-            technical_impact={'P': 'PARTIAL', 'T': 'TOTAL'}.get(technical_impact_match, technical_impact_match),
-            mission_wellbeing_impact={'L': 'LOW', 'M': 'MEDIUM', 'H': 'HIGH'}.get(mission_wellbeing_match, mission_wellbeing_match),
+            exploitation={'N': 'NONE', 'P': 'POC', 'A': 'ACTIVE'}.get(exploitation_match, exploitation_match) if exploitation_match else None,
+            automatable={'Y': 'YES', 'N': 'NO'}.get(automatable_match, automatable_match) if automatable_match else None,
+            technical_impact={'P': 'PARTIAL', 'T': 'TOTAL'}.get(technical_impact_match, technical_impact_match) if technical_impact_match else None,
+            mission_wellbeing_impact={'L': 'LOW', 'M': 'MEDIUM', 'H': 'HIGH'}.get(mission_wellbeing_match, mission_wellbeing_match) if mission_wellbeing_match else None,
         )

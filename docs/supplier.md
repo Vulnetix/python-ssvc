@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/supplier.yaml
 generator: scripts/generate_plugins.py
-lastGenerated: 2025-08-29T21:05:04.864466
+lastGenerated: 2025-08-29T23:51:54.751748
 generatedFiles:
   python:
     path: src/ssvc/plugins/supplier.py
-    checksum: 7a11c75778e4ba638905c24abd0bdbb9f14c42e4
+    checksum: e4aed46a10bf379b86ea683c77cbdefa5395feb6
 ---
 
 # Supplier Decision Model
@@ -231,7 +231,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify Python plugin file
-echo "7a11c75778e4ba638905c24abd0bdbb9f14c42e4  src/ssvc/plugins/supplier.py" | sha1sum -c
+echo "e4aed46a10bf379b86ea683c77cbdefa5395feb6  src/ssvc/plugins/supplier.py" | sha1sum -c
 
 # Verify all generated files using the justfile task
 just verify-checksums

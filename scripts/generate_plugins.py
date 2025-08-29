@@ -510,9 +510,9 @@ Always verify checksums before deploying or using generated files in production 
             
             if 'valueMappings' in mapping:
                 reverse_mappings = {v: k for k, v in mapping['valueMappings'].items()}
-                from_vector_params.append(f"            {actual_param_name}={reverse_mappings}.get({param_name}_match, {param_name}_match),")
+                from_vector_params.append(f"            {actual_param_name}={reverse_mappings}.get({param_name}_match, {param_name}_match) if {param_name}_match else None,")
             else:
-                from_vector_params.append(f"            {actual_param_name}={param_name}_match,")
+                from_vector_params.append(f"            {actual_param_name}={param_name}_match if {param_name}_match else None,")
         
         prefix = vector_meta['prefix']
         version = vector_meta['version']

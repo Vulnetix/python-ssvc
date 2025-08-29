@@ -12,7 +12,7 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/supplier.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T21:05:04.860871
+@lastGenerated 2025-08-29T23:51:54.751042
 """
 
 from enum import Enum
@@ -47,9 +47,9 @@ class ActionType(Enum):
     IMMEDIATE = "immediate"
 
 class DecisionPriorityLevel(Enum):
-    LOW = "low"
-    MEDIUM = "medium"
     HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
     IMMEDIATE = "immediate"
 
 priority_map = {
@@ -236,8 +236,8 @@ class DecisionSupplier:
         public_safety_match = params.get('P')
         
         return cls(
-            exploitation={'N': 'none', 'P': 'public_poc', 'A': 'active'}.get(exploitation_match, exploitation_match),
-            utility={'L': 'laborious', 'E': 'efficient', 'S': 'super_effective'}.get(utility_match, utility_match),
-            technical_impact={'P': 'partial', 'T': 'total'}.get(technical_impact_match, technical_impact_match),
-            public_safety_impact={'M': 'minimal', 'S': 'significant'}.get(public_safety_match, public_safety_match),
+            exploitation={'N': 'none', 'P': 'public_poc', 'A': 'active'}.get(exploitation_match, exploitation_match) if exploitation_match else None,
+            utility={'L': 'laborious', 'E': 'efficient', 'S': 'super_effective'}.get(utility_match, utility_match) if utility_match else None,
+            technical_impact={'P': 'partial', 'T': 'total'}.get(technical_impact_match, technical_impact_match) if technical_impact_match else None,
+            public_safety_impact={'M': 'minimal', 'S': 'significant'}.get(public_safety_match, public_safety_match) if public_safety_match else None,
         )

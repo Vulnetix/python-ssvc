@@ -1,0 +1,155 @@
+name: "AI/LLM Triage"
+description: "AI and LLM Vulnerability Triage for stakeholder-specific decision making"
+version: "1.0"
+
+enums:
+  ExploitationStatus:
+    - NONE
+    - POC
+    - ACTIVE
+  StakeholderRole:
+    - DEPLOYER
+    - APPLICATION
+    - USER
+  DeployerAttackVector:
+    - SUPPLY_CHAIN
+    - MODEL_POISONING
+    - INFRASTRUCTURE_COMPROMISE
+  ApplicationAttackVector:
+    - PROMPT_INJECTION
+    - TOOL_MISUSE
+    - PRIVILEGE_ESCALATION
+    - MEMORY_MANIPULATION
+    - ALIGNMENT_BYPASS
+  UserAttackVector:
+    - DATA_EXTRACTION
+    - PROMPT_MANIPULATION
+    - OUTPUT_MANIPULATION
+
+priorityMap:
+  MONITOR: LOW
+  ASSESS_RISK: LOW
+  PROMPT_SANITIZATION: MEDIUM
+  FINETUNE_GUARDRAILS: MEDIUM
+  RETRAIN_MODEL: HIGH
+  HIGH_RISK: HIGH
+  LOW_TRUST: MEDIUM
+  IMMEDIATE_ACTION: IMMEDIATE
+
+decisionTree:
+  type: ExploitationStatus
+  children:
+    NONE:
+      type: StakeholderRole
+      children:
+        DEPLOYER:
+          type: DeployerAttackVector
+          children:
+            SUPPLY_CHAIN: ASSESS_RISK
+            MODEL_POISONING: ASSESS_RISK
+            INFRASTRUCTURE_COMPROMISE: MONITOR
+        APPLICATION:
+          type: ApplicationAttackVector
+          children:
+            PROMPT_INJECTION: MONITOR
+            TOOL_MISUSE: PROMPT_SANITIZATION
+            PRIVILEGE_ESCALATION: FINETUNE_GUARDRAILS
+            MEMORY_MANIPULATION: MONITOR
+            ALIGNMENT_BYPASS: MONITOR
+        USER:
+          type: UserAttackVector
+          children:
+            DATA_EXTRACTION: ASSESS_RISK
+            PROMPT_MANIPULATION: LOW_TRUST
+            OUTPUT_MANIPULATION: LOW_TRUST
+    POC:
+      type: StakeholderRole
+      children:
+        DEPLOYER:
+          type: DeployerAttackVector
+          children:
+            SUPPLY_CHAIN: FINETUNE_GUARDRAILS
+            MODEL_POISONING: RETRAIN_MODEL
+            INFRASTRUCTURE_COMPROMISE: ASSESS_RISK
+        APPLICATION:
+          type: ApplicationAttackVector
+          children:
+            PROMPT_INJECTION: PROMPT_SANITIZATION
+            TOOL_MISUSE: FINETUNE_GUARDRAILS
+            PRIVILEGE_ESCALATION: RETRAIN_MODEL
+            MEMORY_MANIPULATION: FINETUNE_GUARDRAILS
+            ALIGNMENT_BYPASS: PROMPT_SANITIZATION
+        USER:
+          type: UserAttackVector
+          children:
+            DATA_EXTRACTION: FINETUNE_GUARDRAILS
+            PROMPT_MANIPULATION: HIGH_RISK
+            OUTPUT_MANIPULATION: HIGH_RISK
+    ACTIVE:
+      type: StakeholderRole
+      children:
+        DEPLOYER:
+          type: DeployerAttackVector
+          children:
+            SUPPLY_CHAIN: IMMEDIATE_ACTION
+            MODEL_POISONING: IMMEDIATE_ACTION
+            INFRASTRUCTURE_COMPROMISE: RETRAIN_MODEL
+        APPLICATION:
+          type: ApplicationAttackVector
+          children:
+            PROMPT_INJECTION: FINETUNE_GUARDRAILS
+            TOOL_MISUSE: RETRAIN_MODEL
+            PRIVILEGE_ESCALATION: IMMEDIATE_ACTION
+            MEMORY_MANIPULATION: RETRAIN_MODEL
+            ALIGNMENT_BYPASS: FINETUNE_GUARDRAILS
+        USER:
+          type: UserAttackVector
+          children:
+            DATA_EXTRACTION: IMMEDIATE_ACTION
+            PROMPT_MANIPULATION: IMMEDIATE_ACTION
+            OUTPUT_MANIPULATION: IMMEDIATE_ACTION
+
+defaultAction: MONITOR
+
+# Vector string metadata
+vectorMetadata:
+  prefix: AI_LLM
+  version: v2
+  parameterMappings:
+    exploitation:
+      abbrev: E
+      enumType: ExploitationStatus
+      valueMappings:
+        NONE: N
+        POC: P
+        ACTIVE: A
+    stakeholder_role:
+      abbrev: SR
+      enumType: StakeholderRole
+      valueMappings:
+        DEPLOYER: D
+        APPLICATION: A
+        USER: U
+    deployer_attack_vector:
+      abbrev: DAV
+      enumType: DeployerAttackVector
+      valueMappings:
+        SUPPLY_CHAIN: SC
+        MODEL_POISONING: MP
+        INFRASTRUCTURE_COMPROMISE: IC
+    application_attack_vector:
+      abbrev: AAV
+      enumType: ApplicationAttackVector
+      valueMappings:
+        PROMPT_INJECTION: PI
+        TOOL_MISUSE: TM
+        PRIVILEGE_ESCALATION: PE
+        MEMORY_MANIPULATION: MM
+        ALIGNMENT_BYPASS: AB
+    user_attack_vector:
+      abbrev: UAV
+      enumType: UserAttackVector
+      valueMappings:
+        DATA_EXTRACTION: DE
+        PROMPT_MANIPULATION: PM
+        OUTPUT_MANIPULATION: OM

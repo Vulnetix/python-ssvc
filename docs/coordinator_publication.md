@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/coordinator_publication.yaml
 generator: scripts/generate_plugins.py
-lastGenerated: 2025-08-29T21:05:04.884664
+lastGenerated: 2025-08-29T23:51:54.777709
 generatedFiles:
   python:
     path: src/ssvc/plugins/coordinator_publication.py
-    checksum: 4188f06662710e0eb33602dc18388a35bf1c9a46
+    checksum: e57849613c9f1139c8ac264f7690a049ea400738
 ---
 
 # Coordinator Publication Decision Model
@@ -174,7 +174,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify Python plugin file
-echo "4188f06662710e0eb33602dc18388a35bf1c9a46  src/ssvc/plugins/coordinator_publication.py" | sha1sum -c
+echo "e57849613c9f1139c8ac264f7690a049ea400738  src/ssvc/plugins/coordinator_publication.py" | sha1sum -c
 
 # Verify all generated files using the justfile task
 just verify-checksums
