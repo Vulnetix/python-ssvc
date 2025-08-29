@@ -12,7 +12,7 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/deployer.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T21:05:04.876412
+@lastGenerated 2025-08-29T23:51:54.768233
 """
 
 from enum import Enum
@@ -50,9 +50,9 @@ class ActionType(Enum):
     IMMEDIATE = "immediate"
 
 class DecisionPriorityLevel(Enum):
-    LOW = "low"
-    MEDIUM = "medium"
     HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
     IMMEDIATE = "immediate"
 
 priority_map = {
@@ -392,8 +392,8 @@ class DecisionDeployer:
         human_impact_match = params.get('HI')
         
         return cls(
-            exploitation={'N': 'none', 'P': 'public_poc', 'A': 'active'}.get(exploitation_match, exploitation_match),
-            system_exposure={'S': 'small', 'C': 'controlled', 'O': 'open'}.get(system_exposure_match, system_exposure_match),
-            utility={'L': 'laborious', 'E': 'efficient', 'S': 'super_effective'}.get(utility_match, utility_match),
-            human_impact={'L': 'low', 'M': 'medium', 'H': 'high', 'V': 'very_high'}.get(human_impact_match, human_impact_match),
+            exploitation={'N': 'none', 'P': 'public_poc', 'A': 'active'}.get(exploitation_match, exploitation_match) if exploitation_match else None,
+            system_exposure={'S': 'small', 'C': 'controlled', 'O': 'open'}.get(system_exposure_match, system_exposure_match) if system_exposure_match else None,
+            utility={'L': 'laborious', 'E': 'efficient', 'S': 'super_effective'}.get(utility_match, utility_match) if utility_match else None,
+            human_impact={'L': 'low', 'M': 'medium', 'H': 'high', 'V': 'very_high'}.get(human_impact_match, human_impact_match) if human_impact_match else None,
         )

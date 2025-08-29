@@ -12,7 +12,7 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/coordinator_triage.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T21:05:04.905468
+@lastGenerated 2025-08-29T23:51:54.816560
 """
 
 from enum import Enum
@@ -54,8 +54,8 @@ class ActionType(Enum):
 
 class DecisionPriorityLevel(Enum):
     LOW = "low"
-    HIGH = "high"
     MEDIUM = "medium"
+    HIGH = "high"
 
 priority_map = {
     ActionType.DECLINE: DecisionPriorityLevel.LOW,
@@ -418,10 +418,10 @@ class DecisionCoordinatorTriage:
         public_safety_match = params.get('PS')
         
         return cls(
-            report_public={'Y': 'YES', 'N': 'NO'}.get(report_public_match, report_public_match),
-            supplier_contacted={'Y': 'YES', 'N': 'NO'}.get(supplier_contacted_match, supplier_contacted_match),
-            report_credibility={'C': 'CREDIBLE', 'N': 'NOT_CREDIBLE'}.get(report_credibility_match, report_credibility_match),
-            supplier_cardinality={'O': 'ONE', 'M': 'MULTIPLE'}.get(supplier_cardinality_match, supplier_cardinality_match),
-            utility={'L': 'LABORIOUS', 'E': 'EFFICIENT', 'S': 'SUPER_EFFECTIVE'}.get(utility_match, utility_match),
-            public_safety_impact={'M': 'MINIMAL', 'S': 'SIGNIFICANT'}.get(public_safety_match, public_safety_match),
+            report_public={'Y': 'YES', 'N': 'NO'}.get(report_public_match, report_public_match) if report_public_match else None,
+            supplier_contacted={'Y': 'YES', 'N': 'NO'}.get(supplier_contacted_match, supplier_contacted_match) if supplier_contacted_match else None,
+            report_credibility={'C': 'CREDIBLE', 'N': 'NOT_CREDIBLE'}.get(report_credibility_match, report_credibility_match) if report_credibility_match else None,
+            supplier_cardinality={'O': 'ONE', 'M': 'MULTIPLE'}.get(supplier_cardinality_match, supplier_cardinality_match) if supplier_cardinality_match else None,
+            utility={'L': 'LABORIOUS', 'E': 'EFFICIENT', 'S': 'SUPER_EFFECTIVE'}.get(utility_match, utility_match) if utility_match else None,
+            public_safety_impact={'M': 'MINIMAL', 'S': 'SIGNIFICANT'}.get(public_safety_match, public_safety_match) if public_safety_match else None,
         )

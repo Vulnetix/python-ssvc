@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/deployer.yaml
 generator: scripts/generate_plugins.py
-lastGenerated: 2025-08-29T21:05:04.878167
+lastGenerated: 2025-08-29T23:51:54.769468
 generatedFiles:
   python:
     path: src/ssvc/plugins/deployer.py
-    checksum: 67c9f050f8b3cf02eb6a1613070bcda5b33faf22
+    checksum: 3ae88f6293d363b5093a39e4094a5401ed916675
 ---
 
 # Deployer Decision Model
@@ -393,7 +393,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify Python plugin file
-echo "67c9f050f8b3cf02eb6a1613070bcda5b33faf22  src/ssvc/plugins/deployer.py" | sha1sum -c
+echo "3ae88f6293d363b5093a39e4094a5401ed916675  src/ssvc/plugins/deployer.py" | sha1sum -c
 
 # Verify all generated files using the justfile task
 just verify-checksums

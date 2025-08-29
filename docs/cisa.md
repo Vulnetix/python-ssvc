@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/cisa.yaml
 generator: scripts/generate_plugins.py
-lastGenerated: 2025-08-29T21:05:04.890731
+lastGenerated: 2025-08-29T23:51:54.788577
 generatedFiles:
   python:
     path: src/ssvc/plugins/cisa.py
-    checksum: f901db00efd1448a131a664b3d20711b2061a1aa
+    checksum: cb84a9995710c376c346ed02406db1dcdbfd1e4e
 ---
 
 # CISA Decision Model
@@ -179,7 +179,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify Python plugin file
-echo "f901db00efd1448a131a664b3d20711b2061a1aa  src/ssvc/plugins/cisa.py" | sha1sum -c
+echo "cb84a9995710c376c346ed02406db1dcdbfd1e4e  src/ssvc/plugins/cisa.py" | sha1sum -c
 
 # Verify all generated files using the justfile task
 just verify-checksums

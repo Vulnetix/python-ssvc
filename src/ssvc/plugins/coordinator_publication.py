@@ -12,7 +12,7 @@ This file is auto-generated. To make changes:
 @generated true
 @source methodologies/coordinator_publication.yaml
 @generator scripts/generate_plugins.py
-@lastGenerated 2025-08-29T21:05:04.883322
+@lastGenerated 2025-08-29T23:51:54.776800
 """
 
 from enum import Enum
@@ -42,8 +42,8 @@ class ActionType(Enum):
     DONT_PUBLISH = "dont_publish"
 
 class DecisionPriorityLevel(Enum):
-    LOW = "low"
     HIGH = "high"
+    LOW = "low"
 
 priority_map = {
     ActionType.PUBLISH: DecisionPriorityLevel.HIGH,
@@ -186,7 +186,7 @@ class DecisionCoordinatorPublication:
         public_value_added_match = params.get('PV')
         
         return cls(
-            supplier_involvement={'F': 'fix_ready', 'C': 'cooperative', 'U': 'uncooperative_unresponsive'}.get(supplier_involvement_match, supplier_involvement_match),
-            exploitation={'N': 'none', 'P': 'public_poc', 'A': 'active'}.get(exploitation_match, exploitation_match),
-            public_value_added={'L': 'limited', 'A': 'ampliative', 'P': 'precedence'}.get(public_value_added_match, public_value_added_match),
+            supplier_involvement={'F': 'fix_ready', 'C': 'cooperative', 'U': 'uncooperative_unresponsive'}.get(supplier_involvement_match, supplier_involvement_match) if supplier_involvement_match else None,
+            exploitation={'N': 'none', 'P': 'public_poc', 'A': 'active'}.get(exploitation_match, exploitation_match) if exploitation_match else None,
+            public_value_added={'L': 'limited', 'A': 'ampliative', 'P': 'precedence'}.get(public_value_added_match, public_value_added_match) if public_value_added_match else None,
         )
