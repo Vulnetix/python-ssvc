@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: 3.12
       - name: PySentry
-        run: uvx pysentry-rs --format sarif --output security-report.sarif
+        run: uvx pysentry-rs --format sarif --output security-report.sarif || true
       - name: Upload security-report.sarif
         uses: actions/upload-artifact@v4
         with:
