@@ -1,0 +1,34 @@
+name: sca-pysentry
+on:
+  pull_request:
+    branches: 
+      - '*'
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
+
+jobs:
+  sca:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install the latest version of uv and set the python version
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: 3.12
+      - name: PySentry
+        run: uvx pysentry-rs --format sarif --output security-report.sarif
+      - name: Upload security-report.sarif
+        uses: actions/upload-artifact@v4
+        with:
+          name: sarif
+          path: ./security-report.sarif
+          retention-days: 7
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          subject-path: ./security-report.sarif

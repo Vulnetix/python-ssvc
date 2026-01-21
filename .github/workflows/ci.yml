@@ -138,6 +138,8 @@ jobs:
 
     - name: Generate artifact attestation
       uses: actions/attest-build-provenance@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         subject-path: ./dist/ssvc-${{ env.APP_VERSION }}-py3-none-any.whl
 
