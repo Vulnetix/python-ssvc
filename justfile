@@ -4,7 +4,7 @@
 set shell := ["/bin/bash", "-c"]
 
 # Semgrep configuration variables
-SEMGREP_ARGS := "--use-git-ignore --metrics=off --force-color --disable-version-check --experimental --dataflow-traces --sarif --timeout=0"
+SEMGREP_ARGS := "--use-git-ignore --force-color --disable-version-check --dataflow-traces --sarif --timeout=0"
 SEMGREP_RULES := "-c p/default -c p/python -c p/php -c p/c -c p/rust -c p/apex -c p/nginx -c p/terraform -c p/csharp -c p/nextjs -c p/golang -c p/nodejs -c p/kotlin -c p/django -c p/docker -c p/kubernetes -c p/lockfiles -c p/supply-chain -c p/headless-browser -c p/expressjs -c p/cpp-audit -c p/mobsfscan -c p/ruby -c p/java -c p/javascript -c p/typescript -c p/bandit -c p/flask -c p/gosec -c p/flawfinder -c p/gitleaks -c p/eslint -c p/phpcs-security-audit -c p/react -c p/brakeman -c p/findsecbugs -c p/secrets -c p/sql-injection -c p/jwt -c p/insecure-transport -c p/command-injection -c p/security-code-scan -c p/xss"
 
 # Show available recipes (default recipe)
@@ -49,7 +49,7 @@ install:
 # Generate SARIF from Semgrep and OSV Scanner for this project
 sarif: clean
     osv-scanner --format sarif --call-analysis=all -r . | jq >osv.sarif.json
-    semgrep {{SEMGREP_ARGS}} {{SEMGREP_RULES}} | jq >semgrep.sarif.json
+    opengrep scan {{SEMGREP_ARGS}} {{SEMGREP_RULES}} | jq >semgrep.sarif.json
 
 # Generate CycloneDX SBOM from pip-audit for this project
 sbom: clean
