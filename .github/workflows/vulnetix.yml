@@ -1,0 +1,96 @@
+name: Vulnetix Security
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  VULNETIX_VERSION: v3.56.2
+
+jobs:
+  analyze:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      VULNETIX_ORG_ID: ${{ secrets.VULNETIX_ORG_ID }}
+      VULNETIX_API_KEY: ${{ secrets.VULNETIX_API_KEY }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: sca
+            name: SCA
+            run: vulnetix sca --no-banner --no-progress --verbose
+            artifact: .vulnetix/sbom.cdx.json
+          - id: secrets
+            name: Secrets
+            run: vulnetix secrets --ignore-binaries --ignore-git --no-banner --no-progress --verbose
+            artifact: .vulnetix/sast.sarif
+          - id: licenses
+            name: Licenses
+            run: vulnetix license --no-banner --no-progress --verbose
+            artifact: .vulnetix/sbom.cdx.json
+          - id: cbom
+            name: CBOM
+            run: vulnetix cbom --no-banner --no-progress --verbose
+            artifact: .vulnetix/cbom.cdx.json
+          - id: aibom
+            name: AIBOM
+            run: vulnetix aibom --commit-scan-max 1 --no-banner --no-progress --verbose
+            artifact: .vulnetix/ai-bom.cdx.json
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Vulnetix CLI
+        run: |
+          curl -fsSL https://cli.vulnetix.com/install.sh             | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Authenticate with Vulnetix
+        run: vulnetix auth login --noninteractive --store project --no-banner --no-progress --verbose
+
+      - name: Verify Vulnetix authentication
+        run: vulnetix auth verify --no-banner --no-progress --verbose
+
+      - name: Run ${{ matrix.name }}
+        continue-on-error: true
+        run: |
+          ${{ matrix.run }}
+
+      - name: Upload ${{ matrix.name }} artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.id }}
+          path: ${{ matrix.artifact }}
+          if-no-files-found: warn
+          retention-days: 7
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    needs: analyze
+    permissions:
+      contents: read
+      actions: read
+    env:
+      VULNETIX_ORG_ID: ${{ secrets.VULNETIX_ORG_ID }}
+      VULNETIX_API_KEY: ${{ secrets.VULNETIX_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Vulnetix CLI
+        run: |
+          curl -fsSL https://cli.vulnetix.com/install.sh             | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Authenticate with Vulnetix
+        run: vulnetix auth login --noninteractive --store project --no-banner --no-progress --verbose
+
+      - name: Upload all artifacts to Vulnetix
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: vulnetix gha upload --org-id "$VULNETIX_ORG_ID" --json --no-banner --no-progress --verbose
