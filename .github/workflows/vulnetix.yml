@@ -57,6 +57,7 @@ jobs:
 
       - name: Run ${{ matrix.name }}
         continue-on-error: true
+        timeout-minutes: 20
         run: |
           ${{ matrix.run }}
 
