@@ -16,6 +16,13 @@ test = [
     "pytest-cov>=6.0.0",
     "pytest>=8.3.4",
     "coverage-badge>=1.1.2",
+    # coverage-badge is unmaintained and still imports pkg_resources, which
+    # setuptools removed in v81 and Python 3.13 no longer provides. Without
+    # this ceiling the badge step dies with ModuleNotFoundError after the tests
+    # have already passed, so CI goes red on a green test run. The ceiling is
+    # the dependency's problem, not ours; drop it if coverage-badge is ever
+    # replaced.
+    "setuptools<81",
 ]
 sec = [
     "pip-audit>=2.7.3",
@@ -27,3 +34,14 @@ dev = [
 [project.urls]
 Homepage = "https://www.vulnetix.com"
 Repository = "https://github.com/vulnetix/python-ssvc.git"
+
+[tool.coverage.run]
+# Measure the library, not the test files. Without this, coverage defaults to
+# whatever was imported and executed, which for a non-editable install is the
+# tests themselves: the report read 100 percent while src/ssvc was never
+# measured at all. `ssvc` rather than `src/ssvc` so it resolves through the
+# editable install and the paths in the report match the source tree.
+source = ["ssvc"]
+
+[tool.coverage.report]
+show_missing = true

@@ -62,9 +62,16 @@ version:
 
 # Run tests with coverage
 test: clean
-    uv pip install ".[test]"
+    # Editable, so imports resolve to src/ssvc and coverage measures the
+    # library. A non-editable install puts the wheel in site-packages, the
+    # tests import that instead, and the report silently covers only the test
+    # files: it read 100 percent while src/ssvc was never measured at all.
+    uv pip install -e ".[test]"
     uv run coverage run -m pytest --nf
-    uv run coverage report -m --fail-under=100
+    # Ratchet, not a target. 33 percent is what the suite actually achieves
+    # today against the library. Raise it as coverage improves; never lower it
+    # to make CI pass.
+    uv run coverage report -m --fail-under=33
     uv run coverage-badge -f -o coverage.svg
 
 # Watch for changes (using entr if available)

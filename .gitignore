@@ -26,3 +26,9 @@ OpenCode.md
 *.tar.gz
 *.zip
 *.log
+# Coverage databases are per-run and embed absolute paths from whichever
+# machine produced them. The badge (coverage.svg) is the intended committed
+# output; the database behind it is not.
+.coverage
+.coverage.*
+htmlcov/
