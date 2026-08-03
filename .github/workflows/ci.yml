@@ -15,12 +15,11 @@ permissions:
 
 jobs:
   test:
-    if: "!startsWith(github.ref, 'refs/tags/')"
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -50,13 +49,17 @@ jobs:
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
+    # Gated on the suite. Publishing to PyPI is irreversible: a version number
+    # cannot be reused even after deleting the file, so an untested release
+    # burns that version permanently.
+    needs: [test]
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
       attestations: write
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -71,6 +74,18 @@ jobs:
 
     - name: Retrieve commit message
       run: echo "COMMIT_MSG=$(git log -1 --pretty=format:'%s')" >> "$GITHUB_ENV"
+
+    # A tag that disagrees with pyproject.toml produces a release named after
+    # one version carrying artifacts built as another, and publishes that
+    # mismatch to PyPI where the version cannot be reused. Cheaper to stop here.
+    - name: Check the tag matches the packaged version
+      env:
+        RELEASE_TAG: ${{ github.ref_name }}
+      run: |
+        if [ "$RELEASE_TAG" != "v${APP_VERSION}" ]; then
+          echo "::error::tag $RELEASE_TAG does not match pyproject version $APP_VERSION"
+          exit 1
+        fi
 
     - name: Build
       run: uv build
