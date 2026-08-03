@@ -2,6 +2,10 @@ name: Vulnetix Security
 
 on:
   push:
+  # A release cut from a tag that already existed produces no push event, so
+  # the tag-push trigger above does not cover it.
+  release:
+    types: [published]
   workflow_dispatch:
 
 env:
@@ -95,3 +99,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: vulnetix gha upload --org-id "$VULNETIX_ORG_ID" --json --no-banner --no-progress --verbose
+
+  publish-tea:
+    name: TEA
+    needs: analyze
+    # `needs` alone would skip this whenever any one of the scanner legs fails
+    # or is cancelled. The design publishes whatever evidence exists, so a
+    # partial scan must still publish. `!cancelled()` still stops it when the
+    # whole run is cancelled.
+    if: ${{ !cancelled() }}
+    uses: Vulnetix/cli/.github/workflows/tea-release.yml@tea-release-v1
+    with:
+      visibility: public
+    secrets: inherit
