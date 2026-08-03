@@ -9,3 +9,12 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # setuptools 81 removed pkg_resources, which coverage-badge still
+      # imports, so a major bump breaks the badge step after the tests have
+      # already passed. pyproject.toml pins setuptools below 81 for that
+      # reason, but Dependabot cannot read the comment explaining it and has
+      # already raised the ceiling once. Drop this entry if coverage-badge is
+      # ever replaced with something maintained.
+      - dependency-name: "setuptools"
+        update-types: ["version-update:semver-major"]
