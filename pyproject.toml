@@ -22,7 +22,7 @@ test = [
     # have already passed, so CI goes red on a green test run. The ceiling is
     # the dependency's problem, not ours; drop it if coverage-badge is ever
     # replaced.
-    "setuptools<81",
+    "setuptools<85",
 ]
 sec = [
     "pip-audit>=2.7.3",
