@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  VULNETIX_VERSION: v3.56.2
+  VULNETIX_VERSION: latest
 
 jobs:
   analyze:
@@ -50,7 +50,7 @@ jobs:
 
       - name: Install Vulnetix CLI
         run: |
-          curl -fsSL https://cli.vulnetix.com/install.sh             | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
+          curl -fsSL https://cli.vulnetix.com/install.sh | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Authenticate with Vulnetix
@@ -61,7 +61,6 @@ jobs:
 
       - name: Run ${{ matrix.name }}
         continue-on-error: true
-        timeout-minutes: 20
         run: |
           ${{ matrix.run }}
 
@@ -89,7 +88,7 @@ jobs:
 
       - name: Install Vulnetix CLI
         run: |
-          curl -fsSL https://cli.vulnetix.com/install.sh             | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
+          curl -fsSL https://cli.vulnetix.com/install.sh | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Authenticate with Vulnetix
