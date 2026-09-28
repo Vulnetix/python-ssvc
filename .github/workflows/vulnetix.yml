@@ -14,7 +14,7 @@ env:
 jobs:
   analyze:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, vulnetix-local]
     permissions:
       contents: read
     env:
@@ -74,7 +74,7 @@ jobs:
 
   publish:
     name: Publish
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, vulnetix-local]
     needs: analyze
     permissions:
       contents: read

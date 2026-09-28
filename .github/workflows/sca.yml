@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   sca:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
       - uses: actions/checkout@v5
       - name: Install the latest version of uv and set the python version

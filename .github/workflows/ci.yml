@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, vulnetix-local]
     permissions:
       contents: read
     steps:
@@ -53,7 +53,7 @@ jobs:
     # cannot be reused even after deleting the file, so an untested release
     # burns that version permanently.
     needs: [test]
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, vulnetix-local]
     permissions:
       contents: write
       id-token: write
