@@ -1,4 +1,4 @@
-attrs==25.3.0
+attrs==26.1.0
 jsonschema==4.26.0
 jsonschema-specifications==2025.4.1
 pyyaml==6.0.3
