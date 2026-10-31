@@ -39,7 +39,7 @@ jobs:
       run: uv run coverage report -m --fail-under=33
 
     - name: Coverage Badge
-      run: uv run coverage-badge -f -o coverage.svg
+      run: uv run python scripts/coverage_badge.py -o coverage.svg
 
     - name: Verify Changed files
       uses: tj-actions/verify-changed-files@v19

@@ -72,7 +72,7 @@ test: clean
     # today against the library. Raise it as coverage improves; never lower it
     # to make CI pass.
     uv run coverage report -m --fail-under=33
-    uv run coverage-badge -f -o coverage.svg
+    uv run python scripts/coverage_badge.py -o coverage.svg
 
 # Watch for changes (using entr if available)
 watch:
@@ -241,7 +241,7 @@ preview-plugins:
 
 # Install development dependencies
 dev-install:
-    uv add --dev pytest coverage pytest-cov coverage-badge ruff mypy
+    uv add --dev pytest coverage pytest-cov ruff mypy
 
 # Type checking with mypy
 typecheck:
