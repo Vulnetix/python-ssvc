@@ -20,10 +20,10 @@ jobs:
     name: Bandit (Python SAST)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Set up uv
         continue-on-error: true
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v6.8.0
       - name: Run Bandit
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -45,7 +45,7 @@ jobs:
             echo '::warning::bandit produced no valid SARIF; dropping the artifact'
             rm -f bandit.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: bandit
           path: bandit.sarif
@@ -57,7 +57,7 @@ jobs:
     name: Bearer (SAST)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Run Bearer
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -75,7 +75,7 @@ jobs:
             echo '::warning::bearer produced no valid SARIF; dropping the artifact'
             rm -f bearer.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: bearer
           path: bearer.sarif
@@ -87,10 +87,10 @@ jobs:
     name: cdxgen (multi-ecosystem SBOM)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Set up Node.js
         continue-on-error: true
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.4.0
         with:
           node-version: 'lts/*'
       - name: Run cdxgen
@@ -106,7 +106,7 @@ jobs:
             echo '::warning::cdxgen produced no valid CycloneDX JSON; dropping the artifact'
             rm -f cdxgen.cdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: cdxgen
           path: cdxgen.cdx.json
@@ -118,10 +118,10 @@ jobs:
     name: Checkov (IaC)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Set up uv
         continue-on-error: true
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v6.8.0
       - name: Run Checkov
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -135,7 +135,7 @@ jobs:
             exit 0
           fi
           uvx --from checkov checkov -d . -o sarif --output-file-path . --soft-fail || true
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: checkov
           path: results.sarif
@@ -147,10 +147,10 @@ jobs:
     name: CycloneDX Python SBOM
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Set up uv
         continue-on-error: true
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v6.8.0
       - name: Generate Python CycloneDX SBOM
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -183,7 +183,7 @@ jobs:
             echo '::warning::cyclonedx python produced no valid CycloneDX JSON; dropping the artifact'
             rm -f cyclonedx-python.cdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: cyclonedx-python
           path: cyclonedx-python.cdx.json
@@ -195,10 +195,10 @@ jobs:
     name: detect-secrets (secrets)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Set up uv
         continue-on-error: true
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v6.8.0
       - name: Run detect-secrets
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -296,7 +296,7 @@ jobs:
             echo '::warning::detect-secrets produced no valid SARIF; dropping the artifact'
             rm -f detect-secrets-results.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: detect-secrets
           path: detect-secrets-results.sarif
@@ -308,10 +308,10 @@ jobs:
     name: Dockle (container image)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Set up Go
         continue-on-error: true
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v6.5.0
         with:
           go-version: stable
       - name: Run Dockle
@@ -341,7 +341,7 @@ jobs:
             echo '::warning::dockle produced no valid SARIF; dropping the artifact'
             rm -f dockle.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: dockle
           path: dockle.sarif
@@ -353,7 +353,7 @@ jobs:
     name: GitHub SBOM (SPDX)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Export the dependency graph
         continue-on-error: true
         env:
@@ -372,7 +372,7 @@ jobs:
             echo '::warning::GitHub returned no valid SPDX; dropping the artifact'
             rm -f github-sbom.spdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: github-sbom
           path: github-sbom.spdx.json
@@ -384,7 +384,7 @@ jobs:
     name: Gitleaks (Secrets)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Run Gitleaks
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -397,7 +397,7 @@ jobs:
             echo "::warning::gitleaks produced no valid SARIF; dropping the artifact"
             rm -f gitleaks.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: gitleaks
           path: gitleaks.sarif
@@ -409,11 +409,11 @@ jobs:
     name: Grype (SCA)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Run Grype
         id: grype
         continue-on-error: true
-        uses: anchore/scan-action@v7
+        uses: anchore/scan-action@v7.4.0
         with:
           fail-build: false
           output-format: sarif
@@ -423,7 +423,7 @@ jobs:
         shell: bash --noprofile --norc {0}
         run: |
           cp "${{ steps.grype.outputs.sarif }}" grype.sarif
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: grype
           path: grype.sarif
@@ -435,7 +435,7 @@ jobs:
     name: Grype image (OCI)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Build the image
         id: build
         continue-on-error: true
@@ -458,7 +458,7 @@ jobs:
       - name: Run Grype
         id: grype
         continue-on-error: true
-        uses: anchore/scan-action@v7
+        uses: anchore/scan-action@v7.4.0
         with:
           fail-build: false
           image: '${{ steps.build.outputs.image }}'
@@ -474,7 +474,7 @@ jobs:
             echo '::warning::grype image produced no valid SARIF; dropping the artifact'
             rm -f grype-image.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: grype-image
           path: grype-image.sarif
@@ -486,7 +486,7 @@ jobs:
     name: Hadolint (Dockerfile)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Run Hadolint
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -515,7 +515,7 @@ jobs:
             echo '::warning::hadolint produced no valid SARIF; dropping the artifact'
             rm -f hadolint.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: hadolint
           path: hadolint.sarif
@@ -527,7 +527,7 @@ jobs:
     name: KICS (IaC)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Run KICS
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -535,7 +535,7 @@ jobs:
           mkdir -p kics-out
           docker run --rm -v "$PWD:/path" checkmarx/kics:v2.1.20 \
             scan -p /path -o /path/kics-out --report-formats sarif --no-progress || true
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: kics
           path: kics-out/results.sarif
@@ -547,7 +547,7 @@ jobs:
     name: Nosey Parker (secrets)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Run Nosey Parker
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -568,7 +568,7 @@ jobs:
             echo '::warning::noseyparker produced no valid SARIF; dropping the artifact'
             rm -f noseyparker.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: noseyparker
           path: noseyparker.sarif
@@ -580,7 +580,7 @@ jobs:
     name: OpenGrep (SAST)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Run OpenGrep
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -601,7 +601,7 @@ jobs:
             echo '::warning::opengrep produced no valid SARIF; dropping the artifact'
             rm -f opengrep.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: opengrep
           path: opengrep.sarif
@@ -613,7 +613,7 @@ jobs:
     name: OSV-Scanner (SCA)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Run OSV-Scanner
         continue-on-error: true
         uses: google/osv-scanner-action/osv-scanner-action@v2.3.8
@@ -622,7 +622,7 @@ jobs:
             --format=sarif
             --output=osv.sarif
             ./
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: osv-scanner
           path: osv.sarif
@@ -634,10 +634,10 @@ jobs:
     name: Ruff (Python lint)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Set up uv
         continue-on-error: true
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v6.8.0
       - name: Run Ruff security rules
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -659,7 +659,7 @@ jobs:
             echo '::warning::ruff produced no valid SARIF; dropping the artifact'
             rm -f ruff.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: ruff
           path: ruff.sarif
@@ -671,10 +671,10 @@ jobs:
     name: ScanCode Toolkit (license SBOM)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Set up uv
         continue-on-error: true
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v6.8.0
       - name: Run ScanCode Toolkit
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -716,7 +716,7 @@ jobs:
                 scancode.cdx.json > scancode.clean.json \
               && mv scancode.clean.json scancode.cdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: scancode
           path: scancode.cdx.json
@@ -728,10 +728,10 @@ jobs:
     name: Semgrep (SAST)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Set up uv
         continue-on-error: true
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v6.8.0
       - name: Run Semgrep
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -745,7 +745,7 @@ jobs:
             exit 0
           fi
           uvx --from semgrep semgrep scan --config auto --sarif --output semgrep.sarif .
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: semgrep
           path: semgrep.sarif
@@ -757,7 +757,7 @@ jobs:
     name: Syft (CycloneDX SBOM)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Generate CycloneDX SBOM
         continue-on-error: true
         uses: anchore/sbom-action@v0.24.0
@@ -766,7 +766,7 @@ jobs:
           format: cyclonedx-json
           output-file: sbom.cdx.json
           path: .
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: syft
           path: sbom.cdx.json
@@ -778,7 +778,7 @@ jobs:
     name: Syft image (CycloneDX SBOM)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Build the image
         id: build
         continue-on-error: true
@@ -814,7 +814,7 @@ jobs:
             echo '::warning::syft image produced no valid CycloneDX JSON; dropping the artifact'
             rm -f syft-image.cdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: syft-image
           path: syft-image.cdx.json
@@ -826,7 +826,7 @@ jobs:
     name: Trivy config (IaC/Dockerfile)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Trivy config
         continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
@@ -835,7 +835,7 @@ jobs:
           output: trivy-config.sarif
           scan-ref: .
           scan-type: config
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: trivy-config
           path: trivy-config.sarif
@@ -847,7 +847,7 @@ jobs:
     name: Trivy (filesystem CDX + SARIF)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Trivy filesystem (CycloneDX)
         continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
@@ -864,7 +864,7 @@ jobs:
           output: trivy-fs.sarif
           scan-ref: .
           scan-type: fs
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: trivy-fs
           path: |
@@ -878,7 +878,7 @@ jobs:
     name: Trivy image (OCI)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Build the image
         id: build
         continue-on-error: true
@@ -915,7 +915,7 @@ jobs:
             echo '::warning::trivy image produced no valid SARIF; dropping the artifact'
             rm -f trivy-image.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: trivy-image
           path: trivy-image.sarif
@@ -927,7 +927,7 @@ jobs:
     name: TruffleHog (secrets)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Run TruffleHog
         continue-on-error: true
         shell: bash --noprofile --norc {0}
@@ -1042,7 +1042,7 @@ jobs:
             echo '::warning::trufflehog produced no valid SARIF; dropping the artifact'
             rm -f trufflehog.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: trufflehog
           path: trufflehog.sarif
@@ -1054,10 +1054,10 @@ jobs:
     name: zizmor (GitHub Actions SAST)
     runs-on: [self-hosted, Linux, X64, vulnetix-local]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Set up uv
         continue-on-error: true
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v6.8.0
       - name: Run zizmor
         continue-on-error: true
         env:
@@ -1083,7 +1083,7 @@ jobs:
             echo "::warning::zizmor produced no valid SARIF; dropping the artifact"
             rm -f zizmor.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: zizmor
           path: zizmor.sarif
@@ -1103,7 +1103,7 @@ jobs:
       VULNETIX_ORG_ID: ${{ secrets.VULNETIX_ORG_ID }}
       VULNETIX_API_KEY: ${{ secrets.VULNETIX_API_KEY }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5.1.0
       - name: Install Vulnetix CLI
         run: |
           curl -fsSL https://cli.vulnetix.com/install.sh | sh -s -- --install-dir "$HOME/.local/bin"
