@@ -19,10 +19,10 @@ jobs:
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v5.1.0
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@v7.6.0
       with:
         python-version: 3.11
 
@@ -42,7 +42,7 @@ jobs:
       run: uv run python scripts/coverage_badge.py -o coverage.svg
 
     - name: Verify Changed files
-      uses: tj-actions/verify-changed-files@v19
+      uses: tj-actions/verify-changed-files@v19.0.0
       id: verify-changed-files
       with:
         files: coverage.svg
@@ -59,10 +59,10 @@ jobs:
       id-token: write
       attestations: write
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v5.1.0
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@v7.6.0
       with:
         python-version: 3.11
 
@@ -100,7 +100,7 @@ jobs:
       run: uv publish
 
     - name: Generate artifact attestation
-      uses: actions/attest-build-provenance@v1
+      uses: actions/attest-build-provenance@v1.4.4
       with:
         subject-path: |
           ./dist/ssvc-${{ env.APP_VERSION }}.tar.gz
