@@ -28,7 +28,7 @@ workflows:
     '.github/workflows/vulnetix.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/download-artifact@v8.0.2'
-        - 'vulnetix/cli@v4.23.1'
+        - 'vulnetix/cli@v4.24.1'
 dependencies:
     'actions/attest-build-provenance@36fa7d009e22618ca7cd599486979b8150596c74':
         ref: 'predicate@1.1.4'
@@ -173,9 +173,9 @@ dependencies:
         repo_id: 273291963
         uses:
             - 'tj-actions/glob@v21'
-    'vulnetix/cli@v4.23.1':
-        ref: 'v4.23.1'
-        commit: 'sha1-b6f596ff3448a4427fbb512aaa639f07cfb4b5d1'
+    'vulnetix/cli@v4.24.1':
+        ref: 'v4.24.1'
+        commit: 'sha1-1b7c1a6dcfb2c7d94a8bcf866e3819fee42a7411'
         owner_id: 178014019
         repo_id: 809336204
         uses:
